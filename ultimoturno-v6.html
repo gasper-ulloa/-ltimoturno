@@ -1,0 +1,2936 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#0d0b08"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Último Turno"/>
+<meta name="description" content="Yu-Gi-Oh! Companion App — Contador de LP, Constructor de Deck y Perfil de Duelista"/>
+<title>Último Turno — v6.0</title>
+<script>
+// PWA Manifest inline
+(function(){
+  const m={name:'Último Turno',short_name:'ÚltimoTurno',start_url:'.',display:'standalone',
+    background_color:'#0d0b08',theme_color:'#0d0b08',
+    description:'Yu-Gi-Oh! Companion App',
+    icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%230d0b08'/%3E%3Ctext x='256' y='340' font-size='300' text-anchor='middle'%3E🃏%3C/text%3E%3C/svg%3E",sizes:'512x512',type:'image/svg+xml'}]};
+  const b=new Blob([JSON.stringify(m)],{type:'application/json'});
+  const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(b);
+  document.currentScript.after(l);
+})();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════════
+   RESET & TOKENS
+════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d0b08; --bg2:#131009; --bg3:#1a160e; --bg4:#221d14; --bg5:#2c2519;
+  --cream:#e8dfc8; --cream2:#d0c8b0; --cream3:#a09070; --cream4:#6a6050;
+  --red:#c41818; --red2:#e02020; --red3:#8b1010;
+  --border:rgba(232,223,200,.14); --border2:rgba(232,223,200,.07);
+  --rdim:rgba(196,24,24,.3);
+  --dm:#e8dfc8; --gx:#38c888; --fds:#88c0e0;
+  --trans:.22s cubic-bezier(.4,0,.2,1);
+}
+html,body{height:100%;background:var(--bg);overflow:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Barlow Condensed',sans-serif}
+
+/* ════════════════════════════════════════════
+   SHELL
+════════════════════════════════════════════ */
+#shell{
+  width:100%;max-width:430px;height:100vh;height:100dvh;
+  margin:0 auto;background:var(--bg);
+  display:flex;flex-direction:column;position:relative;overflow:hidden;
+}
+/* global noise layer */
+#shell::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ════════════════════════════════════════════
+   SPLASH
+════════════════════════════════════════════ */
+#splash{
+  position:fixed;inset:0;z-index:999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .7s .5s,visibility .7s .5s;
+}
+#splash.gone{opacity:0;visibility:hidden;pointer-events:none}
+
+.sp-badge{
+  display:flex;flex-direction:column;align-items:center;
+  animation:spIn .9s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes spIn{from{opacity:0;transform:translateY(30px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Badge frame replicates logo card shape */
+.sp-ft{
+  width:116px;height:36px;
+  border:1.5px solid var(--red);border-radius:9px 9px 0 0;border-bottom:none;
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.sp-ft::before{content:'';position:absolute;inset:4px 6px 0;border:1px solid rgba(196,24,24,.28);border-radius:6px 6px 0 0;border-bottom:none}
+.sp-eye{display:flex;align-items:center;gap:5px}
+.sp-el{width:16px;height:1.5px;background:var(--red)}
+.sp-eo{width:17px;height:9px;border:1.5px solid var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.sp-eo::after{content:'';width:5px;height:5px;background:var(--red);border-radius:50%}
+
+.sp-text{padding:4px 18px 0}
+.sp-ul{font-family:'Black Ops One',sans-serif;font-size:27px;letter-spacing:5px;color:var(--cream);text-shadow:2px 2px 0 rgba(0,0,0,.85);line-height:1;display:block;text-align:center}
+.sp-tn{font-family:'Black Ops One',sans-serif;font-size:52px;letter-spacing:3px;color:var(--cream);text-shadow:3px 3px 0 rgba(0,0,0,.9),0 0 50px rgba(196,24,24,.3);line-height:.88;display:block;text-align:center}
+
+.sp-arc{width:156px;height:13px;margin-top:-3px;border:1.5px solid var(--red);border-radius:0 0 50% 50%;border-top:none;position:relative}
+.sp-arc::before{content:'';position:absolute;inset:4px 10px 0;border:1px solid rgba(196,24,24,.28);border-radius:0 0 50% 50%;border-top:none}
+.sp-fb{width:92px;height:28px;margin-top:-1px;border:1.5px solid var(--red);border-radius:0 0 9px 9px;border-top:none;display:flex;align-items:center;justify-content:center;position:relative}
+.sp-fb::before{content:'';position:absolute;inset:0 5px 4px;border:1px solid rgba(196,24,24,.28);border-radius:0 0 7px 7px;border-top:none}
+.sp-sp{width:13px;height:13px;border:1.5px solid var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.sp-sp::after{content:'';width:5px;height:5px;border:1px solid rgba(196,24,24,.45);border-radius:50%}
+
+.sp-sub{margin-top:28px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:rgba(232,223,200,.22);animation:fadeU .6s 1.1s both}
+.sp-ver{position:absolute;bottom:30px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:rgba(196,24,24,.38);letter-spacing:3px;text-transform:uppercase;animation:fadeU .5s 1.4s both}
+
+/* Progress bar in splash */
+.sp-bar-wrap{position:absolute;bottom:52px;left:50%;transform:translateX(-50%);width:100px}
+.sp-bar{height:1px;background:rgba(196,24,24,.2);border-radius:1px;overflow:hidden}
+.sp-bar-fill{height:100%;background:var(--red);width:0;animation:barLoad 2s .3s forwards;box-shadow:0 0 8px rgba(196,24,24,.5)}
+@keyframes barLoad{to{width:100%}}
+@keyframes fadeU{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ════════════════════════════════════════════
+   TOPBAR
+════════════════════════════════════════════ */
+#topbar{
+  background:var(--bg);border-bottom:2px solid var(--red);
+  display:flex;align-items:stretch;flex-shrink:0;z-index:10;position:relative;
+}
+#topbar::after{
+  content:'';position:absolute;bottom:-8px;left:0;right:0;height:8px;
+  background:radial-gradient(ellipse 80% 100% at 50% 0,rgba(196,24,24,.18),transparent 100%);
+  pointer-events:none;
+}
+.tb-brand{padding:8px 12px;border-right:1px solid var(--border2);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tb-ltext{display:flex;flex-direction:column;line-height:1}
+.tb-ul{font-family:'Black Ops One',sans-serif;font-size:7px;letter-spacing:2.5px;color:var(--cream2);display:block}
+.tb-tn{font-family:'Black Ops One',sans-serif;font-size:14px;letter-spacing:2px;color:var(--cream);text-shadow:1px 1px 0 rgba(0,0,0,.8);display:block}
+.tb-beta{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:rgba(196,24,24,.16);border:1px solid rgba(196,24,24,.38);border-radius:2px;padding:2px 5px;color:var(--red2)}
+.tb-nav{display:flex;flex:1}
+.tbn{
+  flex:1;background:none;border:none;cursor:pointer;padding:8px 3px 7px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  color:rgba(232,223,200,.22);
+  transition:color var(--trans);
+  font-family:'Barlow Condensed',sans-serif;font-size:8.5px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  border-left:1px solid var(--border2);position:relative;
+}
+.tbn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform var(--trans)}
+.tbn:hover{color:rgba(232,223,200,.5)}
+.tbn:hover svg{transform:scale(1.18) translateY(-1px)}
+.tbn.on{color:var(--cream)}
+.tbn.on svg{filter:drop-shadow(0 0 5px rgba(196,24,24,.55))}
+.tbn.on::after{content:'';position:absolute;bottom:0;left:16%;right:16%;height:2px;background:var(--red);box-shadow:0 0 10px rgba(196,24,24,.6)}
+
+/* ════════════════════════════════════════════
+   CONTENT
+════════════════════════════════════════════ */
+#content{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;z-index:1}
+#content::-webkit-scrollbar{width:2px}
+#content::-webkit-scrollbar-thumb{background:var(--rdim);border-radius:1px}
+.view{display:none}
+.view.on{display:block;animation:viewIn .25s ease}
+@keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Page header */
+.ph{background:var(--bg2);padding:12px 16px 10px;position:relative}
+.ph::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.ph-t{font-family:'Black Ops One',sans-serif;font-size:15px;letter-spacing:2px;color:var(--cream)}
+.ph-s{font-family:'Barlow Condensed',sans-serif;font-weight:400;font-size:11px;color:var(--cream3);letter-spacing:1.5px;margin-top:1px}
+/* Subtle brand watermark in every header */
+.ph-wm{position:absolute;right:12px;top:50%;transform:translateY(-50%);opacity:.055;pointer-events:none;line-height:1;text-align:right}
+.ph-wm b{font-family:'Black Ops One',sans-serif;font-size:6px;color:var(--cream);letter-spacing:2px;display:block}
+.ph-wm s{font-family:'Black Ops One',sans-serif;font-size:13px;color:var(--cream);letter-spacing:1px;display:block;text-decoration:none}
+
+/* Section label */
+.slbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:3px;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin:14px 0 8px}
+.slbl::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+/* Shared interactive block */
+.iblock{background:var(--bg2);border:1px solid var(--border);border-radius:3px;position:relative;overflow:hidden;transition:border-color var(--trans),box-shadow var(--trans)}
+.iblock::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,rgba(196,24,24,.55),transparent);opacity:0;transition:opacity var(--trans)}
+.iblock:hover{border-color:rgba(196,24,24,.32)}
+.iblock:hover::before{opacity:1}
+
+/* Buttons */
+.btn-red{padding:10px 18px;background:var(--red);border:none;border-radius:2px;color:var(--cream);font-family:'Black Ops One',sans-serif;font-size:12px;letter-spacing:1.5px;cursor:pointer;transition:all var(--trans);white-space:nowrap}
+.btn-red:hover{background:var(--red2);box-shadow:0 4px 18px rgba(196,24,24,.4);transform:translateY(-1px)}
+.btn-red:active{transform:scale(.97) translateY(0)}
+.btn-ghost{padding:8px 14px;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--cream2);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all var(--trans)}
+.btn-ghost:hover{border-color:rgba(196,24,24,.4);color:var(--cream);transform:translateY(-1px)}
+
+.fd{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:2px;padding:9px 12px;color:var(--cream);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:500;letter-spacing:.5px;outline:none;transition:all var(--trans);width:100%}
+.fd:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(196,24,24,.1)}
+.fd::placeholder{color:rgba(232,223,200,.2);font-size:12px;letter-spacing:1px}
+.fd[type=number]::-webkit-inner-spin-button{opacity:.2}
+
+/* ════════════════════════════════════════════
+   ── LP VIEW ──
+════════════════════════════════════════════ */
+.lp-page{padding:14px}
+.setup-inner{padding:18px}
+.s-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:3px;text-transform:uppercase;text-align:center;margin-bottom:14px}
+.lp-opts{display:flex;gap:8px;margin-bottom:12px}
+.lp-opt{flex:1;padding:14px 8px;border:1px solid var(--border2);border-radius:2px;background:rgba(255,255,255,.02);cursor:pointer;text-align:center;transition:all var(--trans);position:relative;overflow:hidden}
+.lp-opt::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--red);transform:scaleX(0);transition:transform var(--trans)}
+.lp-opt:hover::after,.lp-opt.on::after{transform:scaleX(1)}
+.lp-opt:hover,.lp-opt.on{border-color:rgba(196,24,24,.4);background:rgba(196,24,24,.07)}
+.lp-n{font-family:'Black Ops One',sans-serif;font-size:26px;letter-spacing:2px;color:var(--cream);display:block;transition:text-shadow var(--trans)}
+.lp-opt.on .lp-n{text-shadow:0 0 20px rgba(196,24,24,.4)}
+.lp-t{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;color:var(--cream3);letter-spacing:2px;text-transform:uppercase;display:block;margin-top:3px}
+.s-row{display:flex;gap:8px;margin-top:4px}
+
+/* ── DUEL FIELD ── */
+#duel{display:none;padding:12px;position:relative}
+
+/* Atmospheric background */
+.df-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 160% 70% at 50% 52%,rgba(80,10,10,.22) 0%,transparent 65%),var(--bg);
+}
+/* SVG duel mat watermark — blurred */
+.df-art{
+  position:fixed;left:50%;top:46%;transform:translate(-50%,-50%);
+  z-index:0;pointer-events:none;
+  width:115%;max-width:500px;
+  opacity:.03;filter:blur(1.2px);
+}
+
+.two-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;position:relative;z-index:1}
+.t-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase}
+.tog{width:32px;height:17px;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:9px;cursor:pointer;position:relative;transition:all var(--trans);flex-shrink:0}
+.tog.on{background:rgba(196,24,24,.22);border-color:var(--rdim)}
+.tog-k{width:12px;height:12px;background:rgba(232,223,200,.25);border-radius:50%;position:absolute;top:2px;left:2px;transition:all var(--trans)}
+.tog.on .tog-k{left:16px;background:var(--red2)}
+
+/* Player board */
+.pb{
+  background:rgba(13,11,8,.9);border:1px solid var(--border);border-radius:3px;
+  margin-bottom:10px;overflow:hidden;position:relative;z-index:1;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  transition:border-color .4s,box-shadow .4s;
+}
+.pb::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,rgba(232,223,200,.1),transparent);transition:all .4s}
+.pb.crit{border-color:rgba(196,24,24,.55);box-shadow:0 0 0 1px rgba(196,24,24,.22),inset 0 0 40px rgba(196,24,24,.06)}
+.pb.crit::before{background:linear-gradient(90deg,transparent,var(--red),transparent);box-shadow:0 2px 14px rgba(196,24,24,.35)}
+.pb.crit .lpn{animation:critPulse 1.8s ease-in-out infinite}
+@keyframes critPulse{0%,100%{opacity:1}50%{opacity:.65}}
+
+.pb-head{padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border2)}
+.p-av{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;cursor:pointer;transition:all var(--trans)}
+.p-av:hover{border-color:var(--red);transform:scale(1.1)}
+.pname{background:none;border:none;outline:none;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;color:var(--cream4);letter-spacing:3px;text-transform:uppercase;width:140px;cursor:text;transition:color var(--trans)}
+.pname:focus{color:var(--cream)}
+.sk-sel{background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:2px;padding:3px 7px;color:var(--cream3);font-family:'Barlow Condensed',sans-serif;font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;outline:none;transition:all var(--trans)}
+.sk-sel:hover{border-color:var(--red);color:var(--cream)}
+.sk-sel option{background:var(--bg);color:var(--cream)}
+
+/* LP big number */
+.lp-hero{text-align:center;padding:10px 14px 4px;position:relative}
+.lp-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--cream4);display:block;margin-bottom:3px}
+.lpn{font-family:'Black Ops One',sans-serif;font-size:62px;letter-spacing:4px;line-height:1;display:inline-block;color:var(--dm);text-shadow:0 0 30px rgba(232,223,200,.08);transition:color .3s,text-shadow .3s}
+
+/* ── SKIN: DM Classic (cream/gold, default) ── */
+.sk-dm{background:rgba(13,11,8,.9)}
+.sk-dm .pb-head{background:rgba(255,255,255,.02)}
+.sk-dm .lpn{color:#e8dfc8;font-family:'Black Ops One',sans-serif;text-shadow:0 2px 20px rgba(232,223,200,.12)}
+
+/* ── SKIN: GX — verde neón + magenta, marco teal ── */
+.sk-gx{background:rgba(0,16,12,.92);border-color:rgba(0,180,120,.3)!important}
+.sk-gx::before{background:linear-gradient(90deg,transparent,#00c890,transparent)!important}
+.sk-gx .pb-head{background:rgba(0,40,28,.5);border-bottom-color:rgba(0,180,120,.2)}
+.sk-gx .lp-lbl{color:#00c890;letter-spacing:2px}
+.sk-gx .lpn{color:#e040e0;font-family:'Black Ops One',sans-serif;font-size:66px;text-shadow:0 0 28px rgba(224,64,224,.4),0 0 60px rgba(224,64,224,.15);letter-spacing:3px}
+.sk-gx .track{background:rgba(0,180,120,.1)}
+.sk-gx .trackf{background:linear-gradient(90deg,#00c890,#00ffaa)!important}
+.sk-gx .qb{background:rgba(0,180,120,.08);border-color:rgba(0,180,120,.25);color:rgba(0,220,140,.7)}
+.sk-gx .qb:hover{background:rgba(0,180,120,.2);color:#00ffaa;border-color:rgba(0,220,140,.5)}
+.sk-gx .pname{color:rgba(0,200,140,.55)}
+.sk-gx .pname:focus{color:#00c890}
+.sk-gx .sk-sel{border-color:rgba(0,180,120,.2);color:rgba(0,200,140,.5)}
+
+/* ── SKIN: 5D's — azul acero + dial speedometer ── */
+.sk-5ds{background:rgba(4,8,18,.95);border-color:rgba(80,140,200,.3)!important}
+.sk-5ds::before{background:linear-gradient(90deg,transparent,#5090d0,transparent)!important}
+.sk-5ds .pb-head{background:rgba(8,16,32,.6);border-bottom-color:rgba(80,140,200,.15)}
+.sk-5ds .lp-lbl{color:#5090d0;letter-spacing:5px;font-family:'Barlow',sans-serif;font-weight:300}
+.sk-5ds .lpn{color:#88c0e8;font-family:'Barlow',sans-serif;font-weight:300;font-size:70px;letter-spacing:8px;text-shadow:0 0 30px rgba(136,192,232,.3),0 0 2px rgba(136,192,232,.8)}
+.sk-5ds .track{background:rgba(80,140,200,.08)}
+.sk-5ds .trackf{background:linear-gradient(90deg,#c04000,#f08000,#f8d000)!important}
+.sk-5ds .qb{background:rgba(80,140,200,.08);border-color:rgba(80,140,200,.22);color:rgba(100,160,220,.7)}
+.sk-5ds .qb:hover{background:rgba(80,140,200,.2);color:#88c0e8;border-color:rgba(136,192,232,.5)}
+.sk-5ds .pname{color:rgba(80,140,200,.5);font-family:'Barlow',sans-serif;font-weight:300;letter-spacing:4px}
+.sk-5ds .pname:focus{color:#88c0e8}
+.sk-5ds .sk-sel{border-color:rgba(80,140,200,.18);color:rgba(80,140,200,.45)}
+
+/* Speedometer ring for 5D's */
+.sk-5ds .lp-hero::before{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:100px;height:100px;border-radius:50%;
+  background:conic-gradient(from 135deg,#c04000 0%,#f08000 25%,#f8d000 50%,rgba(255,255,255,.05) 50%);
+  opacity:.18;z-index:0;pointer-events:none;
+}
+.sk-5ds .lpn{position:relative;z-index:1}
+
+/* ── SKIN: ZEXAL — morado oscuro + LP badge oval ── */
+.sk-zx{background:rgba(10,4,20,.95);border-color:rgba(140,80,220,.35)!important}
+.sk-zx::before{background:linear-gradient(90deg,transparent,#9040e0,transparent)!important}
+.sk-zx .pb-head{background:rgba(20,8,36,.6);border-bottom-color:rgba(140,80,220,.18)}
+.sk-zx .lp-lbl{color:#a060d8;letter-spacing:3px;font-style:italic}
+.sk-zx .lpn{
+  color:#ffffff;font-family:'Barlow',sans-serif;font-weight:300;
+  font-size:68px;letter-spacing:6px;
+  text-shadow:0 0 20px rgba(160,96,216,.5),0 0 60px rgba(160,96,216,.2);
+  background:radial-gradient(ellipse 120% 80% at 50% 50%,rgba(140,80,220,.15),transparent 70%);
+  padding:0 16px;border-radius:40px;
+}
+.sk-zx .track{background:rgba(140,80,220,.08)}
+.sk-zx .trackf{background:linear-gradient(90deg,#5010a0,#9040e0,#c080ff)!important}
+.sk-zx .qb{background:rgba(140,80,220,.08);border-color:rgba(140,80,220,.22);color:rgba(180,120,240,.7)}
+.sk-zx .qb:hover{background:rgba(140,80,220,.2);color:#c080ff;border-color:rgba(180,120,240,.5)}
+.sk-zx .pname{color:rgba(140,80,220,.5);font-style:italic}
+.sk-zx .pname:focus{color:#a060d8}
+.sk-zx .sk-sel{border-color:rgba(140,80,220,.18);color:rgba(140,80,220,.45)}
+/* LP oval badge */
+.sk-zx .lp-hero{padding:6px 14px 4px}
+.sk-zx .lp-hero::after{
+  content:'LP';position:absolute;left:50%;top:8px;transform:translateX(-50%);
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  color:rgba(160,96,216,.6);letter-spacing:3px;text-transform:uppercase;
+}
+
+.lpn.dmg{animation:dmgFx .4s ease}
+.lpn.hl{animation:hlFx .4s ease}
+@keyframes dmgFx{0%,100%{transform:scale(1)}30%{transform:scale(.84);color:var(--red2)!important;text-shadow:0 0 30px rgba(196,24,24,.7)!important}}
+@keyframes hlFx{0%,100%{transform:scale(1)}30%{transform:scale(1.1);color:#38e080!important;text-shadow:0 0 30px rgba(56,224,128,.6)!important}}
+
+/* Flash overlay for screen feedback */
+.flash-overlay{position:fixed;inset:0;z-index:500;pointer-events:none;opacity:0}
+.flash-overlay.red{animation:flashR .45s ease}
+.flash-overlay.green{animation:flashG .45s ease}
+@keyframes flashR{0%{opacity:0}20%{opacity:.18;background:rgba(196,24,24,1)}100%{opacity:0}}
+@keyframes flashG{0%{opacity:0}20%{opacity:.14;background:rgba(56,200,136,1)}100%{opacity:0}}
+
+.track-wrap{padding:0 14px 8px}
+.track{height:2px;background:rgba(255,255,255,.04);border-radius:1px}
+.trackf{height:100%;border-radius:1px;transition:width .55s cubic-bezier(.4,0,.2,1),background .55s}
+
+/* Quick damage buttons */
+.qrow{display:flex;gap:4px;padding:0 10px 7px}
+.qb{flex:1;background:rgba(196,24,24,.08);border:1px solid rgba(196,24,24,.2);border-radius:2px;padding:7px 2px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.3px;color:rgba(220,100,100,.72);cursor:pointer;text-align:center;transition:all .15s}
+.qb:hover{background:rgba(196,24,24,.22);color:var(--red2);border-color:rgba(196,24,24,.48);transform:translateY(-2px);box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.qb:active{transform:scale(.93) translateY(0)}
+
+.crow{display:flex;gap:5px;padding:0 10px 8px}
+.crow .fd{text-align:center;letter-spacing:1px;padding:6px 8px;font-size:14px}
+.bm,.bp{padding:6px 11px;border-radius:2px;font-family:'Black Ops One',sans-serif;font-size:14px;cursor:pointer;transition:all .15s;border:1px solid}
+.bm{background:rgba(196,24,24,.1);border-color:rgba(196,24,24,.28);color:rgba(220,80,80,.85)}
+.bm:hover{background:rgba(196,24,24,.26);transform:translateY(-1px)}
+.bp{background:rgba(20,80,50,.14);border-color:rgba(40,130,80,.28);color:rgba(80,190,120,.85)}
+.bp:hover{background:rgba(20,80,50,.3);transform:translateY(-1px)}
+
+.hist{padding:3px 12px 7px;display:flex;gap:5px;flex-wrap:wrap;min-height:22px}
+.he{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:2px 6px;border-radius:2px;letter-spacing:.5px;animation:heIn .2s ease}
+@keyframes heIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+.he.n{color:rgba(220,80,80,.72);background:rgba(196,24,24,.1)}
+.he.p{color:rgba(60,190,110,.78);background:rgba(40,130,70,.1)}
+
+/* VS divider */
+.vs-div{display:flex;align-items:center;gap:8px;margin:2px 0 10px;position:relative;z-index:1}
+.vs-div::before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border))}
+.vs-div::after{content:'';flex:1;height:1px;background:linear-gradient(270deg,transparent,var(--border))}
+.vs-t{font-family:'Black Ops One',sans-serif;font-size:11px;color:var(--cream4);letter-spacing:3px}
+
+/* Tools */
+.tools-box{background:rgba(13,11,8,.9);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:8px;position:relative;z-index:1;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.tools-inner{display:flex}
+.tc{flex:1;padding:9px 5px;cursor:pointer;text-align:center;border-right:1px solid var(--border2);transition:background .15s;user-select:none}
+.tc:last-child{border-right:none}
+.tc:hover{background:rgba(196,24,24,.07)}
+.tc:active{background:rgba(196,24,24,.15)}
+.tc-i{font-size:16px;display:block;margin-bottom:3px;transition:transform .2s}
+.tc:hover .tc-i{transform:scale(1.25) rotate(-6deg)}
+.tc-l{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);letter-spacing:1.5px;text-transform:uppercase;display:block}
+.tc-r{font-family:'Black Ops One',sans-serif;font-size:17px;color:var(--cream);display:block;min-height:21px;margin-top:2px;transition:all .15s}
+
+/* Animated dice */
+.dice-anim{display:inline-block;animation:diceRoll .5s cubic-bezier(.36,.07,.19,.97)}
+@keyframes diceRoll{
+  0%{transform:rotate(0deg) scale(.5);opacity:0}
+  30%{transform:rotate(180deg) scale(1.3);opacity:1}
+  70%{transform:rotate(320deg) scale(.95)}
+  100%{transform:rotate(360deg) scale(1)}
+}
+/* Animated coin */
+.coin-anim{display:inline-block;animation:coinFlip .6s ease}
+@keyframes coinFlip{
+  0%{transform:scaleX(1) translateY(0)}
+  25%{transform:scaleX(0) translateY(-8px)}
+  50%{transform:scaleX(1) translateY(-14px)}
+  75%{transform:scaleX(0) translateY(-8px)}
+  100%{transform:scaleX(1) translateY(0)}
+}
+
+.reset-lnk{display:block;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(196,24,24,.3);cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:color var(--trans);margin-bottom:6px;position:relative;z-index:1}
+.reset-lnk:hover{color:var(--red2)}
+
+/* ════════════════════════════════════════════
+   ── DECK VIEW ──
+════════════════════════════════════════════ */
+.deck-page{padding:12px}
+
+/* Search + advanced toggle */
+.srow{position:relative;margin-bottom:8px;display:flex;gap:6px}
+.si-wrap{flex:1;position:relative}
+.si{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--cream4);pointer-events:none}
+.sf{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:2px;padding:8px 10px 8px 30px;color:var(--cream);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:500;letter-spacing:.5px;outline:none;transition:all var(--trans)}
+.sf:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(196,24,24,.1)}
+.sf::placeholder{color:rgba(232,223,200,.2);font-size:12px;letter-spacing:1px}
+.adv-tog{flex-shrink:0;width:36px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:2px;cursor:pointer;transition:all var(--trans);font-size:14px;color:var(--cream4)}
+.adv-tog:hover,.adv-tog.on{border-color:rgba(196,24,24,.4);color:var(--cream);background:rgba(196,24,24,.08)}
+
+/* Advanced panel */
+.adv-panel{background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:12px;margin-bottom:10px;display:none}
+.adv-panel.open{display:block;animation:slideD .2s ease}
+@keyframes slideD{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.adv-f{display:flex;flex-direction:column;gap:4px}
+.adv-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase}
+.adv-sel,.adv-inp{background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:2px;padding:6px 8px;color:var(--cream2);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:500;letter-spacing:.5px;outline:none;transition:border-color var(--trans);width:100%}
+.adv-sel:focus,.adv-inp:focus{border-color:var(--red)}
+.adv-sel option{background:var(--bg);color:var(--cream)}
+.adv-inp::placeholder{color:rgba(232,223,200,.2);font-size:11px}
+.adv-btns{display:flex;gap:6px}
+
+/* Mode / chips */
+.mode-row{display:flex;gap:6px;margin-bottom:9px}
+.mode-btn{flex:1;padding:6px 4px;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;color:var(--cream4);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all var(--trans);text-align:center}
+.mode-btn:hover{border-color:rgba(196,24,24,.3);color:var(--cream2)}
+.mode-btn.on{border-color:var(--red);color:var(--cream);background:rgba(196,24,24,.07)}
+
+.chips{display:flex;gap:4px;overflow-x:auto;margin-bottom:9px;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream3);cursor:pointer;transition:all .15s;letter-spacing:1px;text-transform:uppercase;background:transparent}
+.chip:hover{border-color:rgba(196,24,24,.3);color:var(--cream);transform:translateY(-1px)}
+.chip.on{background:var(--red);border-color:var(--red);color:var(--cream)}
+
+/* Deck zones */
+.ztabs{display:flex;gap:5px;margin-bottom:9px}
+.ztab{flex:1;padding:7px 4px;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;cursor:pointer;text-align:center;transition:all var(--trans)}
+.ztab:hover{border-color:rgba(196,24,24,.25)}
+.ztab.on{border-color:var(--red);background:rgba(196,24,24,.07)}
+.zt-l{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);letter-spacing:1.5px;text-transform:uppercase;display:block}
+.ztab.on .zt-l{color:var(--cream)}
+.zt-c{font-family:'Black Ops One',sans-serif;font-size:14px;color:rgba(232,223,200,.18)}
+.ztab.on .zt-c{color:var(--cream)}
+
+/* Deck grid */
+.dgrid{display:flex;flex-wrap:wrap;gap:5px;padding:8px;min-height:46px;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;margin-bottom:9px}
+.dge{width:100%;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;color:var(--cream4);text-align:center;padding:8px 0;letter-spacing:2px;text-transform:uppercase}
+.mc{width:40px;height:57px;border-radius:2px;border:1px solid var(--border2);overflow:hidden;position:relative;cursor:pointer;transition:all .15s;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:14px}
+.mc:hover{transform:scale(1.12) translateY(-2px);border-color:var(--red);box-shadow:0 6px 14px rgba(0,0,0,.5)}
+.mc img{width:100%;height:100%;object-fit:cover}
+.mc-b{position:absolute;bottom:0;right:0;background:rgba(0,0,0,.9);color:var(--cream);font-size:8px;font-weight:700;padding:1px 3px;font-family:'Black Ops One',sans-serif}
+.mc .del{position:absolute;inset:0;background:rgba(139,10,10,.9);display:none;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:900}
+.mc:hover .del{display:flex}
+
+.export-btn{width:100%;padding:8px;background:rgba(196,24,24,.07);border:1px solid rgba(196,24,24,.2);border-radius:2px;color:rgba(196,24,24,.72);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all var(--trans);margin-bottom:12px}
+.export-btn:hover{background:rgba(196,24,24,.18);color:var(--cream);border-color:var(--red);transform:translateY(-1px)}
+
+/* Card rows (list mode) */
+.clist{display:flex;flex-direction:column;gap:4px}
+.cr{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:7px 9px;cursor:pointer;transition:all var(--trans)}
+.cr:hover,.cr.ind{border-color:rgba(196,24,24,.28)}
+.cr:hover{transform:translateX(3px)}
+.cthumb{width:32px;height:46px;border-radius:2px;background:rgba(232,223,200,.04);border:1px solid var(--border2);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:14px;transition:border-color var(--trans)}
+.cr:hover .cthumb{border-color:rgba(196,24,24,.3)}
+.cthumb img{width:100%;height:100%;object-fit:cover}
+.cinfo{flex:1;min-width:0}
+.cn{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:rgba(232,223,200,.9);letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cm{font-size:10px;color:var(--cream4);margin-top:1px;letter-spacing:.5px}
+.tpill{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;letter-spacing:.5px;flex-shrink:0;text-transform:uppercase}
+.tm{background:rgba(100,65,10,.3);color:#c89050;border:1px solid rgba(180,130,40,.18)}
+.ts{background:rgba(10,50,75,.3);color:#50a0c0;border:1px solid rgba(60,150,190,.18)}
+.tt{background:rgba(65,10,65,.3);color:#a050a8;border:1px solid rgba(160,60,160,.18)}
+.tf{background:rgba(70,25,0,.3);color:#b06818;border:1px solid rgba(170,100,20,.18)}
+.tsy{background:rgba(20,40,60,.3);color:#6090c0;border:1px solid rgba(80,130,190,.18)}
+.tx{background:rgba(40,30,0,.3);color:#c0a018;border:1px solid rgba(190,150,20,.18)}
+.tlk{background:rgba(0,40,40,.3);color:#40b8b8;border:1px solid rgba(40,160,160,.18)}
+
+.addb{width:24px;height:24px;border-radius:2px;background:rgba(196,24,24,.08);border:1px solid rgba(196,24,24,.22);color:var(--red2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-weight:700}
+.addb:hover{background:rgba(196,24,24,.24);border-color:var(--red2);transform:scale(1.15)}
+.addb:disabled{opacity:.14;cursor:default;transform:none}
+
+/* Browse grid */
+.bgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.bgc{border-radius:2px;overflow:hidden;border:1px solid var(--border2);cursor:pointer;transition:all var(--trans);background:var(--bg2);aspect-ratio:.72;display:flex;align-items:center;justify-content:center;font-size:18px;position:relative}
+.bgc img{width:100%;height:100%;object-fit:cover}
+.bgc:hover{border-color:var(--red);transform:scale(1.06) translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.55),0 0 0 1px rgba(196,24,24,.3)}
+.bgc-add{position:absolute;bottom:0;left:0;right:0;background:rgba(13,11,8,.92);display:none;align-items:center;justify-content:center;padding:3px;font-family:'Black Ops One',sans-serif;font-size:8px;color:var(--cream);letter-spacing:1px}
+.bgc:hover .bgc-add{display:flex}
+
+.ld{text-align:center;padding:22px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;color:var(--cream4);letter-spacing:2.5px;text-transform:uppercase}
+.lr{width:22px;height:22px;border:1.5px solid rgba(196,24,24,.14);border-top-color:var(--red);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 10px}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ════════════════════════════════════════════
+   ── PROFILE VIEW ──
+════════════════════════════════════════════ */
+.profile-page{padding:14px}
+
+.profile-hero{display:flex;align-items:center;gap:14px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
+.profile-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+
+.av-big{width:68px;height:68px;border-radius:50%;border:2px solid var(--border);background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--trans);position:relative;overflow:hidden;padding:6px}
+.av-big svg{width:100%;height:100%;border-radius:50%}
+.av-big:hover{border-color:var(--red);transform:scale(1.06)}
+.av-big .av-edit-ov{position:absolute;inset:0;background:rgba(13,11,8,.82);border-radius:50%;display:none;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--red2)}
+.av-big:hover .av-edit-ov{display:flex}
+
+/* Rank badge on duel board */
+.p-av{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:var(--bg4);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all var(--trans);overflow:hidden;padding:2px}
+.p-av svg{width:100%;height:100%}
+.p-av:hover{border-color:var(--red);transform:scale(1.1)}
+
+.pi{flex:1;min-width:0}
+.pname-inp{background:none;border:none;border-bottom:1px solid var(--border2);outline:none;font-family:'Black Ops One',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--cream);width:100%;transition:border-color var(--trans);padding-bottom:3px;margin-bottom:6px}
+.pname-inp:focus{border-bottom-color:var(--red)}
+.p-rank{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--red2);letter-spacing:2.5px;text-transform:uppercase}
+.p-since{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);letter-spacing:1.5px;margin-top:2px}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.sbox{background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:10px 8px;text-align:center;transition:all var(--trans);cursor:default}
+.sbox:hover{border-color:rgba(196,24,24,.28);transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.sv{font-family:'Black Ops One',sans-serif;font-size:22px;letter-spacing:1px;color:var(--cream);display:block}
+.slb{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;display:block;margin-top:2px}
+.sbox.win .sv{color:var(--gx)}
+.sbox.loss .sv{color:var(--red2)}
+
+/* Era selector */
+.era-row{display:flex;gap:6px;margin-bottom:12px}
+.era-btn{flex:1;padding:9px 4px;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;cursor:pointer;text-align:center;transition:all var(--trans)}
+.era-btn:hover,.era-btn.on{border-color:var(--red);background:rgba(196,24,24,.07)}
+.era-btn-t{font-family:'Black Ops One',sans-serif;font-size:12px;letter-spacing:1px;color:var(--cream3);display:block}
+.era-btn.on .era-btn-t{color:var(--cream)}
+
+/* Avatar picker */
+/* Avatar picker icons — card style */
+.av-grid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.av-opt{
+  width:66px;height:76px;border-radius:4px;
+  border:2px solid var(--border2);
+  background:var(--bg3);
+  display:flex;align-items:flex-start;justify-content:center;
+  cursor:pointer;transition:all var(--trans);
+  position:relative;overflow:hidden;
+  padding:4px 4px 16px;
+}
+.av-opt svg{width:58px;height:58px;flex-shrink:0}
+.av-opt::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.06) 0%,transparent 50%);
+  pointer-events:none;
+}
+.av-opt:hover{transform:scale(1.08) translateY(-2px);border-color:rgba(196,24,24,.5);box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.av-opt.on{border-color:var(--red);background:rgba(196,24,24,.15);box-shadow:0 0 12px rgba(196,24,24,.3)}
+
+/* Duel history list */
+.dh-list{display:flex;flex-direction:column;gap:5px}
+.dh-entry{background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:10px 12px;display:flex;align-items:center;gap:10px;transition:all var(--trans)}
+.dh-entry:hover{border-color:rgba(196,24,24,.24);transform:translateX(3px)}
+.dh-res{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Black Ops One',sans-serif;font-size:11px;letter-spacing:.5px}
+.dh-res.w{background:rgba(56,200,136,.1);border:1px solid rgba(56,200,136,.28);color:var(--gx)}
+.dh-res.l{background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.28);color:var(--red2)}
+.dh-info{flex:1;min-width:0}
+.dh-vs{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--cream);letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dh-meta{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);letter-spacing:.5px;margin-top:2px}
+.dh-lp{font-family:'Black Ops One',sans-serif;font-size:13px;color:var(--cream3);letter-spacing:1px;flex-shrink:0}
+.no-hist{text-align:center;padding:32px 20px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;color:var(--cream4);letter-spacing:2px;text-transform:uppercase}
+
+/* ════════════════════════════════════════════
+   ── ABOUT VIEW ──
+════════════════════════════════════════════ */
+.about-page{padding:14px}
+.a-hero{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:30px 20px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden}
+.a-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.a-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+/* Logo CSS rebuild */
+.logo-css{display:inline-flex;flex-direction:column;align-items:center}
+.lc-ft{width:106px;height:32px;border:1.5px solid var(--red);border-radius:8px 8px 0 0;border-bottom:none;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:-1px}
+.lc-ft::before{content:'';position:absolute;inset:4px 6px 0;border:1px solid rgba(196,24,24,.26);border-radius:5px 5px 0 0;border-bottom:none}
+.lc-er{display:flex;align-items:center;gap:5px}
+.lc-el{width:15px;height:1px;background:var(--red)}
+.lc-eo{width:16px;height:9px;border:1.5px solid var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.lc-eo::after{content:'';width:5px;height:5px;background:var(--red);border-radius:50%}
+.lc-tx{padding:2px 12px 0}
+.lc-ul{font-family:'Black Ops One',sans-serif;font-size:18px;letter-spacing:4px;color:var(--cream);text-shadow:2px 2px 0 rgba(0,0,0,.85);line-height:1;display:block;text-align:center}
+.lc-tn{font-family:'Black Ops One',sans-serif;font-size:40px;letter-spacing:2.5px;color:var(--cream);text-shadow:3px 3px 0 rgba(0,0,0,.9),0 0 35px rgba(196,24,24,.2);line-height:.9;display:block;text-align:center}
+.lc-arc{width:140px;height:12px;margin-top:-3px;border:1.5px solid var(--red);border-radius:0 0 50% 50%;border-top:none;position:relative}
+.lc-arc::before{content:'';position:absolute;inset:4px 9px 0;border:1px solid rgba(196,24,24,.26);border-radius:0 0 50% 50%;border-top:none}
+.lc-fb{width:86px;height:26px;margin-top:-1px;border:1.5px solid var(--red);border-radius:0 0 8px 8px;border-top:none;display:flex;align-items:center;justify-content:center;position:relative}
+.lc-fb::before{content:'';position:absolute;inset:0 5px 4px;border:1px solid rgba(196,24,24,.26);border-radius:0 0 6px 6px;border-top:none}
+.lc-sp{width:12px;height:12px;border:1.5px solid var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.lc-sp::after{content:'';width:4px;height:4px;border:1px solid rgba(196,24,24,.42);border-radius:50%}
+.a-tag{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:400;color:var(--cream3);letter-spacing:2px;text-transform:uppercase;margin-top:18px;line-height:1.75}
+
+.flist{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fi{background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:10px 12px;display:flex;align-items:flex-start;gap:9px;transition:all var(--trans)}
+.fi:hover{border-color:rgba(196,24,24,.2);transform:translateX(3px)}
+.fi-i{font-size:14px;flex-shrink:0;margin-top:1px}
+.fi-t{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;color:var(--cream);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.fi-d{font-family:'Barlow',sans-serif;font-size:11px;font-weight:400;color:var(--cream3);line-height:1.5}
+
+.skins-preview{display:flex;gap:5px;margin-bottom:14px}
+.skin-prev{flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:10px 6px;text-align:center;position:relative;overflow:hidden;transition:all var(--trans)}
+.skin-prev:hover{border-color:rgba(196,24,24,.3);transform:translateY(-2px)}
+.skin-prev::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px}
+.skin-prev.sk1::before{background:linear-gradient(90deg,transparent,var(--dm),transparent)}
+.skin-prev.sk2::before{background:linear-gradient(90deg,transparent,var(--gx),transparent)}
+.skin-prev.sk3::before{background:linear-gradient(90deg,transparent,var(--fds),transparent)}
+.sp-num{font-family:'Black Ops One',sans-serif;font-size:22px;letter-spacing:2px;display:block}
+.skin-prev.sk1 .sp-num{color:var(--dm)}
+.skin-prev.sk2 .sp-num{color:var(--gx)}
+.skin-prev.sk3 .sp-num{color:var(--fds);font-size:24px;letter-spacing:4px}
+.sp-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--cream4);display:block;margin-top:3px}
+
+.a-footer{background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:14px;text-align:center;position:relative;overflow:hidden}
+.a-footer::before{content:'';position:absolute;top:0;left:25%;right:25%;height:1px;background:linear-gradient(90deg,transparent,rgba(196,24,24,.35),transparent)}
+.skin-prev.sk4::before{background:linear-gradient(90deg,transparent,#9040e0,transparent)}
+.af-v{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);letter-spacing:3px;text-transform:uppercase;margin-bottom:3px}
+.af-n{font-family:'Black Ops One',sans-serif;font-size:15px;color:rgba(232,223,200,.38);letter-spacing:2px}
+.af-s{font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4);margin-top:4px}
+
+/* ════════════════════════════════════════════
+   MODALS
+════════════════════════════════════════════ */
+.mbg{position:fixed;inset:0;background:rgba(5,4,2,.94);z-index:800;display:flex;align-items:flex-end;animation:fi2 .2s}
+@keyframes fi2{from{opacity:0}to{opacity:1}}
+.msh{background:var(--bg);max-width:430px;width:100%;border-radius:4px 4px 0 0;border:1px solid var(--border);border-bottom:none;padding:16px;max-height:85vh;overflow-y:auto;margin:0 auto;position:relative;animation:su .3s cubic-bezier(.34,1.1,.64,1)}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.msh::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.mhandle{width:32px;height:2px;background:var(--border);border-radius:1px;margin:0 auto 14px}
+.m-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;color:var(--cream);line-height:1.2;margin-bottom:4px;letter-spacing:.5px}
+.m-img{width:110px;display:block;margin:0 auto 12px;border-radius:2px;border:1px solid var(--border)}
+.m-img-ph{width:88px;height:124px;background:var(--bg2);border:1px solid var(--border);border-radius:2px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:32px}
+.mstats{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:10px 0}
+.mstat{background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:7px;text-align:center}
+.msl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);text-transform:uppercase;letter-spacing:1.5px;display:block}
+.msv{font-family:'Black Ops One',sans-serif;font-size:16px;color:var(--cream);display:block;margin-top:2px}
+.mdesc{font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream2);line-height:1.7;margin:10px 0;padding:9px 10px;background:var(--bg2);border-radius:2px;border-left:2px solid var(--red)}
+.madd{width:100%;padding:11px;background:var(--red);border:none;border-radius:2px;color:var(--cream);font-family:'Black Ops One',sans-serif;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all var(--trans);margin-top:8px}
+.madd:hover{background:var(--red2);box-shadow:0 4px 18px rgba(196,24,24,.4)}
+.mclose{width:100%;padding:9px;background:transparent;border:1px solid var(--border2);border-radius:2px;color:var(--cream3);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:5px;transition:all var(--trans)}
+.mclose:hover{border-color:var(--border);color:var(--cream)}
+.export-ta{width:100%;min-height:140px;background:var(--bg2);border:1px solid var(--border);border-radius:2px;padding:10px;color:var(--cream);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:500;letter-spacing:.5px;line-height:1.6;resize:none;outline:none;margin:10px 0}
+.copy-btn{width:100%;padding:10px;background:var(--red);border:none;border-radius:2px;color:var(--cream);font-family:'Black Ops One',sans-serif;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all var(--trans)}
+.copy-btn:hover{background:var(--red2)}
+
+/* TOAST */
+.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--red);border-radius:2px;padding:7px 16px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--cream);z-index:1000;letter-spacing:2px;text-transform:uppercase;animation:ta 2.9s forwards;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.7),0 0 18px rgba(196,24,24,.15)}
+@keyframes ta{0%{opacity:0;transform:translateX(-50%) translateY(-10px)}12%{opacity:1;transform:translateX(-50%) translateY(0)}78%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-10px)}}
+
+/* ════════════════════════════════════════════
+   TOURNAMENT CSS
+════════════════════════════════════════════ */
+.trn-page{padding:12px}
+
+/* Setup card */
+.trn-setup{display:flex;flex-direction:column;gap:10px}
+.trn-format-info{
+  background:rgba(196,24,24,.06);border:1px solid rgba(196,24,24,.2);
+  border-radius:3px;padding:10px 12px;
+}
+.trn-fi-title{font-family:'Black Ops One',sans-serif;font-size:11px;letter-spacing:1.5px;color:var(--red2);margin-bottom:4px}
+.trn-fi-body{font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.6}
+
+/* Player list */
+.trn-player-add{display:flex;gap:6px;margin-bottom:8px}
+.trn-players{display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto}
+.trn-players::-webkit-scrollbar{width:2px}
+.trn-players::-webkit-scrollbar-thumb{background:var(--rdim)}
+.trn-player-row{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg2);border:1px solid var(--border2);border-radius:2px;
+  padding:7px 10px;transition:all var(--trans);
+}
+.trn-player-row:hover{border-color:rgba(196,24,24,.2)}
+.trn-player-seed{
+  font-family:'Black Ops One',sans-serif;font-size:12px;
+  color:var(--cream4);width:18px;text-align:center;flex-shrink:0;
+}
+.trn-player-name{
+  flex:1;font-family:'Barlow Condensed',sans-serif;font-size:14px;
+  font-weight:700;color:var(--cream);letter-spacing:.3px;
+}
+.trn-player-pts{
+  font-family:'Black Ops One',sans-serif;font-size:13px;
+  color:var(--gold2,#d4a830);letter-spacing:1px;
+}
+.trn-del-btn{
+  width:20px;height:20px;background:none;border:none;cursor:pointer;
+  color:rgba(196,24,24,.4);font-size:16px;display:flex;align-items:center;
+  justify-content:center;transition:color var(--trans);flex-shrink:0;
+  font-family:monospace;line-height:1;
+}
+.trn-del-btn:hover{color:var(--red2)}
+
+/* Tournament header banner */
+.trn-banner{
+  background:var(--bg2);border:1px solid var(--border);border-radius:3px;
+  padding:12px 14px;margin-bottom:10px;position:relative;overflow:hidden;
+}
+.trn-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.trn-banner-name{font-family:'Black Ops One',sans-serif;font-size:16px;letter-spacing:2px;color:var(--cream)}
+.trn-banner-sub{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--cream3);letter-spacing:2px;margin-top:2px}
+.trn-prize-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(212,168,48,.1);border:1px solid rgba(212,168,48,.3);
+  border-radius:2px;padding:4px 10px;margin-top:8px;
+}
+.trn-prize-text{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#d4a830;letter-spacing:1px}
+.trn-round-badge{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-family:'Black Ops One',sans-serif;font-size:11px;
+  color:var(--cream4);letter-spacing:1px;text-align:right;
+}
+
+/* Pairings */
+.trn-pairings{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.trn-pair-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:3px;
+  overflow:hidden;transition:all var(--trans);
+}
+.trn-pair-card.done{border-color:rgba(56,200,136,.25);background:rgba(56,200,136,.03)}
+.trn-pair-card.bye{border-color:rgba(212,168,48,.2);background:rgba(212,168,48,.03)}
+.trn-pair-names{
+  display:flex;align-items:center;padding:10px 12px 6px;gap:8px;
+}
+.trn-pair-p1,.trn-pair-p2{
+  flex:1;font-family:'Barlow Condensed',sans-serif;
+  font-size:14px;font-weight:800;color:var(--cream);
+  letter-spacing:.5px;text-align:center;
+}
+.trn-pair-vs{
+  font-family:'Black Ops One',sans-serif;font-size:10px;
+  color:var(--cream4);letter-spacing:2px;flex-shrink:0;
+}
+.trn-pair-btns{
+  display:flex;gap:0;border-top:1px solid var(--border2);
+}
+.trn-res-btn{
+  flex:1;padding:8px 4px;background:none;border:none;
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  transition:all .15s;color:var(--cream4);
+  border-right:1px solid var(--border2);
+}
+.trn-res-btn:last-child{border-right:none}
+.trn-res-btn:hover{background:rgba(255,255,255,.04);color:var(--cream)}
+.trn-res-btn.sel-p1{background:rgba(56,200,136,.12);color:#38c888}
+.trn-res-btn.sel-draw{background:rgba(212,168,48,.1);color:#d4a830}
+.trn-res-btn.sel-p2{background:rgba(196,24,24,.12);color:var(--red2)}
+.trn-pair-result{
+  padding:4px 12px 8px;
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;
+  color:var(--cream4);letter-spacing:1px;text-align:center;
+}
+
+/* Standings table */
+.trn-standings{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:3px;overflow:hidden;margin-bottom:10px;
+}
+.trn-st-head{
+  display:grid;grid-template-columns:28px 1fr 42px 42px 42px 42px;
+  gap:0;padding:7px 10px;
+  border-bottom:1px solid var(--border2);
+  background:rgba(255,255,255,.02);
+}
+.trn-st-hcell{
+  font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;
+  color:var(--cream4);letter-spacing:1.5px;text-transform:uppercase;text-align:center;
+}
+.trn-st-hcell:nth-child(2){text-align:left}
+.trn-st-row{
+  display:grid;grid-template-columns:28px 1fr 42px 42px 42px 42px;
+  padding:7px 10px;border-bottom:1px solid var(--border2);
+  transition:background var(--trans);
+}
+.trn-st-row:last-child{border-bottom:none}
+.trn-st-row:hover{background:rgba(255,255,255,.02)}
+.trn-st-row.top{background:rgba(212,168,48,.05)}
+.trn-st-pos{
+  font-family:'Black Ops One',sans-serif;font-size:12px;color:var(--cream4);
+  display:flex;align-items:center;justify-content:center;
+}
+.trn-st-row.top:nth-child(1) .trn-st-pos{color:#d4a830}
+.trn-st-row.top:nth-child(2) .trn-st-pos{color:#a0a0b0}
+.trn-st-row.top:nth-child(3) .trn-st-pos{color:#b07040}
+.trn-st-name{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
+  color:var(--cream);letter-spacing:.3px;display:flex;align-items:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.trn-st-cell{
+  font-family:'Black Ops One',sans-serif;font-size:12px;color:var(--cream3);
+  display:flex;align-items:center;justify-content:center;
+}
+.trn-st-cell.pts{color:#d4a830;font-size:14px}
+.trn-st-cell.w{color:var(--gx)}
+.trn-st-cell.l{color:var(--red2)}
+
+/* Top cut bracket */
+.trn-bracket{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.trn-bracket-phase{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  color:var(--red2);letter-spacing:3px;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;margin:8px 0 4px;
+}
+.trn-bracket-phase::after{content:'';flex:1;height:1px;background:rgba(196,24,24,.2)}
+
+/* Winner screen */
+.trn-winner-screen{
+  text-align:center;padding:20px 14px 30px;
+}
+.trn-trophy{font-size:64px;animation:trophyBounce 1s cubic-bezier(.34,1.5,.64,1) both;display:block;margin-bottom:8px}
+@keyframes trophyBounce{from{transform:scale(0) translateY(-20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.trn-winner-label{
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;
+  color:var(--red2);letter-spacing:4px;text-transform:uppercase;margin-bottom:6px;
+}
+.trn-winner-name{
+  font-family:'Black Ops One',sans-serif;font-size:28px;letter-spacing:3px;
+  color:#d4a830;text-shadow:0 0 30px rgba(212,168,48,.4);
+  animation:fadeU .6s .3s both;
+}
+.trn-winner-prize{
+  margin-top:10px;
+  font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;
+  color:var(--cream3);letter-spacing:1px;
+  animation:fadeU .6s .5s both;
+}
+.trn-podium{
+  display:flex;align-items:flex-end;justify-content:center;gap:8px;
+  margin:20px 0;
+}
+.trn-podium-place{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.trn-podium-block{
+  width:72px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:2px 2px 0 0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Black Ops One',sans-serif;font-size:14px;color:var(--cream3);
+}
+.trn-podium-place:nth-child(1) .trn-podium-block{height:60px;background:rgba(212,168,48,.1);border-color:rgba(212,168,48,.3);color:#d4a830}
+.trn-podium-place:nth-child(2) .trn-podium-block{height:44px;background:rgba(160,160,176,.08);border-color:rgba(160,160,176,.25);color:#a0a0b0}
+.trn-podium-place:nth-child(3) .trn-podium-block{height:32px;background:rgba(176,112,64,.08);border-color:rgba(176,112,64,.25);color:#b07040}
+.trn-podium-name{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  color:var(--cream3);letter-spacing:.5px;text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;
+}
+
+/* Round indicator dots */
+.trn-rounds-dots{display:flex;gap:5px;justify-content:center;margin-bottom:12px}
+.trn-rd{
+  width:28px;height:28px;border-radius:50%;
+  border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Black Ops One',sans-serif;font-size:10px;color:var(--cream4);
+  transition:all var(--trans);
+}
+.trn-rd.done{background:rgba(56,200,136,.12);border-color:rgba(56,200,136,.3);color:var(--gx)}
+.trn-rd.active{background:rgba(196,24,24,.15);border-color:var(--red);color:var(--cream);box-shadow:0 0 10px rgba(196,24,24,.2)}
+
+/* Timer */
+.trn-timer{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:3px;
+  padding:8px 12px;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.trn-timer-display{
+  font-family:'Black Ops One',sans-serif;font-size:22px;letter-spacing:3px;
+  color:var(--cream);transition:color .3s;
+}
+.trn-timer-display.warn{color:#f08030;animation:critPulse 1s ease-in-out infinite}
+.trn-timer-display.crit{color:var(--red2);animation:critPulse .6s ease-in-out infinite}
+.trn-timer-btns{display:flex;gap:6px}
+.trn-timer-btn{
+  padding:5px 10px;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:2px;color:var(--cream3);
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s;
+}
+.trn-timer-btn:hover{border-color:var(--red);color:var(--cream)}
+
+.hidden{display:none!important}
+@media(max-width:360px){.lpn{font-size:54px}.sk-5ds .lpn{font-size:58px}.sp-tn{font-size:44px}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ SPLASH ══════════ -->
+<div id="splash">
+  <div class="sp-badge">
+    <div class="sp-ft">
+      <div class="sp-eye"><div class="sp-el"></div><div class="sp-eo"></div><div class="sp-el"></div></div>
+    </div>
+    <div class="sp-text">
+      <span class="sp-ul">ÚLTIMO</span>
+      <span class="sp-tn">TURNO</span>
+    </div>
+    <div class="sp-arc"></div>
+    <div class="sp-fb"><div class="sp-sp"></div></div>
+  </div>
+  <div class="sp-sub">Yu-Gi-Oh! Companion</div>
+  <div class="sp-bar-wrap"><div class="sp-bar"><div class="sp-bar-fill"></div></div></div>
+  <div class="sp-ver">v6.0 · 2025</div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div class="flash-overlay" id="flash"></div>
+<div id="shell">
+  <div id="topbar">
+    <div class="tb-brand">
+      <div class="tb-ltext">
+        <span class="tb-ul">ÚLTIMO</span>
+        <span class="tb-tn">TURNO</span>
+      </div>
+      <span class="tb-beta">v6.0</span>
+    </div>
+    <div class="tb-nav">
+      <button class="tbn on" id="tn-lp" onclick="gv('lp')">
+        <svg viewBox="0 0 24 24"><path d="M12 21C6.5 15.6 1 10.8 1 6.9 1 3.1 3.8 2 6 2c1.3 0 4 .5 6 4.3C14 2.5 16.8 2 18 2c2.5 0 5 1.5 5 4.9C23 10.9 17.5 15.6 12 21z"/></svg>
+        Duelo
+      </button>
+      <button class="tbn" id="tn-deck" onclick="gv('deck')">
+        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="15" height="19" rx="2"/><path d="M6 2h14a2 2 0 012 2v17"/></svg>
+        Deck
+      </button>
+      <button class="tbn" id="tn-profile" onclick="gv('profile')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Perfil
+      </button>
+      <button class="tbn" id="tn-torneo" onclick="gv('torneo')">
+        <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>
+        Torneo
+      </button>
+      <button class="tbn" id="tn-about" onclick="gv('about')">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/></svg>
+        App
+      </button>
+    </div>
+  </div>
+
+  <div id="content">
+
+    <!-- ════ LP VIEW ════ -->
+    <div id="v-lp" class="view on">
+      <div class="ph">
+        <div class="ph-t">Campo de Duelo</div>
+        <div class="ph-s">Registra cada punto de vida</div>
+        <div class="ph-wm"><b>ÚLTIMO</b><s>TURNO</s></div>
+      </div>
+      <div class="lp-page" id="lp-setup">
+        <div class="iblock" style="padding:0">
+          <div class="setup-inner">
+            <div class="s-lbl">Puntos de vida iniciales</div>
+            <div class="lp-opts">
+              <div class="lp-opt on" onclick="pickLP(4000,this)"><span class="lp-n">4000</span><span class="lp-t">Clásico</span></div>
+              <div class="lp-opt" onclick="pickLP(8000,this)"><span class="lp-n">8000</span><span class="lp-t">Anime</span></div>
+            </div>
+            <div class="s-row">
+              <input class="fd" id="lp-ci" type="number" min="100" placeholder="Otro valor…"/>
+              <button class="btn-red" onclick="beginDuel()">DUELO</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="duel">
+        <div class="df-bg"></div>
+        <svg class="df-art" viewBox="0 0 400 540" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="155" width="340" height="230" stroke="#e8dfc8" stroke-width=".6" rx="4"/>
+          <line x1="30" y1="270" x2="370" y2="270" stroke="#c41818" stroke-width=".8"/>
+          <rect x="42" y="170" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/><rect x="108" y="170" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/><rect x="174" y="170" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/><rect x="240" y="170" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/><rect x="306" y="170" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/>
+          <rect x="42" y="278" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/><rect x="108" y="278" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/><rect x="174" y="278" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/><rect x="240" y="278" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/><rect x="306" y="278" width="52" height="66" stroke="#e8dfc8" stroke-width=".5" rx="2"/>
+          <circle cx="200" cy="270" r="10" stroke="#c41818" stroke-width=".6"/>
+          <circle cx="200" cy="270" r="68" stroke="#c41818" stroke-width=".3" opacity=".35"/>
+          <circle cx="200" cy="270" r="108" stroke="#c41818" stroke-width=".2" opacity=".18"/>
+          <rect x="30" y="352" width="36" height="24" stroke="#e8dfc8" stroke-width=".4" rx="2"/>
+          <rect x="334" y="155" width="36" height="24" stroke="#e8dfc8" stroke-width=".4" rx="2"/>
+          <circle cx="348" cy="328" r="18" stroke="#e8dfc8" stroke-width=".4"/>
+          <circle cx="52" cy="202" r="18" stroke="#e8dfc8" stroke-width=".4"/>
+          <rect x="30" y="55" width="158" height="68" rx="3" stroke="#e8dfc8" stroke-width=".5"/>
+          <rect x="212" y="55" width="158" height="68" rx="3" stroke="#e8dfc8" stroke-width=".5"/>
+          <rect x="30" y="417" width="158" height="68" rx="3" stroke="#e8dfc8" stroke-width=".5"/>
+          <rect x="212" y="417" width="158" height="68" rx="3" stroke="#e8dfc8" stroke-width=".5"/>
+        </svg>
+
+        <div class="two-row">
+          <span class="t-lbl">2 Jugadores</span>
+          <div class="tog on" id="twoP" onclick="toggleTwo(this)"><div class="tog-k"></div></div>
+        </div>
+
+        <!-- P1 -->
+        <div class="pb sk-dm" id="pb1">
+          <div class="pb-head">
+            <div style="display:flex;align-items:center;gap:7px">
+              <div class="p-av" id="av1" onclick="gv('profile')" title="Ver perfil">⚔️</div>
+              <input class="pname" id="pn1" value="JUGADOR 1"/>
+            </div>
+            <select class="sk-sel" onchange="setSkin(1,this.value)">
+              <option value="sk-dm">DM</option>
+              <option value="sk-gx">GX</option>
+              <option value="sk-5ds">5D'S</option>
+              <option value="sk-zx">ZEXAL</option>
+            </select>
+          </div>
+          <div class="lp-hero">
+            <span class="lp-lbl">Life Points</span>
+            <div class="lpn" id="lp1">4000</div>
+          </div>
+          <div class="track-wrap"><div class="track"><div class="trackf" id="tf1" style="width:100%;background:var(--cream2)"></div></div></div>
+          <div class="qrow">
+            <button class="qb" onclick="dmg(1,10)">−10</button>
+            <button class="qb" onclick="dmg(1,50)">−50</button>
+            <button class="qb" onclick="dmg(1,100)">−100</button>
+            <button class="qb" onclick="dmg(1,500)">−500</button>
+            <button class="qb" onclick="dmg(1,1000)">−1000</button>
+          </div>
+          <div class="crow">
+            <input class="fd" id="ci1" type="number" min="1" placeholder="Daño / curación…"/>
+            <button class="bm" onclick="cDmg(1)">−</button>
+            <button class="bp" onclick="cHeal(1)">+</button>
+          </div>
+          <div class="hist" id="h1"></div>
+        </div>
+
+        <div class="vs-div"><span class="vs-t">VS</span></div>
+
+        <!-- P2 -->
+        <div class="pb sk-dm" id="pb2">
+          <div class="pb-head">
+            <div style="display:flex;align-items:center;gap:7px">
+              <div class="p-av" style="background:rgba(196,24,24,.1)">🛡️</div>
+              <input class="pname" id="pn2" value="JUGADOR 2"/>
+            </div>
+            <select class="sk-sel" onchange="setSkin(2,this.value)">
+              <option value="sk-dm">DM</option>
+              <option value="sk-gx">GX</option>
+              <option value="sk-5ds">5D'S</option>
+              <option value="sk-zx">ZEXAL</option>
+            </select>
+          </div>
+          <div class="lp-hero">
+            <span class="lp-lbl">Life Points</span>
+            <div class="lpn" id="lp2">4000</div>
+          </div>
+          <div class="track-wrap"><div class="track"><div class="trackf" id="tf2" style="width:100%;background:var(--red3)"></div></div></div>
+          <div class="qrow">
+            <button class="qb" onclick="dmg(2,10)">−10</button>
+            <button class="qb" onclick="dmg(2,50)">−50</button>
+            <button class="qb" onclick="dmg(2,100)">−100</button>
+            <button class="qb" onclick="dmg(2,500)">−500</button>
+            <button class="qb" onclick="dmg(2,1000)">−1000</button>
+          </div>
+          <div class="crow">
+            <input class="fd" id="ci2" type="number" min="1" placeholder="Daño / curación…"/>
+            <button class="bm" onclick="cDmg(2)">−</button>
+            <button class="bp" onclick="cHeal(2)">+</button>
+          </div>
+          <div class="hist" id="h2"></div>
+        </div>
+
+        <div class="vs-div" style="margin-top:10px"><span class="vs-t" style="font-size:10px;letter-spacing:4px">HERRAMIENTAS</span></div>
+        <div class="tools-box">
+          <div class="tools-inner">
+            <div class="tc" onclick="rollD()"><span class="tc-i">🎲</span><span class="tc-l">Dado</span><span class="tc-r" id="dr">—</span></div>
+            <div class="tc" onclick="roll2D()"><span class="tc-i">🎯</span><span class="tc-l">2 Dados</span><span class="tc-r" id="d2r">—</span></div>
+            <div class="tc" onclick="flipC()"><span class="tc-i">🪙</span><span class="tc-l">Moneda</span><span class="tc-r" id="cr">—</span></div>
+          </div>
+        </div>
+        <a class="reset-lnk" onclick="doReset()">↺ REINICIAR DUELO</a>
+      </div>
+    </div>
+
+    <!-- ════ DECK VIEW ════ -->
+    <div id="v-deck" class="view hidden">
+      <div class="ph">
+        <div class="ph-t">Constructor de Deck</div>
+        <div class="ph-s">Base de datos completa · YGOPRODeck</div>
+        <div class="ph-wm"><b>ÚLTIMO</b><s>TURNO</s></div>
+      </div>
+      <div class="deck-page">
+        <div class="srow">
+          <div class="si-wrap">
+            <span class="si">🔍</span>
+            <input class="sf" id="si-inp" type="text" placeholder="Buscar carta por nombre…" oninput="onSI(this.value)"/>
+          </div>
+          <div class="adv-tog" id="adv-tog" onclick="toggleAdv(this)" title="Filtros avanzados">⚙</div>
+        </div>
+
+        <div class="adv-panel" id="adv-panel">
+          <div class="adv-grid">
+            <div class="adv-f"><div class="adv-lbl">Tipo</div>
+              <select class="adv-sel" id="af-type">
+                <option value="">Todos</option>
+                <option value="Normal Monster">Normal</option>
+                <option value="Effect Monster">Efecto</option>
+                <option value="Fusion Monster">Fusión</option>
+                <option value="Synchro Monster">Sincro</option>
+                <option value="XYZ Monster">XYZ</option>
+                <option value="Link Monster">Link</option>
+                <option value="Spell Card">Mágica</option>
+                <option value="Trap Card">Trampa</option>
+              </select>
+            </div>
+            <div class="adv-f"><div class="adv-lbl">Atributo</div>
+              <select class="adv-sel" id="af-attr">
+                <option value="">Todos</option>
+                <option value="DARK">DARK</option><option value="LIGHT">LIGHT</option>
+                <option value="WATER">WATER</option><option value="FIRE">FIRE</option>
+                <option value="EARTH">EARTH</option><option value="WIND">WIND</option>
+                <option value="DIVINE">DIVINE</option>
+              </select>
+            </div>
+            <div class="adv-f"><div class="adv-lbl">Nivel/Rango</div>
+              <select class="adv-sel" id="af-level">
+                <option value="">Todos</option>
+                <option>1</option><option>2</option><option>3</option><option>4</option>
+                <option>5</option><option>6</option><option>7</option><option>8</option>
+                <option>9</option><option>10</option><option>11</option><option>12</option>
+              </select>
+            </div>
+            <div class="adv-f"><div class="adv-lbl">Arquetipo</div>
+              <input class="adv-inp" id="af-arch" placeholder="Ej: Blue-Eyes…"/>
+            </div>
+            <div class="adv-f"><div class="adv-lbl">ATK mín.</div>
+              <input class="adv-inp" id="af-atk-min" type="number" placeholder="0"/>
+            </div>
+            <div class="adv-f"><div class="adv-lbl">ATK máx.</div>
+              <input class="adv-inp" id="af-atk-max" type="number" placeholder="5000"/>
+            </div>
+          </div>
+          <div class="adv-btns">
+            <button class="btn-red" style="flex:1;padding:8px" onclick="doAdvSearch()">BUSCAR</button>
+            <button class="btn-ghost" onclick="clearAdv()">Limpiar</button>
+          </div>
+        </div>
+
+        <div class="mode-row">
+          <div class="mode-btn on" id="mb-search" onclick="setMode('search')">🔍 Buscar</div>
+          <div class="mode-btn" id="mb-browse" onclick="setMode('browse')">📚 Explorar</div>
+        </div>
+
+        <div class="chips">
+          <div class="chip on" onclick="setChip('all',this)">Todas</div>
+          <div class="chip" onclick="setChip('monster',this)">Monstruo</div>
+          <div class="chip" onclick="setChip('spell',this)">Mágica</div>
+          <div class="chip" onclick="setChip('trap',this)">Trampa</div>
+          <div class="chip" onclick="setChip('fusion',this)">Fusión</div>
+          <div class="chip" onclick="setChip('synchro',this)">Sincro</div>
+          <div class="chip" onclick="setChip('xyz',this)">XYZ</div>
+          <div class="chip" onclick="setChip('link',this)">Link</div>
+        </div>
+
+        <div class="ztabs">
+          <div class="ztab on" onclick="setZone('main',this)"><span class="zt-l">Principal</span><span class="zt-c" id="zc-main">0/60</span></div>
+          <div class="ztab" onclick="setZone('extra',this)"><span class="zt-l">Extra</span><span class="zt-c" id="zc-extra">0/15</span></div>
+          <div class="ztab" onclick="setZone('side',this)"><span class="zt-l">Side</span><span class="zt-c" id="zc-side">0/15</span></div>
+        </div>
+        <div class="dgrid" id="dg"></div>
+        <div style="display:flex;gap:6px;margin-bottom:12px">
+          <button class="export-btn" style="flex:1;margin-bottom:0" onclick="exportDeck()">📋 Exportar Deck</button>
+          <button class="export-btn" style="flex:0 0 auto;margin-bottom:0;padding:8px 12px;border-color:rgba(196,24,24,.3);color:rgba(196,24,24,.5)" onclick="clearDeck()" title="Vaciar deck actual">🗑</button>
+        </div>
+        <div id="ss"></div>
+        <div id="cl"></div>
+      </div>
+    </div>
+
+    <!-- ════ PROFILE VIEW ════ -->
+    <div id="v-profile" class="view hidden">
+      <div class="ph">
+        <div class="ph-t">Mi Perfil</div>
+        <div class="ph-s">Duelista · Estadísticas · Historial</div>
+        <div class="ph-wm"><b>ÚLTIMO</b><s>TURNO</s></div>
+      </div>
+      <div class="profile-page">
+        <div class="profile-hero">
+          <div class="av-big" id="av-display" onclick="openAvatarPicker()">
+            <span id="av-icon" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">⚔️</span>
+            <div class="av-edit-ov">CAMBIAR</div>
+          </div>
+          <div class="pi">
+            <input class="pname-inp" id="prf-name" value="DUELISTA" maxlength="20"/>
+            <div class="p-rank" id="prf-rank" style="transition:color .3s">🃏 Aprendiz del Duelo</div>
+            <div class="p-since" id="prf-since">Registrado hoy</div>
+          </div>
+        </div>
+
+        <!-- Rank progress block -->
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px 14px;margin-bottom:12px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:1.5px;background:linear-gradient(90deg,transparent,var(--red),transparent)"></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <span id="rank-icon" style="font-size:22px">🃏</span>
+            <div style="flex:1">
+              <div style="font-family:'Black Ops One',sans-serif;font-size:13px;color:var(--cream);letter-spacing:1px" id="rank-name">Aprendiz del Duelo</div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px" id="rank-next-label">0 victorias para el siguiente rango</div>
+            </div>
+          </div>
+          <div style="height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden">
+            <div id="rank-progress-bar" style="height:100%;width:0;border-radius:2px;transition:width .7s cubic-bezier(.4,0,.2,1),background .5s"></div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="sbox"><span class="sv" id="st-t">0</span><span class="slb">Duelos</span></div>
+          <div class="sbox win"><span class="sv" id="st-w">0</span><span class="slb">Victorias</span></div>
+          <div class="sbox loss"><span class="sv" id="st-l">0</span><span class="slb">Derrotas</span></div>
+        </div>
+        <!-- Win rate bar -->
+        <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:10px 12px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase">Ratio de Victorias</span>
+            <span style="font-family:'Black Ops One',sans-serif;font-size:13px;color:var(--cream3);letter-spacing:1px" id="wr-pct">—</span>
+          </div>
+          <div style="height:3px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden">
+            <div id="wr-bar" style="height:100%;background:linear-gradient(90deg,var(--red3),var(--gx));border-radius:2px;width:0;transition:width .6s cubic-bezier(.4,0,.2,1)"></div>
+          </div>
+        </div>
+
+        <div class="slbl">Era favorita</div>
+        <div class="era-row">
+          <div class="era-btn on" data-era="DM" onclick="setEra('DM',this)"><span class="era-btn-t">DM</span></div>
+          <div class="era-btn" data-era="GX" onclick="setEra('GX',this)"><span class="era-btn-t">GX</span></div>
+          <div class="era-btn" data-era="5DS" onclick="setEra('5DS',this)"><span class="era-btn-t">5D'S</span></div>
+        </div>
+
+        <button class="btn-red" style="width:100%;padding:10px;margin-bottom:6px" onclick="saveProfile()">GUARDAR PERFIL</button>
+
+        <div class="slbl" style="margin-top:16px">Historial de Duelos</div>
+        <div class="dh-list" id="duel-hist"><div class="no-hist">Sin duelos registrados</div></div>
+      </div>
+    </div>
+
+    <!-- ════ ABOUT VIEW ════ -->
+    <div id="v-about" class="view hidden">
+      <div class="ph">
+        <div class="ph-t">La App</div>
+        <div class="ph-s">Último Turno · v6.0</div>
+      </div>
+      <div class="about-page">
+        <div class="a-hero">
+          <div class="logo-css">
+            <div class="lc-ft"><div class="lc-er"><div class="lc-el"></div><div class="lc-eo"></div><div class="lc-el"></div></div></div>
+            <div class="lc-tx"><span class="lc-ul">ÚLTIMO</span><span class="lc-tn">TURNO</span></div>
+            <div class="lc-arc"></div>
+            <div class="lc-fb"><div class="lc-sp"></div></div>
+          </div>
+          <div class="a-tag">Para quienes gritaban<br/><em style="color:var(--red2)">"¡Es mi turno final!"</em><br/>frente al televisor</div>
+        </div>
+        <div class="flist">
+          <div class="fi"><span class="fi-i">⚔️</span><div><div class="fi-t">Contador de LP</div><div class="fi-d">2 jugadores · skins DM/GX/5D's · dado, 2 dados y moneda · barra crítica pulsante · historial de golpes</div></div></div>
+          <div class="fi"><span class="fi-i">🃏</span><div><div class="fi-t">Constructor de Deck</div><div class="fi-d">Base completa YGOPRODeck · browse por tipo/atributo/nivel/arquetipo · modo explorar o buscar · exportar lista · deck principal, extra y side</div></div></div>
+          <div class="fi"><span class="fi-i">👤</span><div><div class="fi-t">Perfil de Jugador</div><div class="fi-d">Avatar · nombre · era favorita · rango automático por victorias · estadísticas · historial completo de duelos</div></div></div>
+          <div class="fi"><span class="fi-i">📱</span><div><div class="fi-t">PWA Instalable</div><div class="fi-d">Agrega a tu pantalla de inicio desde Safari o Chrome. Sin instalación en tiendas.</div></div></div>
+        </div>
+        <div class="slbl">Skins por era</div>
+        <div class="skins-preview">
+          <div class="skin-prev sk1"><span class="sp-num">8000</span><span class="sp-lbl">DM</span></div>
+          <div class="skin-prev sk2"><span class="sp-num" style="color:#e040e0">8000</span><span class="sp-lbl">GX</span></div>
+          <div class="skin-prev sk3"><span class="sp-num" style="color:#88c0e8;font-size:20px;letter-spacing:4px">8000</span><span class="sp-lbl">5D's</span></div>
+          <div class="skin-prev sk4"><span class="sp-num" style="color:#fff;font-size:20px">8000</span><span class="sp-lbl">ZEXAL</span></div>
+        </div>
+        <div class="a-footer">
+          <div class="af-v">Versión</div>
+          <div class="af-n">4.0</div>
+          <div class="af-s">Último Turno · Hecho en Valdivia, Chile · 2025</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;color:var(--cream4);letter-spacing:2px;text-transform:uppercase">
+            Base de datos · YGOPRODeck API · PWA Instalable
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ TOURNAMENT VIEW ════ -->
+    <div id="v-torneo" class="view hidden">
+      <div class="ph">
+        <div class="ph-t">Torneo</div>
+        <div class="ph-s" id="trn-ph-sub">Sistema Swiss · Formato Oficial YGO</div>
+        <div class="ph-wm"><b>ÚLTIMO</b><s>TURNO</s></div>
+      </div>
+      <div class="trn-page" id="trn-content"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CARD MODAL -->
+<div id="mbg" class="mbg hidden" onclick="closeM(event)">
+  <div class="msh" onclick="event.stopPropagation()">
+    <div class="mhandle"></div><div id="mi"></div>
+  </div>
+</div>
+<!-- EXPORT MODAL -->
+<div id="embg" class="mbg hidden" onclick="closeEM(event)">
+  <div class="msh" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div class="m-name">Exportar Deck</div>
+    <textarea class="export-ta" id="exta" readonly></textarea>
+    <button class="copy-btn" onclick="copyDeck()">📋 COPIAR AL PORTAPAPELES</button>
+    <button class="mclose" onclick="closeEM()">Cerrar</button>
+  </div>
+</div>
+<!-- AVATAR MODAL -->
+<div id="avbg" class="mbg hidden" onclick="closeAV(event)">
+  <div class="msh" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div class="m-name" style="margin-bottom:4px">Elige tu Icono</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Iconografía del mundo de Yu-Gi-Oh!</div>
+    <div class="av-grid" id="av-grid"></div>
+    <button class="mclose" style="margin-top:10px" onclick="closeAV()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+/* ══════════════════════════════════════
+   YGO ICON LIBRARY (SVG, estilo ref.)
+══════════════════════════════════════ */
+const YGO_ICONS = [
+  {id:'millennium',label:'Puzzle',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#1a1650"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#b8922a" stroke-width="1.5"/>
+    <rect x="5" y="5" width="54" height="54" rx="2" fill="none" stroke="rgba(184,146,42,.3)" stroke-width=".8"/>
+    <!-- Gold filigree corners -->
+    <path d="M5 12 Q5 5 12 5" stroke="#b8922a" stroke-width="1.5" fill="none"/>
+    <path d="M52 5 Q59 5 59 12" stroke="#b8922a" stroke-width="1.5" fill="none"/>
+    <path d="M5 52 Q5 59 12 59" stroke="#b8922a" stroke-width="1.5" fill="none"/>
+    <path d="M59 52 Q59 59 52 59" stroke="#b8922a" stroke-width="1.5" fill="none"/>
+    <!-- Millennium Puzzle triangle -->
+    <path d="M32 10 L52 44 L12 44 Z" fill="rgba(184,146,42,.25)" stroke="#d4a830" stroke-width="2"/>
+    <!-- Inner triangle inverted -->
+    <path d="M32 18 L46 40 L18 40 Z" fill="rgba(26,22,80,.8)" stroke="#d4a830" stroke-width="1.2"/>
+    <!-- Ankh top -->
+    <circle cx="32" cy="11" r="4" fill="none" stroke="#d4a830" stroke-width="2"/>
+    <line x1="32" y1="7" x2="32" y2="3" stroke="#d4a830" stroke-width="2"/>
+    <!-- Eye of Horus center -->
+    <ellipse cx="32" cy="32" rx="7" ry="5" fill="rgba(184,146,42,.3)" stroke="#d4a830" stroke-width="1.5"/>
+    <circle cx="32" cy="32" r="2.5" fill="#d4a830"/>
+    <circle cx="32" cy="32" r="1" fill="#1a1650"/>
+    <!-- Decorative swooshes -->
+    <path d="M27 36 Q30 39 35 37" stroke="#b8922a" stroke-width="1.2" fill="none"/>
+    <path d="M29 38 Q32 41 35 39" stroke="#b8922a" stroke-width="1" fill="none"/>
+    <!-- Bottom triangle -->
+    <path d="M28 44 L36 44 L32 50 Z" fill="#d4a830"/>
+  </svg>`},
+
+  {id:'anubis',label:'Anubis',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#c4a86a"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#8b6914" stroke-width="1.5"/>
+    <!-- Stone tablet texture -->
+    <rect x="8" y="6" width="48" height="50" rx="2" fill="#d4b87a" opacity=".6"/>
+    <path d="M8 14 Q14 8 22 6" stroke="rgba(139,105,20,.4)" stroke-width="1" fill="none"/>
+    <path d="M56 50 Q52 56 44 58" stroke="rgba(139,105,20,.4)" stroke-width="1" fill="none"/>
+    <!-- Millennium symbol left -->
+    <path d="M12 28 L24 48 L0 48" fill="none" stroke="#8b6914" stroke-width="1.5" transform="translate(8,4) scale(.55)"/>
+    <circle cx="20" cy="22" r="3.5" fill="none" stroke="#8b6914" stroke-width="1.2"/>
+    <circle cx="20" cy="22" r="1.2" fill="#8b6914"/>
+    <!-- Anubis head silhouette -->
+    <path d="M36 14 L40 8 L44 10 L42 16 L44 20 Q46 26 44 30 L40 32 Q36 34 34 30 L32 24 Q30 18 34 16 Z" fill="#c4a050" stroke="#8b6914" stroke-width="1"/>
+    <!-- Ears -->
+    <path d="M38 14 L42 8" stroke="#8b6914" stroke-width="1.5"/>
+    <path d="M42 10 L46 6" stroke="#8b6914" stroke-width="1.5"/>
+    <!-- Eye -->
+    <ellipse cx="39" cy="22" rx="2" ry="1.5" fill="#8b6914"/>
+    <!-- Nemes headdress stripes -->
+    <path d="M34 26 L32 36 M38 28 L37 38" stroke="#8b6914" stroke-width="1" opacity=".6"/>
+    <!-- Body/collar -->
+    <path d="M33 32 Q36 36 40 32 L42 40 Q38 44 33 40 Z" fill="#c4a050" stroke="#8b6914" stroke-width="1"/>
+    <path d="M33 34 L42 34" stroke="#8b6914" stroke-width=".8" opacity=".5"/>
+    <path d="M33 36 L41 36" stroke="#8b6914" stroke-width=".8" opacity=".5"/>
+  </svg>`},
+
+  {id:'axe',label:'Hacha',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#2a3050"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#b8922a" stroke-width="1.5"/>
+    <!-- Magic circle background -->
+    <circle cx="32" cy="32" r="24" fill="none" stroke="rgba(200,200,220,.12)" stroke-width=".8"/>
+    <circle cx="32" cy="32" r="16" fill="none" stroke="rgba(200,200,220,.08)" stroke-width=".8"/>
+    <!-- Rune marks -->
+    <text x="10" y="18" font-size="6" fill="rgba(200,200,220,.2)" font-family="serif">ᚱ</text>
+    <text x="48" y="22" font-size="6" fill="rgba(200,200,220,.2)" font-family="serif">ᚦ</text>
+    <text x="8" y="46" font-size="6" fill="rgba(200,200,220,.2)" font-family="serif">ᛟ</text>
+    <text x="50" y="48" font-size="6" fill="rgba(200,200,220,.2)" font-family="serif">ᚹ</text>
+    <!-- Axe handle -->
+    <path d="M22 54 L42 18" stroke="#6b4c2a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M22 54 L42 18" stroke="#8b6c3a" stroke-width="2" stroke-linecap="round"/>
+    <!-- Axe head -->
+    <path d="M36 14 Q28 8 26 18 L38 22 Z" fill="#d4a830" stroke="#b8922a" stroke-width="1.2"/>
+    <path d="M36 14 Q44 8 46 18 L38 22 Z" fill="#d4a830" stroke="#b8922a" stroke-width="1.2"/>
+    <!-- Eye orb -->
+    <circle cx="38" cy="20" r="6" fill="#c49020" stroke="#d4a830" stroke-width="1.5"/>
+    <circle cx="38" cy="20" r="4" fill="#8b6910"/>
+    <ellipse cx="38" cy="20" rx="3" ry="2" fill="#d4a830" opacity=".4"/>
+    <circle cx="38" cy="20" r="2" fill="#1a1208"/>
+    <circle cx="36.5" cy="18.5" r=".8" fill="rgba(255,255,255,.6)"/>
+    <!-- Handle wrapping -->
+    <path d="M25 50 L28 44 M26 46 L29 40" stroke="#6b3c1a" stroke-width="1.5" opacity=".7"/>
+    <!-- Spike bottom -->
+    <path d="M20 54 L22 58 L24 54" fill="#b8922a"/>
+  </svg>`},
+
+  {id:'necklace',label:'Collar',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#6ab8c8"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#8b6914" stroke-width="1.5"/>
+    <!-- Stone bg -->
+    <rect x="6" y="6" width="52" height="52" rx="2" fill="rgba(255,255,255,.1)"/>
+    <!-- Rope/chain -->
+    <path d="M12 16 Q20 8 32 10 Q44 8 52 16" fill="none" stroke="#c4a050" stroke-width="4" stroke-linecap="round"/>
+    <path d="M12 16 Q20 8 32 10 Q44 8 52 16" fill="none" stroke="#d4b060" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 2"/>
+    <path d="M12 16 L16 32 Q20 42 28 44" fill="none" stroke="#c4a050" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M52 16 L48 32 Q44 42 36 44" fill="none" stroke="#c4a050" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Eye of Ra pendant -->
+    <path d="M22 44 Q32 58 42 44" fill="none" stroke="#c4a050" stroke-width="3"/>
+    <!-- Wings -->
+    <path d="M18 46 Q14 42 16 38 Q20 40 22 44" fill="#d4a830" stroke="#b8922a" stroke-width="1"/>
+    <path d="M46 46 Q50 42 48 38 Q44 40 42 44" fill="#d4a830" stroke="#b8922a" stroke-width="1"/>
+    <path d="M20 44 Q16 40 18 36" fill="none" stroke="#d4a830" stroke-width=".8"/>
+    <path d="M44 44 Q48 40 46 36" fill="none" stroke="#d4a830" stroke-width=".8"/>
+    <!-- Eye center -->
+    <ellipse cx="32" cy="46" rx="8" ry="5" fill="#c49020" stroke="#d4a830" stroke-width="1.5"/>
+    <ellipse cx="32" cy="46" rx="5" ry="3.5" fill="#8b6008"/>
+    <circle cx="32" cy="46" r="2.5" fill="#1a1208"/>
+    <circle cx="30.5" cy="44.5" r="1" fill="rgba(255,255,255,.5)"/>
+    <!-- Teardrop bottom -->
+    <path d="M30 51 Q32 55 34 51" fill="#d4a830" stroke="#b8922a" stroke-width="1"/>
+  </svg>`},
+
+  {id:'milleye',label:'Ojo',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#1a0830"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#b8922a" stroke-width="1.5"/>
+    <!-- Spiral galaxy bg -->
+    <circle cx="32" cy="32" r="28" fill="rgba(80,20,120,.3)"/>
+    <circle cx="32" cy="32" r="20" fill="rgba(60,10,100,.2)"/>
+    <!-- Gold dust particles -->
+    <circle cx="15" cy="20" r="1" fill="rgba(212,168,48,.4)"/>
+    <circle cx="50" cy="15" r=".8" fill="rgba(212,168,48,.3)"/>
+    <circle cx="8" cy="40" r="1.2" fill="rgba(212,168,48,.35)"/>
+    <circle cx="55" cy="45" r=".9" fill="rgba(212,168,48,.4)"/>
+    <circle cx="20" cy="52" r="1" fill="rgba(212,168,48,.3)"/>
+    <!-- Outer ring silver/gold -->
+    <circle cx="32" cy="32" r="22" fill="none" stroke="#a0a0b0" stroke-width="3"/>
+    <circle cx="32" cy="32" r="22" fill="none" stroke="#d4a830" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+    <!-- Eyelid frame top -->
+    <path d="M10 32 Q18 18 32 16 Q46 18 54 32" fill="rgba(160,160,176,.15)" stroke="#b0b0c0" stroke-width="2.5"/>
+    <!-- Eyelid frame bottom -->
+    <path d="M10 32 Q18 46 32 48 Q46 46 54 32" fill="rgba(160,160,176,.15)" stroke="#b0b0c0" stroke-width="2.5"/>
+    <!-- Inner gold trim top -->
+    <path d="M14 32 Q20 22 32 20 Q44 22 50 32" fill="none" stroke="#d4a830" stroke-width="1.5" opacity=".7"/>
+    <path d="M14 32 Q20 42 32 44 Q44 42 50 32" fill="none" stroke="#d4a830" stroke-width="1.5" opacity=".7"/>
+    <!-- Iris - amber/gold -->
+    <circle cx="32" cy="32" r="13" fill="url(#irisGrad)"/>
+    <defs>
+      <radialGradient id="irisGrad" cx="40%" cy="35%">
+        <stop offset="0%" stop-color="#ffe080"/>
+        <stop offset="40%" stop-color="#d4a020"/>
+        <stop offset="100%" stop-color="#8b5c00"/>
+      </radialGradient>
+    </defs>
+    <!-- Iris lines -->
+    <line x1="32" y1="19" x2="32" y2="45" stroke="rgba(0,0,0,.15)" stroke-width=".5"/>
+    <line x1="19" y1="32" x2="45" y2="32" stroke="rgba(0,0,0,.15)" stroke-width=".5"/>
+    <line x1="23" y1="23" x2="41" y2="41" stroke="rgba(0,0,0,.12)" stroke-width=".5"/>
+    <line x1="41" y1="23" x2="23" y2="41" stroke="rgba(0,0,0,.12)" stroke-width=".5"/>
+    <!-- Pupil -->
+    <circle cx="32" cy="32" r="6" fill="#0a0408"/>
+    <!-- Glow specular -->
+    <ellipse cx="28" cy="27" rx="3" ry="2" fill="rgba(255,255,255,.35)" opacity=".8"/>
+    <circle cx="27" cy="26" r="1.2" fill="rgba(255,255,255,.5)"/>
+    <!-- Triangle markers top/bottom -->
+    <path d="M30 17 L32 14 L34 17 Z" fill="#d4a830"/>
+    <path d="M30 47 L32 50 L34 47 Z" fill="#d4a830"/>
+  </svg>`},
+
+  {id:'key',label:'Llave',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#c49830"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#8b6010" stroke-width="1.5"/>
+    <!-- Parchment bg -->
+    <rect x="6" y="6" width="52" height="52" rx="2" fill="#d4a840" opacity=".5"/>
+    <!-- Gear/cog head -->
+    <circle cx="40" cy="24" r="14" fill="#c4a020" stroke="#8b6010" stroke-width="1.5"/>
+    <circle cx="40" cy="24" r="10" fill="#b89010" stroke="#c4a020" stroke-width="1"/>
+    <!-- Gear teeth -->
+    <path d="M40 10 L38 6 L42 6 Z" fill="#c4a020"/>
+    <path d="M40 38 L38 42 L42 42 Z" fill="#c4a020"/>
+    <path d="M26 24 L22 22 L22 26 Z" fill="#c4a020"/>
+    <path d="M54 24 L58 22 L58 26 Z" fill="#c4a020"/>
+    <path d="M30 14 L27 11 L30 9 Z" fill="#c4a020"/>
+    <path d="M50 14 L53 11 L50 9 Z" fill="#c4a020"/>
+    <path d="M30 34 L27 37 L30 39 Z" fill="#c4a020"/>
+    <path d="M50 34 L53 37 L50 39 Z" fill="#c4a020"/>
+    <!-- Eye in gear -->
+    <ellipse cx="40" cy="24" rx="6" ry="4" fill="#d4a830" stroke="#8b6010" stroke-width="1"/>
+    <ellipse cx="40" cy="24" rx="3" ry="2.5" fill="#6b4800"/>
+    <circle cx="40" cy="24" r="1.5" fill="#1a1208"/>
+    <circle cx="38.5" cy="22.5" r=".7" fill="rgba(255,255,255,.6)"/>
+    <!-- Key shaft -->
+    <rect x="12" y="22" width="26" height="4" rx="2" fill="#c4a020" stroke="#8b6010" stroke-width="1"/>
+    <!-- Key teeth bottom -->
+    <rect x="14" y="26" width="4" height="6" rx="1" fill="#c4a020" stroke="#8b6010" stroke-width=".8"/>
+    <rect x="20" y="26" width="3" height="8" rx="1" fill="#c4a020" stroke="#8b6010" stroke-width=".8"/>
+    <rect x="25" y="26" width="4" height="5" rx="1" fill="#c4a020" stroke="#8b6010" stroke-width=".8"/>
+    <!-- Ring top of gear -->
+    <circle cx="40" cy="12" r="3" fill="none" stroke="#c4a020" stroke-width="2"/>
+    <!-- Keyhole -->
+    <rect x="44" y="42" width="10" height="12" rx="2" fill="#a08020" stroke="#8b6010" stroke-width="1"/>
+    <circle cx="49" cy="46" r="2.5" fill="#1a1208"/>
+    <rect x="48" y="47" width="2" height="5" rx="1" fill="#1a1208"/>
+  </svg>`},
+
+  {id:'scales',label:'Balanza',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#e8f0e0"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#8b6914" stroke-width="1.5"/>
+    <!-- Green gradient bg -->
+    <rect x="6" y="6" width="52" height="52" rx="2" fill="rgba(80,160,80,.15)"/>
+    <!-- Base -->
+    <rect x="28" y="54" width="8" height="3" rx="1" fill="#c4a020"/>
+    <rect x="24" y="57" width="16" height="2" rx="1" fill="#b89010"/>
+    <!-- Center pole -->
+    <rect x="31" y="20" width="2" height="34" rx="1" fill="#c4a020"/>
+    <!-- Crossbar -->
+    <rect x="10" y="20" width="44" height="2.5" rx="1.2" fill="#d4a830"/>
+    <!-- Top ornament -->
+    <path d="M30 16 L32 10 L34 16 Z" fill="#d4a830"/>
+    <circle cx="32" cy="18" r="3" fill="#c49020" stroke="#d4a830" stroke-width="1"/>
+    <circle cx="32" cy="18" r="1.5" fill="#8b6010"/>
+    <!-- Left chains -->
+    <line x1="14" y1="22" x2="12" y2="38" stroke="#c4a020" stroke-width="1.2" stroke-dasharray="2 1.5"/>
+    <line x1="18" y1="22" x2="16" y2="38" stroke="#c4a020" stroke-width="1.2" stroke-dasharray="2 1.5"/>
+    <line x1="22" y1="22" x2="20" y2="38" stroke="#c4a020" stroke-width="1.2" stroke-dasharray="2 1.5"/>
+    <!-- Left pan -->
+    <path d="M8 38 Q14 44 22 38" fill="#c4a020" stroke="#b89010" stroke-width="1.2"/>
+    <!-- Right chains -->
+    <line x1="42" y1="22" x2="44" y2="38" stroke="#c4a020" stroke-width="1.2" stroke-dasharray="2 1.5"/>
+    <line x1="46" y1="22" x2="48" y2="38" stroke="#c4a020" stroke-width="1.2" stroke-dasharray="2 1.5"/>
+    <line x1="50" y1="22" x2="52" y2="38" stroke="#c4a020" stroke-width="1.2" stroke-dasharray="2 1.5"/>
+    <!-- Right pan -->
+    <path d="M42 38 Q48 44 56 38" fill="#c4a020" stroke="#b89010" stroke-width="1.2"/>
+  </svg>`},
+
+  {id:'dragon',label:'Dragón',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#0a1020"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#b8922a" stroke-width="1.5"/>
+    <!-- Dragon silhouette -->
+    <!-- Body -->
+    <path d="M16 48 Q20 40 28 36 Q32 34 36 30 L40 20 Q42 16 46 14 Q50 12 52 16 Q54 20 50 24 Q46 28 42 28 L38 34 Q36 40 32 44 Q28 48 24 50 Z" fill="#1a3060" stroke="#4060a0" stroke-width="1.5"/>
+    <!-- Wings -->
+    <path d="M36 28 Q30 20 18 18 Q24 24 28 32" fill="#1a3060" stroke="#4060a0" stroke-width="1"/>
+    <path d="M36 28 Q28 18 14 14 Q20 22 26 30" fill="rgba(26,48,96,.5)" stroke="#3050a0" stroke-width=".8"/>
+    <!-- Wing membrane lines -->
+    <line x1="26" y1="20" x2="30" y2="30" stroke="#3050a0" stroke-width=".6"/>
+    <line x1="22" y1="18" x2="28" y2="30" stroke="#3050a0" stroke-width=".6"/>
+    <!-- Head -->
+    <path d="M50 16 Q54 14 56 18 Q58 22 54 24 Q50 26 48 22 Q46 18 50 16 Z" fill="#2040a0" stroke="#4060c0" stroke-width="1.2"/>
+    <!-- Eye -->
+    <circle cx="53" cy="19" r="2.5" fill="#d4a830"/>
+    <circle cx="53" cy="19" r="1.2" fill="#0a0a20"/>
+    <circle cx="52" cy="18" r=".6" fill="rgba(255,255,255,.7)"/>
+    <!-- Horns -->
+    <path d="M52 14 L54 9 M54 15 L58 11" stroke="#4060c0" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- Tail -->
+    <path d="M16 48 Q12 52 10 56 Q14 54 16 52 Q18 56 20 52" fill="none" stroke="#4060a0" stroke-width="1.2"/>
+    <!-- Claws -->
+    <path d="M32 44 L30 50 M34 44 L34 50 M36 42 L38 48" stroke="#4060a0" stroke-width="1"/>
+    <!-- Fire breath glow -->
+    <path d="M56 18 Q62 20 60 26 Q58 22 54 24" fill="rgba(212,168,48,.2)" stroke="#d4a830" stroke-width=".8"/>
+  </svg>`},
+
+  {id:'pharaoh',label:'Faraón',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#1a1650"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#b8922a" stroke-width="1.5"/>
+    <!-- Nemes headdress -->
+    <path d="M20 16 Q22 8 32 8 Q42 8 44 16 L44 28 Q40 32 32 32 Q24 32 20 28 Z" fill="#1a3070" stroke="#d4a830" stroke-width="1.2"/>
+    <!-- Headdress stripes -->
+    <path d="M22 14 L42 14 M22 18 L42 18 M22 22 L42 22" stroke="#d4a830" stroke-width=".8" opacity=".5"/>
+    <!-- Side flaps -->
+    <path d="M20 18 L14 30 L18 42" stroke="#d4a830" stroke-width="1.2" fill="#1a3070"/>
+    <path d="M44 18 L50 30 L46 42" stroke="#d4a830" stroke-width="1.2" fill="#1a3070"/>
+    <!-- Uraeus cobra -->
+    <path d="M30 8 Q32 4 34 6 Q36 8 34 10 Q32 12 30 10 Q29 8 30 8" fill="#d4a830" stroke="#b8922a" stroke-width=".8"/>
+    <!-- Face -->
+    <ellipse cx="32" cy="28" rx="9" ry="10" fill="#c4a050"/>
+    <!-- Eye of Horus -->
+    <path d="M22 26 Q26 24 28 26" fill="none" stroke="#1a1208" stroke-width="1.5"/>
+    <circle cx="26" cy="26" r="2" fill="#1a1208"/>
+    <path d="M24 28 L23 31 M26 28 L26 32" stroke="#1a1208" stroke-width=".8"/>
+    <path d="M36 26 Q38 24 42 26" fill="none" stroke="#1a1208" stroke-width="1.5"/>
+    <circle cx="38" cy="26" r="2" fill="#1a1208"/>
+    <!-- Collar/necklace -->
+    <path d="M23 36 Q32 42 41 36" fill="#d4a830" stroke="#b8922a" stroke-width="1"/>
+    <path d="M22 38 Q32 45 42 38" fill="none" stroke="#d4a830" stroke-width=".8"/>
+    <!-- Gold bands on stripes -->
+    <rect x="24" y="48" width="16" height="3" rx="1" fill="#d4a830"/>
+    <rect x="26" y="52" width="12" height="3" rx="1" fill="#c4a020"/>
+  </svg>`},
+
+  {id:'duel-disk',label:'Duel Disk',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#101828"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#4080d0" stroke-width="1.5"/>
+    <!-- Arm/base -->
+    <rect x="8" y="36" width="20" height="8" rx="3" fill="#1a2840" stroke="#4080d0" stroke-width="1"/>
+    <!-- Duel disk tray extended -->
+    <path d="M28 32 L56 24 L58 30 Q58 36 54 38 L28 40 Z" fill="#1a3060" stroke="#4080d0" stroke-width="1.2"/>
+    <!-- Card zones on tray -->
+    <rect x="30" y="30" width="6" height="8" rx="1" fill="rgba(64,128,208,.15)" stroke="#4080d0" stroke-width=".8"/>
+    <rect x="38" y="28" width="6" height="8" rx="1" fill="rgba(64,128,208,.15)" stroke="#4080d0" stroke-width=".8"/>
+    <rect x="46" y="26" width="6" height="8" rx="1" fill="rgba(64,128,208,.15)" stroke="#4080d0" stroke-width=".8"/>
+    <!-- Life point display -->
+    <rect x="8" y="28" width="20" height="8" rx="2" fill="#0a1a30" stroke="#4080d0" stroke-width="1"/>
+    <text x="10" y="35" font-size="7" fill="#4080d0" font-family="monospace" font-weight="bold">8000</text>
+    <!-- Glow effect -->
+    <path d="M28 32 L56 24" stroke="#80c0ff" stroke-width=".5" opacity=".5"/>
+    <!-- Buttons -->
+    <circle cx="14" cy="42" r="2" fill="#4080d0" opacity=".7"/>
+    <circle cx="20" cy="42" r="2" fill="#4080d0" opacity=".5"/>
+  </svg>`},
+
+  {id:'blue-eyes',label:'Blue Eyes',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#040c18"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#b8922a" stroke-width="1.5"/>
+    <!-- Dragon head -->
+    <path d="M10 44 Q14 36 20 30 Q26 24 32 22 Q36 20 40 22 L48 18 Q52 16 54 20 Q56 24 52 28 Q48 32 44 30 Q40 28 36 30 Q30 34 26 40 Q22 46 20 52 Z" fill="#1a2c4a" stroke="#4080b0" stroke-width="1.5"/>
+    <!-- Scales texture -->
+    <path d="M24 36 Q26 34 28 36 M28 40 Q30 38 32 40 M20 42 Q22 40 24 42" fill="none" stroke="#5090c0" stroke-width=".7" opacity=".6"/>
+    <!-- Horn -->
+    <path d="M44 30 L50 22 L52 26" fill="#2040a0" stroke="#4060c0" stroke-width="1"/>
+    <!-- Eye - glowing blue -->
+    <circle cx="44" cy="24" r="5" fill="#2060a0"/>
+    <circle cx="44" cy="24" r="3.5" fill="#4090d0"/>
+    <circle cx="44" cy="24" r="2" fill="#0a1830"/>
+    <circle cx="42.5" cy="22.5" r="1" fill="rgba(180,220,255,.8)"/>
+    <!-- Wing -->
+    <path d="M28 26 Q18 16 10 18 Q16 22 20 28 Q22 30 26 30" fill="#1a2c4a" stroke="#4080b0" stroke-width="1"/>
+    <path d="M22 20 Q16 16 12 20" fill="none" stroke="#3070a0" stroke-width=".7"/>
+    <path d="M24 22 Q18 18 14 22" fill="none" stroke="#3070a0" stroke-width=".7"/>
+    <!-- Breath glow -->
+    <path d="M10 44 Q6 48 8 54 Q10 50 14 48" fill="rgba(100,180,255,.15)" stroke="rgba(100,200,255,.4)" stroke-width="1"/>
+    <!-- Claws -->
+    <path d="M18 50 L16 56 M20 52 L18 58 M22 50 L22 56" stroke="#4080b0" stroke-width="1.2" stroke-linecap="round"/>
+  </svg>`},
+
+  {id:'dark-magician',label:'Mago Oscuro',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#1a0a2a"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#b8922a" stroke-width="1.5"/>
+    <!-- Magic circle bg -->
+    <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(160,80,220,.2)" stroke-width="1"/>
+    <circle cx="32" cy="32" r="18" fill="none" stroke="rgba(160,80,220,.15)" stroke-width=".8"/>
+    <!-- Staff -->
+    <rect x="30" y="8" width="3" height="48" rx="1.5" fill="#8040a0" stroke="#a060c0" stroke-width=".8"/>
+    <!-- Staff head orb -->
+    <circle cx="31.5" cy="12" r="7" fill="#6020a0" stroke="#c080e0" stroke-width="1.5"/>
+    <circle cx="31.5" cy="12" r="4.5" fill="#8040c0"/>
+    <circle cx="31.5" cy="12" r="2.5" fill="rgba(220,160,255,.6)"/>
+    <circle cx="29.5" cy="10" r="1.2" fill="rgba(255,255,255,.7)"/>
+    <!-- Star of David / magic seal -->
+    <path d="M31.5 4 L33.5 8 L29.5 8 Z" fill="#d4a830"/>
+    <path d="M31.5 20 L29.5 16 L33.5 16 Z" fill="#d4a830"/>
+    <!-- Robe/figure -->
+    <path d="M22 28 Q24 24 31.5 24 Q39 24 42 28 L44 52 Q38 56 31.5 56 Q25 56 20 52 Z" fill="#2a1050" stroke="#6030a0" stroke-width="1"/>
+    <!-- Hat -->
+    <path d="M24 28 L31.5 8 L39 28 Z" fill="#3a1860" stroke="#6030a0" stroke-width="1"/>
+    <!-- Eyes -->
+    <circle cx="28" cy="30" r="2" fill="#d4a830"/>
+    <circle cx="35" cy="30" r="2" fill="#d4a830"/>
+    <circle cx="28" cy="30" r="1" fill="#1a0a2a"/>
+    <circle cx="35" cy="30" r="1" fill="#1a0a2a"/>
+    <!-- Belt gem -->
+    <ellipse cx="31.5" cy="40" rx="3" ry="2" fill="#a060d0" stroke="#d4a830" stroke-width=".8"/>
+  </svg>`},
+];
+
+const ICON_IDS = YGO_ICONS.map(i=>i.id);
+
+/* ══════════════════════════════════════
+   15 RANGOS DE DUELISTA
+══════════════════════════════════════ */
+const RANKS = [
+  { name:'Aprendiz del Duelo',   min:0,   icon:'🃏', color:'#6a6050' },
+  { name:'Iniciado del Puzzle',  min:1,   icon:'🔮', color:'#8b7040' },
+  { name:'Guardián del Mazo',    min:3,   icon:'🛡️', color:'#7080a0' },
+  { name:'Invocador Novato',     min:6,   icon:'⚡', color:'#9070b0' },
+  { name:'Duelista de Academia', min:10,  icon:'🎓', color:'#4090a0' },
+  { name:'Caballero del Duelo',  min:15,  icon:'⚔️', color:'#6090c0' },
+  { name:'Maestro de Trampas',   min:21,  icon:'🕳️', color:'#b06820' },
+  { name:'Invocador Experto',    min:28,  icon:'🌟', color:'#b09020' },
+  { name:'Ejecutor del Destino', min:36,  icon:'👁️', color:'#c07030' },
+  { name:'Señor del Ojo Milenario', min:45, icon:'🏺', color:'#c08020' },
+  { name:'Portador del Puzzle',  min:55,  icon:'🔱', color:'#d09020' },
+  { name:'Campeón Regional',     min:66,  icon:'🏆', color:'#d4a020' },
+  { name:'Rey del Duelo',        min:78,  icon:'👑', color:'#e0b020' },
+  { name:'Guardián del Faraón',  min:91,  icon:'🦅', color:'#f0c030' },
+  { name:'Leyenda Milenaria',    min:105, icon:'💎', color:'#d4a830' },
+];
+
+function getRank(w){
+  let rank=RANKS[0];
+  for(let i=1;i<RANKS.length;i++){if(w>=RANKS[i].min)rank=RANKS[i];else break;}
+  return rank;
+}
+function getRankName(w){return getRank(w).name;}
+function getRankNext(w){
+  for(let i=0;i<RANKS.length-1;i++){if(w<RANKS[i+1].min)return{rank:RANKS[i+1],needed:RANKS[i+1].min-w};}
+  return null;
+}
+
+const G={
+  initLP:4000,p1:4000,p2:4000,h1:[],h2:[],twoP:true,
+  deck:{main:[],extra:[],side:[]},zone:'main',
+  filter:'all',query:'',results:[],mode:'search',
+  profile:{name:'DUELISTA',avatar:'⚔️',era:'DM',since:Date.now()},
+  wins:0,losses:0,history:[],
+  // Tournament state
+  trn:{
+    phase:'setup', // setup | swiss | topcut | done
+    name:'',prize:'',
+    players:[],   // {id,name,pts,w,l,d,byes,opponents:[]}
+    rounds:[],    // {n,pairings:[{p1,p2,p1n,p2n,res:null/'p1'/'draw'/'p2'}],done}
+    curRound:0,
+    totalRounds:0,
+    topCut:0,     // 4 or 8
+    bracket:[],   // [{round,p1,p2,p1n,p2n,res}]
+    winner:null,
+    podium:[],
+    timerSec:0,
+    timerRunning:false,
+    timerInterval:null,
+  },
+};
+
+/* ══════════════════════════════════════
+   INIT & SPLASH
+══════════════════════════════════════ */
+window.addEventListener('load',()=>{
+  loadAll();
+  setTimeout(()=>document.getElementById('splash').classList.add('gone'),2400);
+});
+
+function loadAll(){
+  try{
+    const p=JSON.parse(localStorage.getItem('ut_profile')||'{}');
+    if(p.name)G.profile.name=p.name;
+    if(p.avatar)G.profile.avatar=p.avatar;
+    if(p.era)G.profile.era=p.era;
+    if(p.since)G.profile.since=p.since;
+    if(p.wins)G.wins=p.wins;
+    if(p.losses)G.losses=p.losses;
+  }catch(e){}
+  try{G.history=JSON.parse(localStorage.getItem('ut_hist')||'[]')}catch(e){G.history=[]}
+  // Load saved deck — persistent across sessions
+  try{
+    const d=JSON.parse(localStorage.getItem('ut_deck')||'{}');
+    if(d.main&&Array.isArray(d.main))G.deck.main=d.main;
+    if(d.extra&&Array.isArray(d.extra))G.deck.extra=d.extra;
+    if(d.side&&Array.isArray(d.side))G.deck.side=d.side;
+  }catch(e){}
+  applyProfile();
+}
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+function gv(v){
+  document.querySelectorAll('.view').forEach(el=>{el.classList.remove('on');el.classList.add('hidden')});
+  document.querySelectorAll('.tbn').forEach(el=>el.classList.remove('on'));
+  const el=document.getElementById('v-'+v);
+  el.classList.remove('hidden');el.classList.add('on');
+  document.getElementById('tn-'+v).classList.add('on');
+  if(v==='deck')renderDG();
+  if(v==='profile'){renderHistory();updateStats();}
+  if(v==='torneo')renderTrn();
+}
+
+/* ══════════════════════════════════════
+   LP
+══════════════════════════════════════ */
+let pendLP=4000;
+function pickLP(v,el){
+  pendLP=v;
+  document.querySelectorAll('.lp-opt').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');document.getElementById('lp-ci').value='';
+}
+function beginDuel(){
+  const cv=parseInt(document.getElementById('lp-ci').value);
+  const lp=cv>0?cv:pendLP;
+  G.initLP=lp;G.p1=lp;G.p2=lp;G.h1=[];G.h2=[];
+  document.getElementById('lp-setup').style.display='none';
+  const d=document.getElementById('duel');d.style.display='block';d.style.padding='12px';
+  // sync name+avatar from profile
+  document.getElementById('pn1').value=G.profile.name;
+  document.getElementById('av1').textContent=G.profile.avatar;
+  renderLP(1);renderLP(2);
+}
+
+function dmg(p,v){
+  if(p===1){G.p1=Math.max(0,G.p1-v);G.h1.unshift({d:-v,a:G.p1})}
+  else{G.p2=Math.max(0,G.p2-v);G.h2.unshift({d:-v,a:G.p2})}
+  playDmgSound();flashScreen('red');
+  renderLP(p);if(G.p1===0||G.p2===0)endDuel();
+}
+function heal(p,v){
+  if(p===1){G.p1+=v;G.h1.unshift({d:v,a:G.p1})}
+  else{G.p2+=v;G.h2.unshift({d:v,a:G.p2})}
+  playHealSound();flashScreen('green');
+  renderLP(p);
+}
+function cDmg(p){const v=parseInt(document.getElementById('ci'+p).value);if(!v||v<=0)return;dmg(p,v);document.getElementById('ci'+p).value=''}
+function cHeal(p){const v=parseInt(document.getElementById('ci'+p).value);if(!v||v<=0)return;heal(p,v);document.getElementById('ci'+p).value=''}
+
+function renderLP(p){
+  const lp=p===1?G.p1:G.p2;
+  const elN=document.getElementById('lp'+p);
+  const fill=document.getElementById('tf'+p);
+  const histEl=document.getElementById('h'+p);
+  const board=document.getElementById('pb'+p);
+  const hist=p===1?G.h1:G.h2;
+
+  elN.textContent=lp.toLocaleString();
+  const pct=Math.max(0,(lp/G.initLP)*100);
+  fill.style.width=pct+'%';
+  if(pct>60)fill.style.background=p===1?'var(--cream2)':'var(--red3)';
+  else if(pct>25)fill.style.background='#a05818';
+  else fill.style.background='var(--red2)';
+  board.classList.toggle('crit',pct<=25&&lp>0);
+
+  const last=hist[0];
+  if(last){
+    elN.classList.remove('dmg','hl');void elN.offsetWidth;
+    elN.classList.add(last.d<0?'dmg':'hl');
+    setTimeout(()=>elN.classList.remove('dmg','hl'),420);
+  }
+  histEl.innerHTML=hist.slice(0,7).map(h=>`<span class="he ${h.d<0?'n':'p'}">${h.d>0?'+':''}${h.d.toLocaleString()}</span>`).join('');
+}
+
+function endDuel(){
+  const p1n=document.getElementById('pn1').value||'Jugador 1';
+  const p2n=document.getElementById('pn2').value||'Jugador 2';
+  const winner=G.p1>0?p1n:p2n;
+  const loser=G.p1>0?p2n:p1n;
+  const myName=G.profile.name.toUpperCase();
+  const isWin=winner.toUpperCase()===myName;
+  if(isWin)G.wins++;else G.losses++;
+  G.history.unshift({date:Date.now(),winner,loser,p1lp:G.p1,p2lp:G.p2,p1n,p2n,initLP:G.initLP});
+  if(G.history.length>50)G.history.pop();
+  saveAll();
+  toast('🏆 '+winner.toUpperCase()+' GANA EL DUELO');
+}
+
+function doReset(){
+  if(!confirm('¿Reiniciar el duelo?'))return;
+  G.p1=G.initLP;G.p2=G.initLP;G.h1=[];G.h2=[];
+  renderLP(1);renderLP(2);toast('DUELO REINICIADO');
+}
+function toggleTwo(el){
+  el.classList.toggle('on');G.twoP=el.classList.contains('on');
+  document.getElementById('pb2').style.display=G.twoP?'':'none';
+  document.querySelector('.vs-div').style.display=G.twoP?'':'none';
+}
+function setSkin(p,sk){
+  const b=document.getElementById('pb'+p);
+  b.classList.remove('sk-dm','sk-gx','sk-5ds','sk-zx');
+  b.classList.add(sk);
+}
+
+/* ══════════════════════════════════════
+   AUDIO ENGINE (Web Audio API)
+══════════════════════════════════════ */
+let _actx=null;
+function getACtx(){if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();return _actx}
+
+function playDmgSound(){
+  try{
+    const ctx=getACtx();
+    // Deep bass thud + high pitch drop
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    const osc2=ctx.createOscillator();
+    const gain2=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc2.connect(gain2);gain2.connect(ctx.destination);
+    // Thud
+    osc.type='sine';osc.frequency.setValueAtTime(180,ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40,ctx.currentTime+.35);
+    gain.gain.setValueAtTime(.7,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.4);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+.4);
+    // Swoosh down
+    osc2.type='sawtooth';osc2.frequency.setValueAtTime(800,ctx.currentTime+.05);
+    osc2.frequency.exponentialRampToValueAtTime(80,ctx.currentTime+.3);
+    gain2.gain.setValueAtTime(.15,ctx.currentTime+.05);
+    gain2.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.35);
+    osc2.start(ctx.currentTime+.05);osc2.stop(ctx.currentTime+.35);
+  }catch(e){}
+}
+
+function playHealSound(){
+  try{
+    const ctx=getACtx();
+    // Rising chime
+    [523,659,784,1047].forEach((freq,i)=>{
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.type='sine';osc.frequency.value=freq;
+      const t=ctx.currentTime+i*.1;
+      gain.gain.setValueAtTime(0,t);
+      gain.gain.linearRampToValueAtTime(.35,t+.04);
+      gain.gain.exponentialRampToValueAtTime(.001,t+.3);
+      osc.start(t);osc.stop(t+.35);
+    });
+  }catch(e){}
+}
+
+function playDiceSound(){
+  try{
+    const ctx=getACtx();
+    // Dice rattle
+    for(let i=0;i<6;i++){
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      const buf=ctx.createBuffer(1,ctx.sampleRate*.05,ctx.sampleRate);
+      const data=buf.getChannelData(0);
+      for(let j=0;j<data.length;j++)data[j]=(Math.random()*2-1)*.8;
+      const src=ctx.createBufferSource();
+      src.buffer=buf;
+      const g2=ctx.createGain();
+      const t=ctx.currentTime+i*.07;
+      g2.gain.setValueAtTime(.4,t);
+      g2.gain.exponentialRampToValueAtTime(.001,t+.06);
+      src.connect(g2);g2.connect(ctx.destination);
+      src.start(t);
+    }
+  }catch(e){}
+}
+
+function playCoinSound(){
+  try{
+    const ctx=getACtx();
+    // Metallic ping
+    [2000,1600,2200].forEach((freq,i)=>{
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.type='triangle';osc.frequency.value=freq;
+      const t=ctx.currentTime+i*.12;
+      gain.gain.setValueAtTime(.3,t);
+      gain.gain.exponentialRampToValueAtTime(.001,t+.5);
+      osc.start(t);osc.stop(t+.55);
+    });
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════
+   SCREEN FLASH
+══════════════════════════════════════ */
+function flashScreen(type){
+  const el=document.getElementById('flash');
+  el.className='flash-overlay '+type;
+  void el.offsetWidth;
+  el.className='flash-overlay '+type;
+  setTimeout(()=>el.className='flash-overlay',500);
+}
+
+/* ══════════════════════════════════════
+   TOOLS — ANIMATED
+══════════════════════════════════════ */
+const FC=['⚀','⚁','⚂','⚃','⚄','⚅'];
+
+function animTool(id,val,cls='dice-anim'){
+  const el=document.getElementById(id);
+  el.innerHTML=`<span class="${cls}">${val}</span>`;
+}
+
+function rollD(){
+  playDiceSound();
+  const v=Math.floor(Math.random()*6);
+  // Brief shuffle animation
+  let count=0;
+  const interval=setInterval(()=>{
+    const r=Math.floor(Math.random()*6);
+    document.getElementById('dr').innerHTML=`<span style="opacity:.5">${FC[r]}</span>`;
+    count++;
+    if(count>=6){clearInterval(interval);animTool('dr',FC[v],'dice-anim');}
+  },60);
+}
+
+function roll2D(){
+  playDiceSound();
+  const a=Math.floor(Math.random()*6),b=Math.floor(Math.random()*6);
+  let count=0;
+  const interval=setInterval(()=>{
+    const ra=Math.floor(Math.random()*6),rb=Math.floor(Math.random()*6);
+    document.getElementById('d2r').innerHTML=`<span style="opacity:.5;font-size:13px">${FC[ra]}${FC[rb]}</span>`;
+    count++;
+    if(count>=6){
+      clearInterval(interval);
+      document.getElementById('d2r').innerHTML=`<span class="dice-anim" style="font-size:13px">${FC[a]}${FC[b]}</span>`;
+    }
+  },60);
+}
+
+function flipC(){
+  playCoinSound();
+  const val=Math.random()<.5;
+  const el=document.getElementById('cr');
+  // Flip animation sequence
+  el.innerHTML=`<span class="coin-anim">🪙</span>`;
+  setTimeout(()=>{
+    el.innerHTML=`<span class="coin-anim" style="font-size:12px;letter-spacing:.5px">${val?'CARA':'CRUZ'}</span>`;
+  },300);
+}
+
+/* ══════════════════════════════════════
+   DECK — SEARCH + BROWSE
+══════════════════════════════════════ */
+let sTimer=null,aF='all',aZ='main';
+
+function toggleAdv(el){el.classList.toggle('on');document.getElementById('adv-panel').classList.toggle('open')}
+function clearAdv(){['af-type','af-attr','af-level'].forEach(id=>{document.getElementById(id).value=''});['af-arch','af-atk-min','af-atk-max'].forEach(id=>{document.getElementById(id).value=''})}
+
+async function doAdvSearch(){
+  const type=document.getElementById('af-type').value;
+  const attr=document.getElementById('af-attr').value;
+  const level=document.getElementById('af-level').value;
+  const arch=document.getElementById('af-arch').value;
+  const amin=document.getElementById('af-atk-min').value;
+  const amax=document.getElementById('af-atk-max').value;
+  const fname=document.getElementById('si-inp').value;
+  let url='https://db.ygoprodeck.com/api/v7/cardinfo.php?num=36&offset=0';
+  if(fname)url+=`&fname=${encodeURIComponent(fname)}`;
+  if(type)url+=`&type=${encodeURIComponent(type)}`;
+  if(attr)url+=`&attribute=${attr}`;
+  if(level)url+=`&level=${level}`;
+  if(arch)url+=`&archetype=${encodeURIComponent(arch)}`;
+  if(amin)url+=`&atk=gte${amin}`;
+  if(amax)url+=`&atk=lte${amax}`;
+  if(!fname&&!type&&!attr&&!level&&!arch&&!amin&&!amax)url+='&fname=dragon';
+  await fetchCards(url,G.mode==='browse');
+}
+
+function setMode(m){
+  G.mode=m;
+  ['search','browse'].forEach(k=>{
+    const el=document.getElementById('mb-'+k);
+    el.classList.toggle('on',k===m);
+  });
+  if(m==='browse')loadBrowse();
+  else{document.getElementById('cl').innerHTML='';document.getElementById('ss').innerHTML=''}
+}
+
+async function loadBrowse(){
+  const url='https://db.ygoprodeck.com/api/v7/cardinfo.php?num=60&offset=0&fname=the';
+  await fetchCards(url,true);
+}
+
+function setChip(f,el){
+  document.querySelectorAll('.chip').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');aF=f;
+  if(G.mode==='search'&&G.query.length>=2)doSearch(G.query);
+  else if(G.mode==='browse')loadBrowseByFilter(f);
+}
+
+async function loadBrowseByFilter(f){
+  let url='https://db.ygoprodeck.com/api/v7/cardinfo.php?num=52&offset=0';
+  if(f==='monster')url+='&type=Effect%20Monster,Normal%20Monster';
+  else if(f==='spell')url+='&type=Spell%20Card';
+  else if(f==='trap')url+='&type=Trap%20Card';
+  else if(f==='fusion')url+='&type=Fusion%20Monster';
+  else if(f==='synchro')url+='&type=Synchro%20Monster';
+  else if(f==='xyz')url+='&type=XYZ%20Monster';
+  else if(f==='link')url+='&type=Link%20Monster';
+  else url+='&fname=the';
+  await fetchCards(url,true);
+}
+
+function setZone(z,el){
+  aZ=z;G.zone=z;
+  document.querySelectorAll('.ztab').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');renderDG();
+}
+function onSI(v){
+  G.query=v;clearTimeout(sTimer);
+  if(!v||v.length<2){document.getElementById('cl').innerHTML='';document.getElementById('ss').innerHTML='';return}
+  sTimer=setTimeout(()=>doSearch(v),480);
+}
+async function doSearch(q){
+  let url=`https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${encodeURIComponent(q)}&num=28&offset=0`;
+  if(aF==='monster')url+='&type=Normal%20Monster,Effect%20Monster';
+  else if(aF==='spell')url+='&type=Spell%20Card';
+  else if(aF==='trap')url+='&type=Trap%20Card';
+  else if(aF==='fusion')url+='&type=Fusion%20Monster';
+  else if(aF==='synchro')url+='&type=Synchro%20Monster';
+  else if(aF==='xyz')url+='&type=XYZ%20Monster';
+  else if(aF==='link')url+='&type=Link%20Monster';
+  await fetchCards(url,false);
+}
+
+async function fetchCards(url,browse=false){
+  const cl=document.getElementById('cl'),ss=document.getElementById('ss');
+  ss.innerHTML=`<div class="ld"><div class="lr"></div>CONSULTANDO BASE DE DATOS…</div>`;
+  cl.innerHTML='';
+  try{
+    const res=await fetch(url);const data=await res.json();
+    ss.innerHTML='';
+    if(!data.data||!data.data.length){
+      cl.innerHTML=`<div class="ld" style="color:rgba(196,24,24,.5)">SIN RESULTADOS</div>`;return;
+    }
+    G.results=data.data;
+    cl.innerHTML=browse
+      ?`<div class="bgrid">${data.data.map(c=>bgHTML(c)).join('')}</div>`
+      :`<div class="clist">${data.data.map(c=>crHTML(c)).join('')}</div>`;
+  }catch(e){
+    ss.innerHTML='';
+    cl.innerHTML=`<div class="ld" style="color:rgba(196,24,24,.5)">ERROR DE CONEXIÓN</div>`;
+  }
+}
+
+/* Type helpers */
+function tC(t){if(!t)return'tm';const s=t.toLowerCase();if(s.includes('spell'))return'ts';if(s.includes('trap'))return'tt';if(s.includes('fusion'))return'tf';if(s.includes('synchro'))return'tsy';if(s.includes('xyz'))return'tx';if(s.includes('link'))return'tlk';return'tm'}
+function tL(t){if(!t)return'Normal';const s=t.toLowerCase();if(s.includes('spell'))return'Mágica';if(s.includes('trap'))return'Trampa';if(s.includes('fusion'))return'Fusión';if(s.includes('synchro'))return'Sincro';if(s.includes('xyz'))return'XYZ';if(s.includes('link'))return'Link';if(s.includes('effect'))return'Efecto';return'Normal'}
+function tE(t){if(!t)return'🃏';const s=t.toLowerCase();if(s.includes('spell'))return'✨';if(s.includes('trap'))return'🕳️';if(s.includes('fusion'))return'🔮';if(s.includes('synchro'))return'⭕';if(s.includes('xyz'))return'✖️';if(s.includes('link'))return'🔗';return'⚔️'}
+function cpys(id){let n=0;['main','extra','side'].forEach(z=>{const f=G.deck[z].find(c=>c.id===id);if(f)n+=(f.qty||1)});return n}
+
+function bgHTML(c){
+  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  return`<div class="bgc" onclick="openM(${c.id})">
+    ${img?`<img src="${img}" loading="lazy" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
+    <div class="bgc-add">+ DECK</div>
+  </div>`;
+}
+function crHTML(c){
+  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  const stats=c.atk!==undefined?`ATK ${c.atk} · DEF ${c.def??'?'}`:(c.race||'');
+  const cp=cpys(c.id);
+  return`<div class="cr ${cp>0?'ind':''}" onclick="openM(${c.id})">
+    <div class="cthumb">${img?`<img src="${img}" loading="lazy" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}</div>
+    <div class="cinfo"><div class="cn">${c.name}</div><div class="cm">${stats}</div></div>
+    <span class="tpill ${tC(c.type)}">${tL(c.type)}</span>
+    <button class="addb" onclick="event.stopPropagation();addC(${c.id})" ${cp>=3?'disabled':''}>+</button>
+  </div>`;
+}
+
+function isExtra(t){if(!t)return false;const s=t.toLowerCase();return s.includes('fusion')||s.includes('synchro')||s.includes('xyz')||s.includes('link')}
+function addC(id){
+  const c=G.results.find(x=>x.id===id);if(!c)return;
+  const tgt=isExtra(c.type)?'extra':aZ==='side'?'side':'main';
+  const lst=G.deck[tgt];const ex=lst.find(x=>x.id===id);
+  const cp=cpys(id);
+  if(cp>=3){toast('MÁXIMO 3 COPIAS');return}
+  const max=tgt==='main'?60:15;
+  const tot=lst.reduce((s,x)=>s+(x.qty||1),0);
+  if(tot>=max&&!ex){toast(`LÍMITE ${max} CARTAS`);return}
+  if(ex)ex.qty=(ex.qty||1)+1;else lst.push({...c,qty:1});
+  renderDG();updateZC();saveDeck();toast(`+ ${c.name}`);refreshList();
+}
+function remC(id,z){
+  const lst=G.deck[z];const i=lst.findIndex(c=>c.id===id);if(i<0)return;
+  if((lst[i].qty||1)>1)lst[i].qty--;else lst.splice(i,1);
+  renderDG();updateZC();saveDeck();refreshList();
+}
+function refreshList(){
+  const cl=document.getElementById('cl');
+  if(!G.results.length)return;
+  const isBrowse=cl.querySelector('.bgrid');
+  cl.innerHTML=isBrowse
+    ?`<div class="bgrid">${G.results.map(c=>bgHTML(c)).join('')}</div>`
+    :`<div class="clist">${G.results.map(c=>crHTML(c)).join('')}</div>`;
+}
+function renderDG(){
+  const el=document.getElementById('dg');
+  const lst=G.deck[G.zone];
+  if(!lst||!lst.length){const L={main:'DECK PRINCIPAL VACÍO',extra:'EXTRA DECK VACÍO',side:'SIDE DECK VACÍO'};el.innerHTML=`<div class="dge">${L[G.zone]}</div>`;return}
+  el.innerHTML=lst.map(c=>{
+    const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+    return`<div class="mc" title="${c.name}" onclick="remC(${c.id},'${G.zone}')">
+      ${img?`<img src="${img}" loading="lazy" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
+      ${(c.qty||1)>1?`<div class="mc-b">x${c.qty}</div>`:''}
+      <div class="del">×</div>
+    </div>`;
+  }).join('');
+}
+function updateZC(){
+  ['main','extra','side'].forEach(z=>{
+    const tot=G.deck[z].reduce((s,c)=>s+(c.qty||1),0);
+    document.getElementById('zc-'+z).textContent=`${tot}/${z==='main'?60:15}`;
+  });
+}
+function exportDeck(){
+  const lines=['══ ÚLTIMO TURNO ── Deck ══',''];
+  let has=false;
+  [{k:'main',l:'DECK PRINCIPAL'},{k:'extra',l:'EXTRA DECK'},{k:'side',l:'SIDE DECK'}].forEach(s=>{
+    const lst=G.deck[s.k];if(!lst||!lst.length)return;has=true;
+    lines.push(`── ${s.l} (${lst.reduce((a,c)=>a+(c.qty||1),0)}) ──`);
+    lst.forEach(c=>lines.push(`${c.qty||1}x ${c.name}`));lines.push('');
+  });
+  if(!has){toast('DECK VACÍO');return}
+  document.getElementById('exta').value=lines.join('\n');
+  document.getElementById('embg').classList.remove('hidden');
+}
+function clearDeck(){
+  if(!confirm(`¿Vaciar el ${G.zone==='main'?'deck principal':G.zone==='extra'?'extra deck':'side deck'}?`))return;
+  G.deck[G.zone]=[];
+  renderDG();updateZC();saveDeck();toast('DECK VACIADO');
+}
+function copyDeck(){
+  const ta=document.getElementById('exta');
+  if(navigator.clipboard)navigator.clipboard.writeText(ta.value).then(()=>toast('DECK COPIADO'));
+  else{ta.select();document.execCommand('copy');toast('DECK COPIADO')}
+}
+function closeEM(e){if(!e||e.target===document.getElementById('embg'))document.getElementById('embg').classList.add('hidden')}
+
+/* ══════════════════════════════════════
+   CARD MODAL
+══════════════════════════════════════ */
+async function openM(id){
+  let c=G.results.find(x=>x.id===id);
+  if(!c){
+    try{const r=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${id}`);const d=await r.json();if(d.data&&d.data[0]){c=d.data[0];G.results.push(c)}}catch(e){}
+  }
+  if(!c)return;
+  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  const cp=cpys(c.id);
+  document.getElementById('mi').innerHTML=`
+    <div class="m-name">${c.name}</div>
+    <span class="tpill ${tC(c.type)}" style="margin-bottom:10px;display:inline-block">${tL(c.type)}${c.race?' · '+c.race:''}</span>
+    ${img?`<img class="m-img" src="${img}" alt="${c.name}"/>`:`<div class="m-img-ph">${tE(c.type)}</div>`}
+    ${c.atk!==undefined?`<div class="mstats">
+      <div class="mstat"><span class="msl">ATK</span><span class="msv">${c.atk}</span></div>
+      <div class="mstat"><span class="msl">DEF</span><span class="msv">${c.def??'—'}</span></div>
+      <div class="mstat"><span class="msl">Nivel</span><span class="msv">${c.level??'—'}</span></div>
+      <div class="mstat"><span class="msl">Atrib.</span><span class="msv" style="font-size:11px">${c.attribute??'—'}</span></div>
+    </div>`:''}
+    <div class="mdesc">${c.desc||''}</div>
+    <button class="madd" onclick="addC(${c.id});closeM()" ${cp>=3?'disabled style="opacity:.3;cursor:default"':''}>
+      ${cp>=3?'✓ YA TIENES 3 COPIAS':'+ AÑADIR AL DECK'}
+    </button>
+    <button class="mclose" onclick="closeM()">Cerrar</button>
+  `;
+  document.getElementById('mbg').classList.remove('hidden');
+}
+function closeM(e){if(!e||e.target===document.getElementById('mbg'))document.getElementById('mbg').classList.add('hidden')}
+
+/* ══════════════════════════════════════
+   PROFILE
+══════════════════════════════════════ */
+function getRank(w){
+  if(w>=50)return RANKS[6];if(w>=30)return RANKS[5];if(w>=15)return RANKS[4];
+  if(w>=8)return RANKS[3];if(w>=3)return RANKS[2];if(w>=1)return RANKS[1];
+  return RANKS[0];
+}
+function applyProfile(){
+  document.getElementById('prf-name').value=G.profile.name;
+  // Avatar — SVG icon or fallback
+  const iconData=YGO_ICONS.find(i=>i.id===G.profile.avatar);
+  const avBig=document.getElementById('av-display');
+  const av1=document.getElementById('av1');
+  if(iconData){
+    document.getElementById('av-icon').innerHTML=iconData.svg;
+    if(av1)av1.innerHTML=`<span style="font-size:18px;line-height:1">${iconData.svg.substring(0,200)}</span>`;
+    // Set avatar in duel as small SVG
+    if(av1){av1.innerHTML='';av1.style.padding='2px';const tmp=document.createElement('div');tmp.style.cssText='width:20px;height:20px;display:flex;align-items:center';tmp.innerHTML=iconData.svg;av1.appendChild(tmp);}
+  } else {
+    document.getElementById('av-icon').textContent=G.profile.avatar||'⚔️';
+    if(av1)av1.textContent=G.profile.avatar||'⚔️';
+  }
+  const rank=getRank(G.wins);
+  const rankEl=document.getElementById('prf-rank');
+  if(rankEl){rankEl.textContent=rank.icon+' '+rank.name;rankEl.style.color=rank.color;}
+  document.getElementById('prf-since').textContent='Desde '+new Date(G.profile.since).toLocaleDateString('es-CL',{year:'numeric',month:'long'});
+  document.querySelectorAll('.era-btn').forEach(b=>b.classList.toggle('on',b.dataset.era===G.profile.era));
+  updateRankProgress();
+}
+
+function updateRankProgress(){
+  const rank=getRank(G.wins);
+  const next=getRankNext(G.wins);
+  const rnEl=document.getElementById('rank-name');
+  const riEl=document.getElementById('rank-icon');
+  const rpEl=document.getElementById('rank-progress-bar');
+  const rlEl=document.getElementById('rank-next-label');
+  if(rnEl)rnEl.textContent=rank.name;
+  if(riEl)riEl.textContent=rank.icon;
+  if(next&&rpEl){
+    const curMin=rank.min;
+    const nextMin=next.rank.min;
+    const pct=Math.round(((G.wins-curMin)/(nextMin-curMin))*100);
+    rpEl.style.width=pct+'%';rpEl.style.background=rank.color;
+    if(rlEl)rlEl.textContent=`${next.needed} victorias para "${next.rank.icon} ${next.rank.name}"`;
+  } else if(rpEl){
+    rpEl.style.width='100%';rpEl.style.background='#d4a830';
+    if(rlEl)rlEl.textContent='¡Rango máximo alcanzado!';
+  }
+}
+function updateStats(){
+  const total=G.wins+G.losses;
+  document.getElementById('st-t').textContent=total;
+  document.getElementById('st-w').textContent=G.wins;
+  document.getElementById('st-l').textContent=G.losses;
+  const rank=getRank(G.wins);
+  const rankEl=document.getElementById('prf-rank');
+  if(rankEl){rankEl.textContent=rank.icon+' '+rank.name;rankEl.style.color=rank.color;}
+  // Win rate bar
+  const pct=total>0?Math.round((G.wins/total)*100):0;
+  const wrEl=document.getElementById('wr-pct');
+  const wrBar=document.getElementById('wr-bar');
+  if(wrEl)wrEl.textContent=pct+'% victorias';
+  if(wrBar)wrBar.style.width=pct+'%';
+  updateRankProgress();
+}
+function saveProfile(){
+  G.profile.name=document.getElementById('prf-name').value||'DUELISTA';
+  saveAll();applyProfile();updateStats();toast('PERFIL GUARDADO');
+}
+function setEra(era,el){
+  G.profile.era=era;
+  document.querySelectorAll('.era-btn').forEach(b=>b.classList.toggle('on',b.dataset.era===era));
+}
+function openAvatarPicker(){
+  document.getElementById('av-grid').innerHTML=YGO_ICONS.map(ico=>
+    `<div class="av-opt ${ico.id===G.profile.avatar?'on':''}" onclick="pickAvatar('${ico.id}',this)" title="${ico.label}">
+      ${ico.svg}
+      <div style="position:absolute;bottom:2px;left:0;right:0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:7px;font-weight:700;color:rgba(232,223,200,.5);letter-spacing:.5px;text-transform:uppercase">${ico.label}</div>
+    </div>`
+  ).join('');
+  document.getElementById('avbg').classList.remove('hidden');
+}
+function pickAvatar(id,el){
+  G.profile.avatar=id;
+  const iconData=YGO_ICONS.find(i=>i.id===id);
+  if(iconData){
+    document.getElementById('av-icon').innerHTML=iconData.svg;
+    const av1=document.getElementById('av1');
+    if(av1){av1.innerHTML='';av1.style.padding='2px';const tmp=document.createElement('div');tmp.style.cssText='width:20px;height:20px;display:flex;align-items:center';tmp.innerHTML=iconData.svg;av1.appendChild(tmp);}
+  }
+  document.querySelectorAll('.av-opt').forEach(o=>o.classList.remove('on'));
+  el.classList.add('on');
+}
+function closeAV(e){if(!e||e.target===document.getElementById('avbg'))document.getElementById('avbg').classList.add('hidden')}
+
+function renderHistory(){
+  const el=document.getElementById('duel-hist');
+  if(!G.history.length){el.innerHTML='<div class="no-hist">Sin duelos registrados aún</div>';return}
+  el.innerHTML=G.history.map(h=>{
+    const myName=G.profile.name.toUpperCase();
+    const isWin=h.winner.toUpperCase()===myName;
+    const opp=isWin?h.loser:h.winner;
+    const myLP=h.p1n&&h.p1n.toUpperCase()===myName?h.p1lp:h.p2lp;
+    const date=new Date(h.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'2-digit'});
+    return`<div class="dh-entry">
+      <div class="dh-res ${isWin?'w':'l'}">${isWin?'WIN':'LOSS'}</div>
+      <div class="dh-info">
+        <div class="dh-vs">vs ${opp}</div>
+        <div class="dh-meta">${date} · ${h.initLP} LP</div>
+      </div>
+      <div class="dh-lp">${myLP.toLocaleString()}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   PERSIST
+══════════════════════════════════════ */
+function saveAll(){
+  try{
+    localStorage.setItem('ut_profile',JSON.stringify({...G.profile,wins:G.wins,losses:G.losses}));
+    localStorage.setItem('ut_hist',JSON.stringify(G.history.slice(0,50)));
+    // Deck stored with card metadata stripped to essentials to save space
+    const deckSave={
+      main:G.deck.main.map(c=>({id:c.id,name:c.name,type:c.type,atk:c.atk,def:c.def,level:c.level,attribute:c.attribute,race:c.race,desc:c.desc,qty:c.qty,card_images:c.card_images})),
+      extra:G.deck.extra.map(c=>({id:c.id,name:c.name,type:c.type,atk:c.atk,def:c.def,level:c.level,attribute:c.attribute,race:c.race,desc:c.desc,qty:c.qty,card_images:c.card_images})),
+      side:G.deck.side.map(c=>({id:c.id,name:c.name,type:c.type,atk:c.atk,def:c.def,level:c.level,attribute:c.attribute,race:c.race,desc:c.desc,qty:c.qty,card_images:c.card_images})),
+    };
+    localStorage.setItem('ut_deck',JSON.stringify(deckSave));
+  }catch(e){console.warn('Save error:',e)}
+}
+function saveDeck(){
+  try{
+    const deckSave={
+      main:G.deck.main.map(c=>({id:c.id,name:c.name,type:c.type,atk:c.atk,def:c.def,level:c.level,attribute:c.attribute,race:c.race,desc:c.desc,qty:c.qty,card_images:c.card_images})),
+      extra:G.deck.extra.map(c=>({id:c.id,name:c.name,type:c.type,atk:c.atk,def:c.def,level:c.level,attribute:c.attribute,race:c.race,desc:c.desc,qty:c.qty,card_images:c.card_images})),
+      side:G.deck.side.map(c=>({id:c.id,name:c.name,type:c.type,atk:c.atk,def:c.def,level:c.level,attribute:c.attribute,race:c.race,desc:c.desc,qty:c.qty,card_images:c.card_images})),
+    };
+    localStorage.setItem('ut_deck',JSON.stringify(deckSave));
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════
+   TOURNAMENT ENGINE — Sistema Swiss YGO
+══════════════════════════════════════ */
+
+// --- Rounds calculation (official YGO formula) ---
+function calcRounds(n){
+  if(n<=4)return 3;
+  if(n<=8)return 3;
+  if(n<=16)return 4;
+  if(n<=32)return 5;
+  return 6;
+}
+function calcTopCut(n){
+  if(n<=6)return 0;   // No top cut for tiny tournaments
+  if(n<=12)return 4;
+  return 8;
+}
+
+// --- Render dispatcher ---
+function renderTrn(){
+  const t=G.trn;
+  const el=document.getElementById('trn-content');
+  const sub=document.getElementById('trn-ph-sub');
+  if(t.phase==='setup'){
+    sub.textContent='Sistema Swiss · Formato Oficial YGO';
+    el.innerHTML=trnSetupHTML();
+  } else if(t.phase==='swiss'){
+    sub.textContent=`${t.name} · Ronda ${t.curRound}/${t.totalRounds}`;
+    el.innerHTML=trnSwissHTML();
+    renderTimer();
+  } else if(t.phase==='topcut'){
+    sub.textContent=`${t.name} · Top ${t.topCut} · Eliminación Directa`;
+    el.innerHTML=trnTopCutHTML();
+  } else if(t.phase==='done'){
+    sub.textContent=`${t.name} · ¡Torneo Finalizado!`;
+    el.innerHTML=trnDoneHTML();
+  }
+}
+
+// --- SETUP HTML ---
+function trnSetupHTML(){
+  const players=G.trn.players;
+  const n=players.length;
+  const rounds=n>=2?calcRounds(n):0;
+  const cut=n>=2?calcTopCut(n):0;
+  return`
+  <div class="trn-setup">
+    <div class="card-block" style="padding:16px">
+      <div class="s-lbl">Nombre del Torneo</div>
+      <input class="fd" id="trn-name" placeholder="Ej: Torneo Local Valdivia…" value="${G.trn.name}" style="margin-bottom:10px"/>
+      <div class="s-lbl">Premio (opcional)</div>
+      <input class="fd" id="trn-prize" placeholder="🏆 Ej: Pack de cartas, trofeo…" value="${G.trn.prize}"/>
+    </div>
+
+    <div class="trn-format-info">
+      <div class="trn-fi-title">⚔ Sistema Swiss — Formato Oficial Konami</div>
+      <div class="trn-fi-body">
+        Victoria = <b style="color:#38c888">3 pts</b> · Empate = <b style="color:#d4a830">1 pt</b> · Derrota = <b style="color:var(--red2)">0 pts</b><br/>
+        ${n>=2?`<b style="color:var(--cream)">${n} jugadores → ${rounds} rondas Swiss${cut?` + Top ${cut} Eliminación Directa`:''}</b>`:'Agrega jugadores para ver la estructura'}
+      </div>
+    </div>
+
+    <div class="card-block" style="padding:14px">
+      <div class="slbl" style="margin-top:0">Jugadores <span style="color:var(--red2)">${n}/32</span></div>
+      <div class="trn-player-add">
+        <input class="fd" id="trn-pname" placeholder="Nombre del duelista…" style="font-size:13px;padding:8px 10px"
+          onkeydown="if(event.key==='Enter')trnAddPlayer()"/>
+        <button class="btn-red" style="padding:8px 14px;font-size:11px;white-space:nowrap" onclick="trnAddPlayer()">+ ADD</button>
+      </div>
+      <div class="trn-players" id="trn-plist">
+        ${players.length===0
+          ?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--cream4);text-align:center;padding:14px;letter-spacing:2px;text-transform:uppercase">Sin jugadores</div>`
+          :players.map((p,i)=>`
+            <div class="trn-player-row">
+              <span class="trn-player-seed">${i+1}</span>
+              <span class="trn-player-name">${p.name}</span>
+              <button class="trn-del-btn" onclick="trnRemovePlayer('${p.id}')">×</button>
+            </div>`).join('')
+        }
+      </div>
+    </div>
+
+    <button class="btn-red" style="width:100%;padding:12px;font-size:14px;letter-spacing:2px"
+      onclick="trnStart()" ${n<2?'disabled style="opacity:.35;cursor:default"':''}>
+      ⚔ INICIAR TORNEO
+    </button>
+    ${n<2?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);text-align:center;letter-spacing:2px;margin-top:4px">Mínimo 2 jugadores</div>`:''}
+  </div>`;
+}
+
+// --- SWISS HTML ---
+function trnSwissHTML(){
+  const t=G.trn;
+  const round=t.rounds[t.curRound-1];
+  const allDone=round&&round.pairings.every(p=>p.res!==null);
+
+  // Round dots
+  const dots=Array.from({length:t.totalRounds},(_,i)=>{
+    const state=i+1<t.curRound?'done':i+1===t.curRound?'active':'';
+    return`<div class="trn-rd ${state}">${i+1}</div>`;
+  }).join('');
+
+  // Pairings
+  const pairingsHTML=round?round.pairings.map((p,idx)=>{
+    if(p.p2==='BYE'){
+      return`<div class="trn-pair-card bye">
+        <div class="trn-pair-names">
+          <div class="trn-pair-p1">${p.p1n}</div>
+          <div class="trn-pair-vs">BYE</div>
+          <div class="trn-pair-p2" style="color:var(--cream4)">—</div>
+        </div>
+        <div class="trn-pair-result">Victoria automática ✓</div>
+      </div>`;
+    }
+    const r=p.res;
+    return`<div class="trn-pair-card ${r?'done':''}">
+      <div class="trn-pair-names">
+        <div class="trn-pair-p1" style="${r==='p1'?'color:var(--gx)':r==='p2'?'opacity:.45':''}">${p.p1n}</div>
+        <div class="trn-pair-vs">VS</div>
+        <div class="trn-pair-p2" style="${r==='p2'?'color:var(--gx)':r==='p1'?'opacity:.45':''}">${p.p2n}</div>
+      </div>
+      <div class="trn-pair-btns">
+        <button class="trn-res-btn ${r==='p1'?'sel-p1':''}" onclick="trnSetResult(${idx},'p1')">🏆 ${p.p1n}</button>
+        <button class="trn-res-btn ${r==='draw'?'sel-draw':''}" onclick="trnSetResult(${idx},'draw')">≈ EMPATE</button>
+        <button class="trn-res-btn ${r==='p2'?'sel-p2':''}" onclick="trnSetResult(${idx},'p2')">🏆 ${p.p2n}</button>
+      </div>
+      ${r?`<div class="trn-pair-result" style="color:${r==='draw'?'#d4a830':r==='p1'?'var(--gx)':'var(--gx)'}">
+        ${r==='p1'?`✓ ${p.p1n} gana`:r==='p2'?`✓ ${p.p2n} gana`:'✓ Empate — 1 punto cada uno'}
+      </div>`:''}
+    </div>`;
+  }).join(''):'';
+
+  return`
+  <!-- Banner -->
+  <div class="trn-banner">
+    <div class="trn-banner-name">${t.name||'TORNEO'}</div>
+    <div class="trn-banner-sub">RONDA ${t.curRound} DE ${t.totalRounds} · SISTEMA SWISS</div>
+    ${t.prize?`<div class="trn-prize-badge"><span>🏆</span><span class="trn-prize-text">${t.prize}</span></div>`:''}
+    <div class="trn-round-badge">
+      <div style="font-size:9px;margin-bottom:2px">QUEDAN</div>
+      <div style="font-size:18px">${t.topCut?`TOP ${t.topCut}`:''}</div>
+    </div>
+  </div>
+
+  <!-- Round dots -->
+  <div class="trn-rounds-dots">${dots}</div>
+
+  <!-- Timer (50 min oficial) -->
+  <div class="trn-timer">
+    <div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px">Tiempo de ronda</div>
+      <div class="trn-timer-display ${G.trn.timerSec<=300&&G.trn.timerSec>0?'warn':G.trn.timerSec<=60&&G.trn.timerSec>0?'crit':''}" id="trn-timer-disp">${fmtTime(G.trn.timerSec)}</div>
+    </div>
+    <div class="trn-timer-btns">
+      <button class="trn-timer-btn" onclick="trnTimerToggle()">${G.trn.timerRunning?'⏸ PAUSA':'▶ INICIAR'}</button>
+      <button class="trn-timer-btn" onclick="trnTimerReset()">↺</button>
+    </div>
+  </div>
+
+  <!-- Pairings -->
+  <div class="slbl">Enfrentamientos — Ronda ${t.curRound}</div>
+  <div class="trn-pairings">${pairingsHTML}</div>
+
+  <!-- Standings -->
+  <div class="slbl">Clasificación</div>
+  ${trnStandingsHTML()}
+
+  <!-- Next round / top cut button -->
+  ${allDone?`
+  <button class="btn-red" style="width:100%;padding:12px;margin-top:6px;font-size:13px;letter-spacing:2px"
+    onclick="trnNextRound()">
+    ${t.curRound<t.totalRounds?`SIGUIENTE RONDA (${t.curRound+1}/${t.totalRounds}) →`:t.topCut?`⚔ INICIAR TOP ${t.topCut}`:'🏆 FINALIZAR TORNEO'}
+  </button>`:`
+  <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);text-align:center;padding:10px;letter-spacing:2px;text-transform:uppercase">
+    Ingresa todos los resultados para continuar
+  </div>`}
+
+  <button class="btn-ghost" style="width:100%;margin-top:8px;font-size:10px" onclick="trnAbandon()">Abandonar torneo</button>`;
+}
+
+// --- TOP CUT HTML ---
+function trnTopCutHTML(){
+  const t=G.trn;
+  // Group bracket by round name
+  const phases=['SEMIFINAL','CUARTOS DE FINAL','OCTAVOS'];
+  // Find unique rounds
+  const rounds=[...new Set(t.bracket.map(m=>m.round))];
+
+  const bracketHTML=rounds.map(rn=>{
+    const matches=t.bracket.filter(m=>m.round===rn);
+    const phaseName=rn==='final'?'FINAL':rn==='semi'?'SEMIFINALES':rn==='quarter'?'CUARTOS DE FINAL':'RONDA';
+    const allDone=matches.every(m=>m.res!==null);
+    return`
+    <div class="trn-bracket-phase">${phaseName}</div>
+    ${matches.map((m,idx)=>{
+      const globalIdx=t.bracket.indexOf(m);
+      if(m.p2==='TBD'){
+        return`<div class="trn-pair-card">
+          <div class="trn-pair-names">
+            <div class="trn-pair-p1">${m.p1n}</div>
+            <div class="trn-pair-vs">VS</div>
+            <div class="trn-pair-p2" style="color:var(--cream4)">Por definir</div>
+          </div>
+        </div>`;
+      }
+      const r=m.res;
+      return`<div class="trn-pair-card ${r?'done':''}">
+        <div class="trn-pair-names">
+          <div class="trn-pair-p1" style="${r==='p1'?'color:var(--gx)':r==='p2'?'opacity:.45':''}">${m.p1n}</div>
+          <div class="trn-pair-vs">VS</div>
+          <div class="trn-pair-p2" style="${r==='p2'?'color:var(--gx)':r==='p1'?'opacity:.45':''}">${m.p2n}</div>
+        </div>
+        ${!r?`<div class="trn-pair-btns">
+          <button class="trn-res-btn" onclick="trnBracketResult(${globalIdx},'p1')">🏆 ${m.p1n}</button>
+          <button class="trn-res-btn" onclick="trnBracketResult(${globalIdx},'p2')">🏆 ${m.p2n}</button>
+        </div>`:`<div class="trn-pair-result" style="color:var(--gx)">✓ ${r==='p1'?m.p1n:m.p2n} avanza</div>`}
+      </div>`;
+    }).join('')}
+    ${rn!=='final'&&allDone?`<button class="btn-red" style="width:100%;padding:10px;margin-top:4px;font-size:12px;letter-spacing:2px" onclick="trnAdvanceBracket('${rn}')">AVANZAR →</button>`:''}
+    ${rn==='final'&&matches[0]?.res?`<button class="btn-red" style="width:100%;padding:12px;margin-top:6px;font-size:13px;letter-spacing:2px" onclick="trnFinish()">🏆 VER CAMPEÓN</button>`:''}
+    `;
+  }).join('');
+
+  return`
+  <div class="trn-banner">
+    <div class="trn-banner-name">${t.name||'TORNEO'}</div>
+    <div class="trn-banner-sub">TOP ${t.topCut} · ELIMINACIÓN DIRECTA</div>
+    ${t.prize?`<div class="trn-prize-badge"><span>🏆</span><span class="trn-prize-text">${t.prize}</span></div>`:''}
+  </div>
+  <div class="slbl">Clasificación Swiss (referencia)</div>
+  ${trnStandingsHTML(true)}
+  <div class="slbl" style="margin-top:14px">Bracket Eliminatorio</div>
+  <div class="trn-bracket">${bracketHTML}</div>`;
+}
+
+// --- DONE HTML ---
+function trnDoneHTML(){
+  const t=G.trn;
+  const sorted=trnSortedPlayers();
+  const [first,second,third]=sorted;
+  return`
+  <div class="trn-winner-screen">
+    <span class="trn-trophy">🏆</span>
+    <div class="trn-winner-label">¡Campeón del Torneo!</div>
+    <div class="trn-winner-name">${t.winner||first?.name||'—'}</div>
+    ${t.prize?`<div class="trn-winner-prize">Premio: ${t.prize}</div>`:''}
+    <div class="trn-podium" style="margin-top:24px">
+      ${second?`<div class="trn-podium-place">
+        <span style="font-size:20px">🥈</span>
+        <div class="trn-podium-block" style="height:44px">2°</div>
+        <div class="trn-podium-name">${second.name}</div>
+        <div style="font-family:'Black Ops One',sans-serif;font-size:10px;color:var(--cream4)">${second.pts}pts</div>
+      </div>`:''}
+      <div class="trn-podium-place">
+        <span style="font-size:28px">🥇</span>
+        <div class="trn-podium-block" style="height:60px">1°</div>
+        <div class="trn-podium-name" style="color:#d4a830;font-weight:900">${first?.name||'—'}</div>
+        <div style="font-family:'Black Ops One',sans-serif;font-size:10px;color:#d4a830">${first?.pts||0}pts</div>
+      </div>
+      ${third?`<div class="trn-podium-place">
+        <span style="font-size:18px">🥉</span>
+        <div class="trn-podium-block" style="height:32px">3°</div>
+        <div class="trn-podium-name">${third.name}</div>
+        <div style="font-family:'Black Ops One',sans-serif;font-size:10px;color:var(--cream4)">${third.pts}pts</div>
+      </div>`:''}
+    </div>
+  </div>
+  <div class="slbl">Clasificación Final</div>
+  ${trnStandingsHTML(true)}
+  <button class="btn-red" style="width:100%;padding:12px;margin-top:14px;font-size:13px;letter-spacing:2px" onclick="trnReset()">+ NUEVO TORNEO</button>`;
+}
+
+// --- STANDINGS HTML ---
+function trnStandingsHTML(full=false){
+  const sorted=trnSortedPlayers();
+  const show=full?sorted:sorted.slice(0,Math.min(8,sorted.length));
+  return`<div class="trn-standings">
+    <div class="trn-st-head">
+      <div class="trn-st-hcell">#</div>
+      <div class="trn-st-hcell">Jugador</div>
+      <div class="trn-st-hcell" style="color:#d4a830">PTS</div>
+      <div class="trn-st-hcell" style="color:var(--gx)">V</div>
+      <div class="trn-st-hcell" style="color:var(--cream4)">E</div>
+      <div class="trn-st-hcell" style="color:var(--red2)">D</div>
+    </div>
+    ${show.map((p,i)=>`
+    <div class="trn-st-row ${i<G.trn.topCut?'top':''}">
+      <div class="trn-st-pos">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div class="trn-st-name">${p.name}</div>
+      <div class="trn-st-cell pts">${p.pts}</div>
+      <div class="trn-st-cell w">${p.w}</div>
+      <div class="trn-st-cell">${p.d}</div>
+      <div class="trn-st-cell l">${p.l}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// --- SORTED PLAYERS (pts desc, then W desc) ---
+function trnSortedPlayers(){
+  return [...G.trn.players].sort((a,b)=>b.pts-a.pts||b.w-a.w||a.name.localeCompare(b.name));
+}
+
+// --- ACTIONS ---
+function trnAddPlayer(){
+  const inp=document.getElementById('trn-pname');
+  if(!inp)return;
+  const name=inp.value.trim();
+  if(!name){toast('Ingresa un nombre');return;}
+  if(G.trn.players.length>=32){toast('MÁXIMO 32 JUGADORES');return;}
+  if(G.trn.players.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('Ese nombre ya existe');return;}
+  const id='p'+Date.now();
+  G.trn.players.push({id,name,pts:0,w:0,l:0,d:0,byes:0,opponents:[]});
+  inp.value='';
+  inp.focus();
+  // Save name + prize while at it
+  const ni=document.getElementById('trn-name');
+  const pi=document.getElementById('trn-prize');
+  if(ni)G.trn.name=ni.value;
+  if(pi)G.trn.prize=pi.value;
+  renderTrn();
+}
+
+function trnRemovePlayer(id){
+  G.trn.players=G.trn.players.filter(p=>p.id!==id);
+  renderTrn();
+}
+
+function trnStart(){
+  const ni=document.getElementById('trn-name');
+  const pi=document.getElementById('trn-prize');
+  G.trn.name=(ni?.value||'').trim()||'TORNEO SIN NOMBRE';
+  G.trn.prize=(pi?.value||'').trim();
+  const n=G.trn.players.length;
+  if(n<2){toast('Mínimo 2 jugadores');return;}
+  G.trn.totalRounds=calcRounds(n);
+  G.trn.topCut=calcTopCut(n);
+  G.trn.curRound=0;
+  G.trn.rounds=[];
+  G.trn.phase='swiss';
+  G.trn.winner=null;
+  G.trn.bracket=[];
+  G.trn.timerSec=3000; // 50 min
+  G.trn.timerRunning=false;
+  // Reset player stats
+  G.trn.players.forEach(p=>{p.pts=0;p.w=0;p.l=0;p.d=0;p.byes=0;p.opponents=[]});
+  trnGenerateRound();
+  renderTrn();
+  toast(`¡${G.trn.name} iniciado! ${n} jugadores · ${G.trn.totalRounds} rondas`);
+}
+
+function trnGenerateRound(){
+  const t=G.trn;
+  t.curRound++;
+  // Swiss pairing algorithm
+  const sorted=trnSortedPlayers();
+  const paired=new Set();
+  const pairings=[];
+
+  for(let i=0;i<sorted.length;i++){
+    if(paired.has(sorted[i].id))continue;
+    let found=false;
+    for(let j=i+1;j<sorted.length;j++){
+      if(paired.has(sorted[j].id))continue;
+      // Avoid rematch if possible (not strict if no other option)
+      const hasPlayed=sorted[i].opponents.includes(sorted[j].id);
+      if(!hasPlayed||(sorted.length-paired.size)<=2){
+        pairings.push({p1:sorted[i].id,p2:sorted[j].id,p1n:sorted[i].name,p2n:sorted[j].name,res:null});
+        paired.add(sorted[i].id);paired.add(sorted[j].id);
+        sorted[i].opponents.push(sorted[j].id);
+        sorted[j].opponents.push(sorted[i].id);
+        found=true;break;
+      }
+    }
+    if(!found&&!paired.has(sorted[i].id)){
+      // Bye
+      pairings.push({p1:sorted[i].id,p2:'BYE',p1n:sorted[i].name,p2n:'BYE',res:'p1'});
+      paired.add(sorted[i].id);
+      sorted[i].pts+=3;sorted[i].w++;sorted[i].byes++;
+    }
+  }
+  t.rounds.push({n:t.curRound,pairings,done:false});
+  // Reset 50-min timer for new round
+  t.timerSec=3000;t.timerRunning=false;
+  if(t.timerInterval){clearInterval(t.timerInterval);t.timerInterval=null;}
+}
+
+function trnSetResult(idx,res){
+  const round=G.trn.rounds[G.trn.curRound-1];
+  const p=round.pairings[idx];
+  if(p.p2==='BYE')return;
+  // Toggle off if clicking same result
+  if(p.res===res){p.res=null;}
+  else{p.res=res;}
+  renderTrn();
+}
+
+function trnNextRound(){
+  const t=G.trn;
+  const round=t.rounds[t.curRound-1];
+  // Apply results to players
+  round.pairings.forEach(p=>{
+    if(p.p2==='BYE'||p.res===null)return;
+    const p1=t.players.find(x=>x.id===p.p1);
+    const p2=p.p2==='BYE'?null:t.players.find(x=>x.id===p.p2);
+    if(p.res==='p1'){
+      if(p1){p1.pts+=3;p1.w++;}
+      if(p2){p2.l++;}
+    } else if(p.res==='p2'){
+      if(p2){p2.pts+=3;p2.w++;}
+      if(p1){p1.l++;}
+    } else if(p.res==='draw'){
+      if(p1){p1.pts+=1;p1.d++;}
+      if(p2){p2.pts+=1;p2.d++;}
+    }
+  });
+  round.done=true;
+
+  if(t.curRound<t.totalRounds){
+    trnGenerateRound();
+    renderTrn();
+    toast(`Ronda ${t.curRound} iniciada`);
+  } else if(t.topCut>0){
+    trnBuildTopCut();
+  } else {
+    trnFinish();
+  }
+}
+
+function trnBuildTopCut(){
+  const t=G.trn;
+  const sorted=trnSortedPlayers();
+  const top=sorted.slice(0,t.topCut);
+  t.phase='topcut';
+  t.bracket=[];
+  // Build first round of bracket
+  const roundName=t.topCut===8?'quarter':t.topCut===4?'semi':'final';
+  // Seed 1 vs last, 2 vs second-to-last, etc.
+  for(let i=0;i<top.length/2;i++){
+    const p1=top[i];
+    const p2=top[top.length-1-i];
+    t.bracket.push({round:roundName,p1:p1.id,p2:p2.id,p1n:p1.name,p2n:p2.name,res:null});
+  }
+  renderTrn();
+  toast(`¡Top ${t.topCut} iniciado!`);
+}
+
+function trnBracketResult(idx,res){
+  G.trn.bracket[idx].res=res;
+  renderTrn();
+}
+
+function trnAdvanceBracket(fromRound){
+  const t=G.trn;
+  const matches=t.bracket.filter(m=>m.round===fromRound);
+  const winners=matches.map(m=>m.res==='p1'?{id:m.p1,name:m.p1n}:{id:m.p2,name:m.p2n});
+
+  // Determine next round name
+  const nextRound=fromRound==='quarter'?'semi':fromRound==='semi'?'final':null;
+  if(!nextRound){trnFinish();return;}
+
+  // Pair winners
+  for(let i=0;i<winners.length;i+=2){
+    const p1=winners[i],p2=winners[i+1]||{id:'TBD',name:'TBD'};
+    t.bracket.push({round:nextRound,p1:p1.id,p2:p2.id,p1n:p1.name,p2n:p2.name,res:null});
+  }
+  renderTrn();
+}
+
+function trnFinish(){
+  const t=G.trn;
+  // Find winner from bracket final, or from standings
+  const finalMatch=t.bracket.find(m=>m.round==='final');
+  if(finalMatch&&finalMatch.res){
+    t.winner=finalMatch.res==='p1'?finalMatch.p1n:finalMatch.p2n;
+  } else {
+    t.winner=trnSortedPlayers()[0]?.name||'—';
+  }
+  t.phase='done';
+  stopTimer();
+  renderTrn();
+  toast('🏆 '+t.winner+' · ¡CAMPEÓN DEL TORNEO!');
+}
+
+function trnAbandon(){
+  if(!confirm('¿Abandonar el torneo en curso?'))return;
+  trnReset();
+}
+
+function trnReset(){
+  stopTimer();
+  G.trn={
+    phase:'setup',name:'',prize:'',
+    players:[],rounds:[],curRound:0,totalRounds:0,
+    topCut:0,bracket:[],winner:null,podium:[],
+    timerSec:3000,timerRunning:false,timerInterval:null,
+  };
+  renderTrn();
+}
+
+// --- TIMER ---
+function fmtTime(s){
+  const m=Math.floor(s/60),sec=s%60;
+  return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+function renderTimer(){
+  const el=document.getElementById('trn-timer-disp');
+  if(el){
+    el.textContent=fmtTime(G.trn.timerSec);
+    el.className='trn-timer-display'+(G.trn.timerSec<=300&&G.trn.timerSec>0?' warn':'')+(G.trn.timerSec<=60&&G.trn.timerSec>0?' crit':'');
+  }
+}
+function trnTimerToggle(){
+  const t=G.trn;
+  if(t.timerRunning){
+    stopTimer();
+  } else {
+    if(t.timerSec<=0)t.timerSec=3000;
+    t.timerRunning=true;
+    t.timerInterval=setInterval(()=>{
+      if(t.timerSec>0){
+        t.timerSec--;
+        renderTimer();
+        if(t.timerSec===300)toast('⏰ QUEDAN 5 MINUTOS');
+        if(t.timerSec===0){stopTimer();toast('⏱ TIEMPO AGOTADO — PROCEDIMIENTO FINAL');renderTrn();}
+      }
+    },1000);
+  }
+  renderTrn();
+}
+function trnTimerReset(){
+  stopTimer();
+  G.trn.timerSec=3000;
+  renderTrn();
+}
+function stopTimer(){
+  G.trn.timerRunning=false;
+  if(G.trn.timerInterval){clearInterval(G.trn.timerInterval);G.trn.timerInterval=null;}
+}
+
+/* ══════════════════════════════════════
+   TOAST & KEYS
+══════════════════════════════════════ */
+function toast(msg){
+  const el=document.createElement('div');el.className='toast';el.textContent=msg;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),2900);
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();closeEM();closeAV()}});
+</script>
+</body>
+</html>
