@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Último Turno"/>
 <meta name="description" content="Yu-Gi-Oh! Companion App — Contador de LP, Constructor de Deck y Perfil de Duelista"/>
-<title>Último Turno — v6.0</title>
+<title>Último Turno — v8.0</title>
 <script>
 // PWA Manifest — Ícono con logo Último Turno
 (function(){
@@ -631,10 +631,248 @@ body{font-family:'Barlow Condensed',sans-serif}
 /* ════════════════════════════════════════════
    ── ABOUT VIEW ──
 ════════════════════════════════════════════ */
-.about-page{padding:14px}
-.a-hero{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:30px 20px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden}
-.a-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
-.a-hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+/* ════════════════════════════════════════════
+   ABOUT — IDENTIDAD + MOTIVACIÓN
+════════════════════════════════════════════ */
+.about-identity-page{
+  overflow-y:auto;height:100%;
+  background:var(--bg);
+  display:flex;flex-direction:column;
+}
+
+/* Hero fullbleed */
+.ai-hero{
+  background:var(--bg);
+  padding:36px 20px 28px;
+  text-align:center;
+  position:relative;overflow:hidden;
+  flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.ai-bg-glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(196,24,24,.08) 0%,transparent 70%);
+}
+/* Animated grain */
+.ai-hero::after{
+  content:'';position:absolute;inset:0;opacity:.03;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Logo large CSS */
+.ai-logo-wrap{
+  display:inline-flex;flex-direction:column;align-items:center;
+  position:relative;z-index:1;
+  animation:aiLogoIn .9s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes aiLogoIn{from{opacity:0;transform:scale(.85) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.ai-frame-top{
+  width:140px;height:42px;
+  border:2px solid var(--red);border-radius:10px 10px 0 0;border-bottom:none;
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.ai-frame-top::before{
+  content:'';position:absolute;inset:5px 7px 0;
+  border:1px solid rgba(196,24,24,.3);border-radius:7px 7px 0 0;border-bottom:none;
+}
+.ai-eye-row{display:flex;align-items:center;gap:6px}
+.ai-el{width:20px;height:2px;background:var(--red)}
+.ai-eo{
+  width:22px;height:12px;
+  border:2px solid var(--red);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.ai-eo-dot{width:6px;height:6px;background:var(--red);border-radius:50%}
+
+.ai-text{padding:4px 16px 0}
+.ai-ul{
+  font-family:'Black Ops One',sans-serif;
+  font-size:32px;letter-spacing:6px;
+  color:var(--cream);text-shadow:2px 2px 0 rgba(0,0,0,.9);
+  line-height:1;display:block;text-align:center;
+}
+.ai-tn{
+  font-family:'Black Ops One',sans-serif;
+  font-size:64px;letter-spacing:3px;
+  color:var(--cream);
+  text-shadow:4px 4px 0 rgba(0,0,0,.95),0 0 50px rgba(196,24,24,.25);
+  line-height:.88;display:block;text-align:center;
+}
+
+.ai-arc{
+  width:180px;height:15px;margin-top:-4px;
+  border:2px solid var(--red);border-radius:0 0 50% 50%;border-top:none;
+  position:relative;
+}
+.ai-arc::before{
+  content:'';position:absolute;inset:4px 12px 0;
+  border:1px solid rgba(196,24,24,.3);border-radius:0 0 50% 50%;border-top:none;
+}
+.ai-frame-bot{
+  width:110px;height:30px;margin-top:-2px;
+  border:2px solid var(--red);border-radius:0 0 10px 10px;border-top:none;
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.ai-frame-bot::before{
+  content:'';position:absolute;inset:0 6px 5px;
+  border:1px solid rgba(196,24,24,.3);border-radius:0 0 8px 8px;border-top:none;
+}
+.ai-spiral{
+  width:14px;height:14px;border:2px solid var(--red);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.ai-spiral-in{width:5px;height:5px;border:1.5px solid rgba(196,24,24,.5);border-radius:50%}
+
+.ai-tagline{
+  margin-top:20px;position:relative;z-index:1;
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;
+  color:rgba(232,223,200,.35);letter-spacing:3px;text-transform:uppercase;
+  animation:fadeU .6s .4s both;
+}
+.ai-version{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:500;
+  color:rgba(196,24,24,.35);letter-spacing:2px;margin-top:4px;
+  animation:fadeU .5s .6s both;position:relative;z-index:1;
+}
+
+/* Quote block */
+.ai-quote-block{
+  background:var(--bg2);
+  border-bottom:1px solid var(--border2);
+  padding:16px 16px 12px;
+  position:relative;
+}
+.ai-quote-block::before{
+  content:'"';
+  position:absolute;top:8px;left:14px;
+  font-family:'Black Ops One',sans-serif;font-size:48px;color:rgba(196,24,24,.08);
+  line-height:1;
+}
+.ai-quote-label{
+  font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;
+  color:var(--red2);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;
+}
+.ai-quote-text{
+  font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;
+  color:var(--cream);line-height:1.6;font-style:italic;
+  margin-bottom:5px;padding-left:8px;
+  border-left:2px solid var(--red);
+  transition:opacity .3s;
+}
+.ai-quote-src{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;
+  color:var(--cream4);letter-spacing:1px;margin-bottom:10px;padding-left:10px;
+}
+.ai-quote-btn{
+  background:none;border:1px solid var(--border2);border-radius:2px;
+  padding:5px 12px;color:var(--cream4);
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+  transition:all var(--trans);
+}
+.ai-quote-btn:hover{border-color:var(--red);color:var(--cream)}
+
+/* Stats block */
+.ai-stats-block{
+  padding:14px 16px;border-bottom:1px solid var(--border2);
+}
+.ai-stats-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  color:var(--cream4);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;
+}
+.ai-stats-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.ai-stat{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:2px;
+  padding:10px 8px;text-align:center;
+  transition:all var(--trans);
+}
+.ai-stat:hover{border-color:rgba(196,24,24,.25);transform:translateY(-2px)}
+.ai-stat-val{
+  font-family:'Black Ops One',sans-serif;font-size:20px;
+  color:var(--cream);display:block;letter-spacing:1px;
+}
+.ai-stat-lbl{
+  font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;
+  color:var(--cream4);letter-spacing:1.5px;text-transform:uppercase;
+  display:block;margin-top:2px;
+}
+.ai-stat.wr .ai-stat-val{color:var(--gx)}
+.ai-stat.rk .ai-stat-val{font-size:13px;color:#d4a830;letter-spacing:.5px}
+
+/* Tip block */
+.ai-tip-block{
+  background:var(--bg2);
+  border-bottom:1px solid var(--border2);
+  padding:14px 16px 12px;
+}
+.ai-tip-label{
+  font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;
+  color:#d4a830;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;
+}
+.ai-tip-text{
+  font-family:'Barlow',sans-serif;font-size:13px;color:var(--cream2);
+  line-height:1.7;margin-bottom:10px;
+  transition:opacity .3s;
+}
+
+/* CTA */
+.ai-cta-block{
+  padding:20px 16px;text-align:center;
+  border-bottom:1px solid var(--border2);
+}
+.ai-cta-btn{
+  width:100%;padding:14px;
+  background:var(--red);border:none;border-radius:3px;
+  color:var(--cream);font-family:'Black Ops One',sans-serif;
+  font-size:16px;letter-spacing:3px;cursor:pointer;
+  transition:all var(--trans);
+  box-shadow:0 4px 20px rgba(196,24,24,.25);
+}
+.ai-cta-btn:hover{background:var(--red2);box-shadow:0 6px 28px rgba(196,24,24,.4);transform:translateY(-2px)}
+.ai-cta-btn:active{transform:scale(.97)}
+.ai-cta-sub{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;
+  color:var(--cream4);letter-spacing:2px;text-transform:uppercase;
+  margin-top:8px;
+}
+
+/* Skins row */
+.ai-skins-row{
+  display:flex;gap:0;border-bottom:1px solid var(--border2);
+}
+.ai-skin{
+  flex:1;padding:10px 6px;text-align:center;
+  border-right:1px solid var(--border2);
+}
+.ai-skin:last-child{border-right:none}
+.ai-skin span{
+  font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;
+  color:var(--cream4);letter-spacing:1px;text-transform:uppercase;display:block;
+  margin-bottom:3px;
+}
+.ai-skin-num{
+  font-family:'Black Ops One',sans-serif;font-size:15px;letter-spacing:2px;
+}
+
+/* Footer */
+.ai-footer{
+  padding:20px 16px;text-align:center;
+}
+.ai-footer-logo{
+  font-family:'Black Ops One',sans-serif;font-size:14px;
+  color:rgba(232,223,200,.2);letter-spacing:3px;margin-bottom:4px;
+}
+.ai-footer-sub{
+  font-family:'Barlow',sans-serif;font-size:11px;
+  color:rgba(232,223,200,.18);margin-bottom:3px;
+}
+.ai-footer-tech{
+  font-family:'Barlow Condensed',sans-serif;font-size:9px;
+  color:rgba(196,24,24,.25);letter-spacing:2px;text-transform:uppercase;
+}
 /* Logo CSS rebuild */
 .logo-css{display:inline-flex;flex-direction:column;align-items:center}
 .lc-ft{width:106px;height:32px;border:1.5px solid var(--red);border-radius:8px 8px 0 0;border-bottom:none;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:-1px}
@@ -945,6 +1183,219 @@ body{font-family:'Barlow Condensed',sans-serif}
 }
 .trn-timer-btn:hover{border-color:var(--red);color:var(--cream)}
 
+/* ════════════════════════════════════════════
+   AYUDA / MANUAL CSS
+════════════════════════════════════════════ */
+.ayuda-page{padding:12px}
+
+/* Tab pills inside ayuda */
+.ayuda-tabs{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+.ayuda-tabs::-webkit-scrollbar{display:none}
+.ayuda-tab{
+  flex-shrink:0;padding:6px 14px;
+  background:var(--bg2);border:1px solid var(--border2);border-radius:20px;
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  color:var(--cream3);cursor:pointer;transition:all var(--trans);
+  letter-spacing:1px;text-transform:uppercase;
+}
+.ayuda-tab:hover{border-color:rgba(196,24,24,.3);color:var(--cream)}
+.ayuda-tab.on{background:var(--red);border-color:var(--red);color:var(--cream)}
+
+.ayuda-section{display:none}
+.ayuda-section.on{display:block;animation:viewIn .2s ease}
+
+/* Manual cards */
+.manual-block{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:3px;
+  margin-bottom:8px;overflow:hidden;
+  transition:border-color var(--trans);
+}
+.manual-block:hover{border-color:rgba(196,24,24,.2)}
+.manual-hd{
+  padding:12px 14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  user-select:none;
+}
+.manual-hd-left{display:flex;align-items:center;gap:10px}
+.manual-icon{font-size:18px;flex-shrink:0}
+.manual-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;
+  color:var(--cream);letter-spacing:.5px;
+}
+.manual-arrow{
+  font-size:12px;color:var(--cream4);transition:transform var(--trans);
+  font-family:monospace;
+}
+.manual-block.open .manual-arrow{transform:rotate(90deg)}
+.manual-body{
+  display:none;padding:0 14px 14px;
+  font-family:'Barlow',sans-serif;font-size:12px;color:var(--cream3);
+  line-height:1.7;border-top:1px solid var(--border2);
+}
+.manual-block.open .manual-body{display:block;animation:fadeU .2s ease}
+
+/* Rule steps */
+.rule-step{
+  display:flex;gap:10px;margin-bottom:10px;
+  padding:10px 12px;
+  background:var(--bg3);border-radius:2px;
+  border-left:2px solid var(--red);
+}
+.rule-step-n{
+  font-family:'Black Ops One',sans-serif;font-size:16px;
+  color:var(--red2);flex-shrink:0;width:20px;
+}
+.rule-step-body{flex:1}
+.rule-step-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;
+  color:var(--cream);margin-bottom:3px;letter-spacing:.5px;
+}
+.rule-step-desc{
+  font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.6;
+}
+
+/* Phase diagram */
+.phase-list{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+.phase-row{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;background:var(--bg3);border-radius:2px;
+  border:1px solid var(--border2);transition:all var(--trans);
+}
+.phase-row:hover{border-color:rgba(196,24,24,.25);transform:translateX(2px)}
+.phase-abbr{
+  font-family:'Black Ops One',sans-serif;font-size:11px;
+  color:var(--red2);width:32px;flex-shrink:0;letter-spacing:.5px;
+}
+.phase-name{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
+  color:var(--cream);flex:1;
+}
+.phase-desc{font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4);line-height:1.4}
+
+/* Card type grid */
+.card-types-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.ct-card{
+  background:var(--bg3);border-radius:2px;padding:8px 10px;
+  border:1px solid var(--border2);
+}
+.ct-name{
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;
+  margin-bottom:3px;
+}
+.ct-desc{font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4);line-height:1.5}
+.ct-monster .ct-name{color:#c89050}
+.ct-spell .ct-name{color:#50a0c0}
+.ct-trap .ct-name{color:#a050a8}
+.ct-extra .ct-name{color:#6090c0}
+
+/* Chain diagram */
+.chain-visual{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:3px;
+  padding:14px;margin:10px 0;
+}
+.chain-link{
+  display:flex;align-items:center;gap:8px;margin-bottom:6px;
+}
+.chain-link:last-child{margin-bottom:0}
+.chain-num{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--red3);border:1px solid var(--red);
+  font-family:'Black Ops One',sans-serif;font-size:12px;color:var(--cream);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.chain-arrow{color:var(--cream4);font-size:12px;flex-shrink:0}
+.chain-card-name{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
+  color:var(--cream);
+}
+.chain-resolve{
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);
+  font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);
+  line-height:1.6;
+}
+.chain-resolve b{color:var(--gx)}
+
+/* IA Árbitro */
+.arbitro-section{margin-top:0}
+.arbitro-input-area{
+  background:var(--bg2);border:1px solid var(--border);border-radius:3px;
+  padding:14px;margin-bottom:10px;
+}
+.arbitro-textarea{
+  width:100%;min-height:100px;max-height:200px;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:2px;
+  padding:10px 12px;color:var(--cream);
+  font-family:'Barlow',sans-serif;font-size:13px;line-height:1.6;
+  outline:none;resize:vertical;transition:border-color var(--trans);
+}
+.arbitro-textarea:focus{border-color:var(--red)}
+.arbitro-textarea::placeholder{color:rgba(232,223,200,.2);font-size:12px}
+
+/* Camera capture */
+.cam-row{display:flex;gap:8px;margin-top:10px;margin-bottom:10px}
+.cam-btn{
+  flex:1;padding:9px 12px;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:2px;
+  color:var(--cream3);font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all var(--trans);display:flex;align-items:center;
+  justify-content:center;gap:6px;
+}
+.cam-btn:hover{border-color:rgba(196,24,24,.35);color:var(--cream)}
+.cam-preview{
+  width:100%;max-height:180px;object-fit:cover;border-radius:2px;
+  border:1px solid var(--border2);margin-top:8px;display:none;
+}
+
+/* IA Response */
+.arbitro-response{
+  background:var(--bg2);border:1px solid var(--border);border-radius:3px;
+  padding:14px;position:relative;overflow:hidden;
+  display:none;
+}
+.arbitro-response::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--red),transparent);
+}
+.arbitro-response-label{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  color:var(--red2);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;
+}
+.arbitro-response-text{
+  font-family:'Barlow',sans-serif;font-size:13px;color:var(--cream2);
+  line-height:1.8;white-space:pre-wrap;
+}
+.arbitro-loading{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;
+  color:var(--cream3);letter-spacing:1.5px;text-transform:uppercase;
+}
+.arbitro-loading-dots{
+  display:flex;gap:4px;
+}
+.arbitro-loading-dots span{
+  width:6px;height:6px;border-radius:50%;background:var(--red);
+  animation:dotPulse 1.2s ease-in-out infinite;
+}
+.arbitro-loading-dots span:nth-child(2){animation-delay:.2s}
+.arbitro-loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,80%,100%{transform:scale(.8);opacity:.5}40%{transform:scale(1.2);opacity:1}}
+
+/* App info blocks */
+.app-feat{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:3px;
+  padding:11px 13px;margin-bottom:6px;
+  display:flex;align-items:flex-start;gap:10px;
+  transition:all var(--trans);
+}
+.app-feat:hover{border-color:rgba(196,24,24,.2);transform:translateX(2px)}
+.app-feat-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.app-feat-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;
+  color:var(--cream);letter-spacing:.5px;margin-bottom:3px;
+}
+.app-feat-desc{font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.5}
+
 .hidden{display:none!important}
 @media(max-width:360px){.lpn{font-size:54px}.sk-5ds .lpn{font-size:58px}.sp-tn{font-size:44px}}
 </style>
@@ -966,7 +1417,7 @@ body{font-family:'Barlow Condensed',sans-serif}
   </div>
   <div class="sp-sub">Yu-Gi-Oh! Companion</div>
   <div class="sp-bar-wrap"><div class="sp-bar"><div class="sp-bar-fill"></div></div></div>
-  <div class="sp-ver">v6.0 · 2025</div>
+  <div class="sp-ver">v8.0 · 2025</div>
 </div>
 
 <!-- ══════════ APP ══════════ -->
@@ -978,7 +1429,7 @@ body{font-family:'Barlow Condensed',sans-serif}
         <span class="tb-ul">ÚLTIMO</span>
         <span class="tb-tn">TURNO</span>
       </div>
-      <span class="tb-beta">v6.0</span>
+      <span class="tb-beta">v8.0</span>
     </div>
     <div class="tb-nav">
       <button class="tbn on" id="tn-lp" onclick="gv('lp')">
@@ -998,8 +1449,14 @@ body{font-family:'Barlow Condensed',sans-serif}
         Torneo
       </button>
       <button class="tbn" id="tn-about" onclick="gv('about')">
-        <svg viewBox="0 0 24 24"><polygon points="12 2 15.1 8.3 22 9.3 17 14.1 18.2 21 12 17.8 5.8 21 7 14.1 2 9.3 8.9 8.3 12 2"/></svg>
-        App
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 2 L14 8 L20 8 L15 12 L17 18 L12 14 L7 18 L9 12 L4 8 L10 8 Z" stroke-linejoin="round"/>
+        </svg>
+        Inicio
+      </button>
+      <button class="tbn" id="tn-ayuda" onclick="gv('ayuda')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Ayuda
       </button>
     </div>
   </div>
@@ -1021,10 +1478,25 @@ body{font-family:'Barlow Condensed',sans-serif}
               <div class="lp-opt on" onclick="pickLP(4000,this)"><span class="lp-n">4000</span><span class="lp-t">Clásico</span></div>
               <div class="lp-opt" onclick="pickLP(8000,this)"><span class="lp-n">8000</span><span class="lp-t">Anime</span></div>
             </div>
-            <div class="s-row">
+            <div class="s-row" style="margin-bottom:10px">
               <input class="fd" id="lp-ci" type="number" min="100" placeholder="Otro valor…"/>
-              <button class="btn-red" onclick="beginDuel()">DUELO</button>
             </div>
+            <!-- Modo de juego -->
+            <div class="s-lbl">Modo de juego</div>
+            <div style="display:flex;gap:8px;margin-bottom:4px">
+              <div class="lp-opt on" id="mode-local" onclick="pickMode('local',this)" style="flex:1">
+                <span class="lp-n" style="font-size:18px">👥</span>
+                <span class="lp-t">Local</span>
+              </div>
+              <div class="lp-opt" id="mode-online" onclick="pickMode('online',this)" style="flex:1">
+                <span class="lp-n" style="font-size:18px">📱</span>
+                <span class="lp-t">Online / Separado</span>
+              </div>
+            </div>
+            <div id="mode-online-hint" style="display:none;font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.5;margin-bottom:8px;padding:8px;background:rgba(196,24,24,.06);border-radius:2px;border-left:2px solid var(--red)">
+              📱 Cada jugador usa su propio teléfono. Toca "PASAR TURNO" para ceder el control al rival. El historial se registra para ambos.
+            </div>
+            <button class="btn-red" style="width:100%;padding:10px" onclick="beginDuel()">INICIAR DUELO</button>
           </div>
         </div>
       </div>
@@ -1132,6 +1604,14 @@ body{font-family:'Barlow Condensed',sans-serif}
             <div class="tc" onclick="flipC()"><span class="tc-i">🪙</span><span class="tc-l">Moneda</span><span class="tc-r" id="cr">—</span></div>
           </div>
         </div>
+
+        <!-- Online mode: pass phone button -->
+        <div id="pass-phone-btn" style="display:none;margin-bottom:8px;position:relative;z-index:1">
+          <button onclick="passPhone()" style="width:100%;padding:12px;background:rgba(212,168,48,.1);border:1px solid rgba(212,168,48,.35);border-radius:3px;color:#d4a830;font-family:'Black Ops One',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;transition:all var(--trans)">
+            📱 PASAR TURNO AL RIVAL
+          </button>
+        </div>
+
         <a class="reset-lnk" onclick="doReset()">↺ REINICIAR DUELO</a>
       </div>
     </div>
@@ -1223,8 +1703,9 @@ body{font-family:'Barlow Condensed',sans-serif}
         </div>
         <div class="dgrid" id="dg"></div>
         <div style="display:flex;gap:6px;margin-bottom:12px">
-          <button class="export-btn" style="flex:1;margin-bottom:0" onclick="exportDeck()">📋 Exportar Deck</button>
-          <button class="export-btn" style="flex:0 0 auto;margin-bottom:0;padding:8px 12px;border-color:rgba(196,24,24,.3);color:rgba(196,24,24,.5)" onclick="clearDeck()" title="Vaciar deck actual">🗑</button>
+          <button class="export-btn" style="flex:1;margin-bottom:0" onclick="exportDeck()">📋 Exportar</button>
+          <button class="export-btn" style="flex:1;margin-bottom:0;border-color:rgba(56,200,136,.3);color:rgba(56,200,136,.7)" onclick="openHandModal()" title="Simular mano de inicio">🎴 Mano</button>
+          <button class="export-btn" style="flex:0 0 auto;margin-bottom:0;padding:8px 12px;border-color:rgba(196,24,24,.3);color:rgba(196,24,24,.5)" onclick="clearDeck()" title="Vaciar deck">🗑</button>
         </div>
         <div id="ss"></div>
         <div id="cl"></div>
@@ -1296,43 +1777,83 @@ body{font-family:'Barlow Condensed',sans-serif}
       </div>
     </div>
 
-    <!-- ════ ABOUT VIEW ════ -->
+    <!-- ════ ABOUT VIEW — IDENTIDAD ════ -->
     <div id="v-about" class="view hidden">
-      <div class="ph">
-        <div class="ph-t">La App</div>
-        <div class="ph-s">Último Turno · v6.0</div>
-      </div>
-      <div class="about-page">
-        <div class="a-hero">
-          <div class="logo-css">
-            <div class="lc-ft"><div class="lc-er"><div class="lc-el"></div><div class="lc-eo"></div><div class="lc-el"></div></div></div>
-            <div class="lc-tx"><span class="lc-ul">ÚLTIMO</span><span class="lc-tn">TURNO</span></div>
-            <div class="lc-arc"></div>
-            <div class="lc-fb"><div class="lc-sp"></div></div>
+      <div class="about-identity-page" id="about-identity-page">
+
+        <!-- Full-bleed logo hero -->
+        <div class="ai-hero">
+          <div class="ai-bg-glow"></div>
+
+          <!-- Logo grande reconstruido en CSS -->
+          <div class="ai-logo-wrap">
+            <div class="ai-frame-top">
+              <div class="ai-eye-row">
+                <div class="ai-el"></div>
+                <div class="ai-eo"><div class="ai-eo-dot"></div></div>
+                <div class="ai-el"></div>
+              </div>
+            </div>
+            <div class="ai-text">
+              <span class="ai-ul">ÚLTIMO</span>
+              <span class="ai-tn">TURNO</span>
+            </div>
+            <div class="ai-arc"></div>
+            <div class="ai-frame-bot">
+              <div class="ai-spiral"><div class="ai-spiral-in"></div></div>
+            </div>
           </div>
-          <div class="a-tag">Para quienes gritaban<br/><em style="color:var(--red2)">"¡Es mi turno final!"</em><br/>frente al televisor</div>
+
+          <div class="ai-tagline">Yu-Gi-Oh! Companion</div>
+          <div class="ai-version">v8.0 · Valdivia, Chile · 2025</div>
         </div>
-        <div class="flist">
-          <div class="fi"><span class="fi-i">⚔️</span><div><div class="fi-t">Contador de LP</div><div class="fi-d">2 jugadores · skins DM/GX/5D's · dado, 2 dados y moneda · barra crítica pulsante · historial de golpes</div></div></div>
-          <div class="fi"><span class="fi-i">🃏</span><div><div class="fi-t">Constructor de Deck</div><div class="fi-d">Base completa YGOPRODeck · browse por tipo/atributo/nivel/arquetipo · modo explorar o buscar · exportar lista · deck principal, extra y side</div></div></div>
-          <div class="fi"><span class="fi-i">👤</span><div><div class="fi-t">Perfil de Jugador</div><div class="fi-d">Avatar · nombre · era favorita · rango automático por victorias · estadísticas · historial completo de duelos</div></div></div>
-          <div class="fi"><span class="fi-i">📱</span><div><div class="fi-t">PWA Instalable</div><div class="fi-d">Agrega a tu pantalla de inicio desde Safari o Chrome. Sin instalación en tiendas.</div></div></div>
+
+        <!-- Frase motivacional aleatoria -->
+        <div class="ai-quote-block">
+          <div class="ai-quote-label">⚡ FRASE DEL DUELISTA</div>
+          <div class="ai-quote-text" id="ai-quote"></div>
+          <div class="ai-quote-src" id="ai-quote-src"></div>
+          <button class="ai-quote-btn" onclick="newQuote()">↺ Nueva frase</button>
         </div>
-        <div class="slbl">Skins por era</div>
-        <div class="skins-preview">
-          <div class="skin-prev sk1"><span class="sp-num">8000</span><span class="sp-lbl">DM</span></div>
-          <div class="skin-prev sk2"><span class="sp-num" style="color:#e040e0">8000</span><span class="sp-lbl">GX</span></div>
-          <div class="skin-prev sk3"><span class="sp-num" style="color:#88c0e8;font-size:20px;letter-spacing:4px">8000</span><span class="sp-lbl">5D's</span></div>
-          <div class="skin-prev sk4"><span class="sp-num" style="color:#fff;font-size:20px">8000</span><span class="sp-lbl">ZEXAL</span></div>
-        </div>
-        <div class="a-footer">
-          <div class="af-v">Versión</div>
-          <div class="af-n">4.0</div>
-          <div class="af-s">Último Turno · Hecho en Valdivia, Chile · 2025</div>
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;color:var(--cream4);letter-spacing:2px;text-transform:uppercase">
-            Base de datos · YGOPRODeck API · PWA Instalable
+
+        <!-- Stats del jugador -->
+        <div class="ai-stats-block" id="ai-stats-block">
+          <div class="ai-stats-title">⚔ TU DESEMPEÑO</div>
+          <div class="ai-stats-grid" id="ai-stats-grid">
+            <!-- rendered by JS -->
           </div>
         </div>
+
+        <!-- Tip del día -->
+        <div class="ai-tip-block">
+          <div class="ai-tip-label">💡 TIP DEL DUELISTA</div>
+          <div class="ai-tip-text" id="ai-tip"></div>
+          <button class="ai-quote-btn" onclick="newTip()">↺ Otro tip</button>
+        </div>
+
+        <!-- CTA -->
+        <div class="ai-cta-block">
+          <button class="ai-cta-btn" onclick="gv('lp')">
+            ⚔ ¡A DULEAR!
+          </button>
+          <div class="ai-cta-sub" id="ai-cta-sub">¿Listo para el próximo duelo?</div>
+        </div>
+
+        <!-- Skins preview compacto -->
+        <div class="ai-skins-row">
+          <div class="ai-skin sk-dm-p"><span>DM</span><div class="ai-skin-num" style="color:var(--cream)">8K</div></div>
+          <div class="ai-skin sk-gx-p"><span>GX</span><div class="ai-skin-num" style="color:#e040e0">8K</div></div>
+          <div class="ai-skin sk-5ds-p"><span>5D's</span><div class="ai-skin-num" style="color:#88c0e8">8K</div></div>
+          <div class="ai-skin sk-zx-p"><span>ZEXAL</span><div class="ai-skin-num" style="color:#c080ff">8K</div></div>
+        </div>
+
+        <!-- Footer mínimo -->
+        <div class="ai-footer">
+          <div class="ai-footer-logo">ÚLTIMO TURNO</div>
+          <div class="ai-footer-sub">Hecho con ❤️ por duelistas, para duelistas</div>
+          <div class="ai-footer-tech">YGOPRODeck API · PWA · Claude AI</div>
+        </div>
+
       </div>
     </div>
 
@@ -1346,6 +1867,245 @@ body{font-family:'Barlow Condensed',sans-serif}
       <div class="trn-page" id="trn-content"></div>
     </div>
 
+    <!-- ════ AYUDA VIEW ════ -->
+    <div id="v-ayuda" class="view hidden">
+      <div class="ph">
+        <div class="ph-t">Centro de Ayuda</div>
+        <div class="ph-s">Manual · Reglas · Árbitro IA</div>
+        <div class="ph-wm"><b>ÚLTIMO</b><s>TURNO</s></div>
+      </div>
+      <div class="ayuda-page">
+
+        <!-- Internal tabs -->
+        <div class="ayuda-tabs">
+          <div class="ayuda-tab on" onclick="setAyudaTab('manual',this)">📖 Manual</div>
+          <div class="ayuda-tab" onclick="setAyudaTab('reglas',this)">⚔ Cómo jugar</div>
+          <div class="ayuda-tab" onclick="setAyudaTab('cadenas',this)">🔗 Cadenas</div>
+          <div class="ayuda-tab" onclick="setAyudaTab('arbitro',this)">🤖 Árbitro IA</div>
+        </div>
+
+        <!-- ── MANUAL DE LA APP ── -->
+        <div class="ayuda-section on" id="ay-manual">
+
+          <div class="manual-block open" onclick="toggleManual(this)">
+            <div class="manual-hd">
+              <div class="manual-hd-left"><span class="manual-icon">⚔️</span><span class="manual-title">Contador de Life Points</span></div>
+              <span class="manual-arrow">›</span>
+            </div>
+            <div class="manual-body">
+              <div class="rule-step"><div class="rule-step-n">1</div><div class="rule-step-body"><div class="rule-step-title">Configura el duelo</div><div class="rule-step-desc">Elige 4000 LP (clásico manga), 8000 LP (anime/oficial) o un valor personalizado. Selecciona modo Local (misma pantalla) u Online (pasas el teléfono al rival).</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">2</div><div class="rule-step-body"><div class="rule-step-title">Botones rápidos de daño</div><div class="rule-step-desc">Toca −10, −50, −100, −500 o −1000 para aplicar daño instantáneo. El número animado y el flash rojo confirman el golpe. También puedes escribir un valor exacto y pulsar − o +.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">3</div><div class="rule-step-body"><div class="rule-step-title">Skins por era</div><div class="rule-step-desc">Cambia la apariencia del contador con el selector en la cabecera del jugador: <b>DM</b> (dorado clásico), <b>GX</b> (verde neón + magenta), <b>5D's</b> (azul acero), <b>ZEXAL</b> (morado + blanco).</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">4</div><div class="rule-step-body"><div class="rule-step-title">Modo Online / Separado</div><div class="rule-step-desc">Activa este modo cuando cada jugador usa su propio teléfono. Solo ves tu tablero. Toca el botón dorado "PASAR TURNO AL RIVAL" para ceder el control. El historial se registra para ambos.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">5</div><div class="rule-step-body"><div class="rule-step-title">Barra crítica</div><div class="rule-step-desc">Cuando los LP caen bajo el 25%, el borde del tablero pulsa en rojo. Una alerta especial aparece cuando alguien llega a 0.</div></div></div>
+            </div>
+          </div>
+
+          <div class="manual-block" onclick="toggleManual(this)">
+            <div class="manual-hd">
+              <div class="manual-hd-left"><span class="manual-icon">🎲</span><span class="manual-title">Herramientas de Duelo</span></div>
+              <span class="manual-arrow">›</span>
+            </div>
+            <div class="manual-body">
+              <p style="margin-bottom:8px">Disponibles durante el duelo en la sección <b>HERRAMIENTAS</b>:</p>
+              <div class="rule-step"><div class="rule-step-n">🎲</div><div class="rule-step-body"><div class="rule-step-title">Dado (1d6)</div><div class="rule-step-desc">Lanza un dado de 6 caras. Muestra animación de shuffle y luego pop-up con el resultado.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">🎯</div><div class="rule-step-body"><div class="rule-step-title">2 Dados</div><div class="rule-step-desc">Lanza dos dados simultáneamente. Muestra ambos resultados y la suma total en el pop-up.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">🪙</div><div class="rule-step-body"><div class="rule-step-title">Moneda</div><div class="rule-step-desc">Lanza una moneda (Cara / Cruz). Animación de flip real antes de mostrar el resultado.</div></div></div>
+            </div>
+          </div>
+
+          <div class="manual-block" onclick="toggleManual(this)">
+            <div class="manual-hd">
+              <div class="manual-hd-left"><span class="manual-icon">🃏</span><span class="manual-title">Constructor de Deck</span></div>
+              <span class="manual-arrow">›</span>
+            </div>
+            <div class="manual-body">
+              <div class="rule-step"><div class="rule-step-n">1</div><div class="rule-step-body"><div class="rule-step-title">Buscar cartas</div><div class="rule-step-desc">Escribe el nombre de la carta en el buscador. Los resultados aparecen en tiempo real desde la base de datos oficial YGOPRODeck. Mínimo 2 caracteres para activar la búsqueda.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">2</div><div class="rule-step-body"><div class="rule-step-title">Filtros avanzados</div><div class="rule-step-desc">Toca el ícono ⚙ para abrir filtros: Tipo, Atributo, Nivel/Rango, Arquetipo, ATK mínimo y máximo.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">3</div><div class="rule-step-body"><div class="rule-step-title">Modo Explorar</div><div class="rule-step-desc">Alterna a modo 📚 Explorar para ver el catálogo completo en grilla visual. Filtra por tipo con los chips de colores.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">4</div><div class="rule-step-body"><div class="rule-step-title">Gestionar cartas del deck</div><div class="rule-step-desc">Toca cualquier carta en tu deck para abrir el menú de acciones: Ver detalles, Mover al Side Deck, o Eliminar. El deck se guarda automáticamente.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">5</div><div class="rule-step-body"><div class="rule-step-title">Simulación de Mano</div><div class="rule-step-desc">Toca el botón 🎴 Mano para ver 5 cartas aleatorias de tu deck (respetando copias). Toca cada carta para ver sus detalles completos. Útil para testear consistencia.</div></div></div>
+            </div>
+          </div>
+
+          <div class="manual-block" onclick="toggleManual(this)">
+            <div class="manual-hd">
+              <div class="manual-hd-left"><span class="manual-icon">🏆</span><span class="manual-title">Sistema de Torneos</span></div>
+              <span class="manual-arrow">›</span>
+            </div>
+            <div class="manual-body">
+              <div class="rule-step"><div class="rule-step-n">1</div><div class="rule-step-body"><div class="rule-step-title">Crear torneo</div><div class="rule-step-desc">Ingresa nombre, premio opcional y añade hasta 32 jugadores. La app calcula automáticamente las rondas y el top cut según la cantidad de participantes.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">2</div><div class="rule-step-body"><div class="rule-step-title">Sistema Swiss</div><div class="rule-step-desc">Victoria = 3 pts · Empate = 1 pt · Derrota = 0 pts. Los emparejamientos se generan automáticamente evitando rematches. Timer de 50 minutos por ronda.</div></div></div>
+              <div class="rule-step"><div class="rule-step-n">3</div><div class="rule-step-body"><div class="rule-step-title">Top Cut</div><div class="rule-step-desc">≤6 jugadores: sin top cut. 7–12: Top 4. 13+: Top 8. Eliminación directa con bracket sembrado por posición Swiss.</div></div></div>
+            </div>
+          </div>
+
+          <div class="manual-block" onclick="toggleManual(this)">
+            <div class="manual-hd">
+              <div class="manual-hd-left"><span class="manual-icon">👤</span><span class="manual-title">Perfil de Duelista</span></div>
+              <span class="manual-arrow">›</span>
+            </div>
+            <div class="manual-body">
+              <p style="margin-bottom:8px">Tu perfil guarda nombre, icono, era favorita, estadísticas y el historial completo de duelos. Todo persiste entre sesiones.</p>
+              <p style="margin-bottom:6px"><b style="color:var(--cream)">15 Rangos de Duelista</b> — progresas automáticamente al acumular victorias, desde Aprendiz del Duelo hasta Leyenda Milenaria.</p>
+              <p><b style="color:var(--cream)">Historial</b> — cada duelo registra ganador, perdedor, LP finales y fecha. Puedes eliminar entradas individuales y los stats se recalculan automáticamente.</p>
+            </div>
+          </div>
+
+        </div><!-- /ay-manual -->
+
+        <!-- ── CÓMO SE JUEGA ── -->
+        <div class="ayuda-section" id="ay-reglas">
+          <div class="slbl" style="margin-top:0">Objetivo del juego</div>
+          <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:12px;margin-bottom:10px;font-family:'Barlow',sans-serif;font-size:12px;color:var(--cream3);line-height:1.7">
+            Reducir los <b style="color:var(--cream)">Life Points del oponente a 0</b>. Cada jugador comienza con <b style="color:var(--cream)">8000 LP</b> (modo anime) o 4000 LP (modo clásico). Se juega con un mazo de <b style="color:var(--cream)">40 a 60 cartas</b>.
+          </div>
+
+          <div class="slbl">Tipos de cartas</div>
+          <div class="card-types-grid">
+            <div class="ct-card ct-monster"><div class="ct-name">⚔️ Monstruo</div><div class="ct-desc">Se invocan en la zona de monstruos. Tienen ATK y DEF. Son el núcleo del combate.</div></div>
+            <div class="ct-card ct-spell"><div class="ct-name">✨ Mágica</div><div class="ct-desc">Cartas de efecto inmediato. Se activan boca arriba en la zona de magia/trampa.</div></div>
+            <div class="ct-card ct-trap"><div class="ct-name">🕳️ Trampa</div><div class="ct-desc">Se colocan boca abajo y se activan como respuesta a las acciones del rival.</div></div>
+            <div class="ct-card ct-extra"><div class="ct-name">🔮 Extra Deck</div><div class="ct-desc">Fusión, Sincro, XYZ y Link. Se invocan con condiciones especiales desde el Extra Deck.</div></div>
+          </div>
+
+          <div class="slbl">Fases del turno</div>
+          <div class="phase-list">
+            <div class="phase-row"><span class="phase-abbr">DP</span><div><div class="phase-name">Draw Phase — Fase de Robo</div><div class="phase-desc">Robas 1 carta de tu mazo al inicio de cada turno</div></div></div>
+            <div class="phase-row"><span class="phase-abbr">SP</span><div><div class="phase-name">Standby Phase — Fase de Preparación</div><div class="phase-desc">Se activan efectos que dicen "durante la Standby Phase"</div></div></div>
+            <div class="phase-row"><span class="phase-abbr">MP1</span><div><div class="phase-name">Main Phase 1 — Fase Principal 1</div><div class="phase-desc">Invocas monstruos, activas cartas mágicas, colocas cartas boca abajo</div></div></div>
+            <div class="phase-row"><span class="phase-abbr">BP</span><div><div class="phase-name">Battle Phase — Fase de Batalla</div><div class="phase-desc">Declaras ataques con tus monstruos contra el rival o sus monstruos</div></div></div>
+            <div class="phase-row"><span class="phase-abbr">MP2</span><div><div class="phase-name">Main Phase 2 — Fase Principal 2</div><div class="phase-desc">Puedes volver a invocar o colocar cartas boca abajo después de la batalla</div></div></div>
+            <div class="phase-row"><span class="phase-abbr">EP</span><div><div class="phase-name">End Phase — Fase Final</div><div class="phase-desc">Descartas si tienes más de 6 cartas en mano. El turno pasa al rival.</div></div></div>
+          </div>
+
+          <div class="slbl">Reglas básicas de combate</div>
+          <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:12px;font-family:'Barlow',sans-serif;font-size:12px;color:var(--cream3);line-height:1.8">
+            <p>• Un monstruo en posición de <b style="color:var(--cream)">Ataque</b> puede atacar al oponente directamente o a sus monstruos.</p>
+            <p>• Si el ATK del atacante supera el DEF del defensor, el defensor es destruido (sin daño de batalla al dueño).</p>
+            <p>• Si el ATK del atacante es menor al DEF del defensor, el atacante sufre la diferencia en daño de batalla.</p>
+            <p>• Un monstruo invocado en el mismo turno <b style="color:var(--cream)">no puede atacar</b> (a menos que tenga un efecto especial).</p>
+            <p>• Solo puedes hacer <b style="color:var(--cream)">1 Invocación Normal</b> por turno.</p>
+            <p>• Ganas el duelo cuando: los LP del rival llegan a 0, el rival no puede robar carta, o el rival tiene que usar una carta que lo declare perdedor.</p>
+          </div>
+        </div><!-- /ay-reglas -->
+
+        <!-- ── CADENAS ── -->
+        <div class="ayuda-section" id="ay-cadenas">
+          <div style="background:rgba(196,24,24,.06);border:1px solid rgba(196,24,24,.2);border-radius:3px;padding:12px;margin-bottom:12px;font-family:'Barlow',sans-serif;font-size:12px;color:var(--cream3);line-height:1.7">
+            Una <b style="color:var(--cream)">Cadena (Chain)</b> se forma cuando múltiples efectos o cartas se apilan para resolverse. El principio fundamental: <b style="color:var(--gx)">el último efecto añadido a la cadena se resuelve primero (LIFO — Last In, First Out)</b>.
+          </div>
+
+          <div class="slbl">Cómo se forma una cadena</div>
+          <div class="phase-list">
+            <div class="phase-row"><span class="phase-abbr" style="color:var(--gx)">①</span><div><div class="phase-name">Se activa una carta o efecto</div><div class="phase-desc">Ej: Jugador A activa "Pot of Greed" → ambos jugadores pueden responder</div></div></div>
+            <div class="phase-row"><span class="phase-abbr" style="color:var(--gx)">②</span><div><div class="phase-name">El rival puede añadir a la cadena</div><div class="phase-desc">Ej: Jugador B activa "Ash Blossom" para negar el efecto → se añade sobre Pot of Greed</div></div></div>
+            <div class="phase-row"><span class="phase-abbr" style="color:var(--gx)">③</span><div><div class="phase-name">Se puede seguir encadenando</div><div class="phase-desc">Cualquier jugador puede continuar añadiendo efectos que puedan activarse</div></div></div>
+            <div class="phase-row"><span class="phase-abbr" style="color:var(--red2)">✓</span><div><div class="phase-name">Ninguno añade más → se resuelve</div><div class="phase-desc">La cadena se resuelve de atrás hacia adelante (LIFO)</div></div></div>
+          </div>
+
+          <div class="slbl">Ejemplo visual</div>
+          <div class="chain-visual">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Cadena formada →</div>
+            <div class="chain-link"><div class="chain-num">1</div><span class="chain-arrow">→</span><div><div class="chain-card-name">Monster Reborn</div><div style="font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4)">Se activa primero</div></div></div>
+            <div class="chain-link"><div class="chain-num" style="background:rgba(196,24,24,.4)">2</div><span class="chain-arrow">→</span><div><div class="chain-card-name">Ash Blossom & Joyous Spring</div><div style="font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4)">Rival responde negando efectos de mazo</div></div></div>
+            <div class="chain-link"><div class="chain-num" style="background:rgba(56,200,136,.3)">3</div><span class="chain-arrow">→</span><div><div class="chain-card-name">Called by the Grave</div><div style="font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4)">Jugador A responde negando Ash Blossom</div></div></div>
+            <div class="chain-resolve">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--red2);letter-spacing:2px;margin-bottom:6px">RESOLUCIÓN (de 3 a 1):</div>
+              <p><b>3° se resuelve:</b> Called by the Grave → Ash Blossom queda negada y desterrada.</p>
+              <p><b>2° se resuelve:</b> Ash Blossom → ya está negada, su efecto no se aplica.</p>
+              <p><b>1° se resuelve:</b> <b style="color:var(--gx)">Monster Reborn funciona con éxito.</b></p>
+            </div>
+          </div>
+
+          <div class="slbl">Reglas clave de cadenas</div>
+          <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:12px;font-family:'Barlow',sans-serif;font-size:12px;color:var(--cream3);line-height:1.8">
+            <p>• Solo se pueden añadir a una cadena cartas o efectos de <b style="color:var(--cream)">Velocidad de Cadena 2 o mayor</b> sobre efectos de Velocidad 2+.</p>
+            <p>• Las <b style="color:var(--cream)">Cartas Mágicas</b> de campo son Velocidad 1 y <b style="color:var(--red2)">no se pueden encadenar</b> sobre otras cartas.</p>
+            <p>• Los <b style="color:var(--cream)">Efectos de Trampa</b> son Velocidad 2. Las <b style="color:var(--cream)">Contratrampas</b> son Velocidad 3.</p>
+            <p>• Un jugador no puede activar dos efectos del mismo nombre en la misma cadena.</p>
+            <p>• Si un efecto es negado pero el monstruo que lo generó sale del campo, el efecto también falla.</p>
+          </div>
+        </div><!-- /ay-cadenas -->
+
+        <!-- ── ÁRBITRO IA ── -->
+        <div class="ayuda-section" id="ay-arbitro">
+          <div style="background:rgba(196,24,24,.06);border:1px solid rgba(196,24,24,.2);border-radius:3px;padding:12px;margin-bottom:12px">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--red2);letter-spacing:1px;margin-bottom:4px">🤖 ÁRBITRO IA — Resolución de Situaciones</div>
+            <div style="font-family:'Barlow',sans-serif;font-size:12px;color:var(--cream3);line-height:1.6">Describe una situación confusa del duelo — una cadena, una interacción entre cartas, o una regla dudosa — y el Árbitro IA te explicará cómo resolverla con lenguaje de juez oficial.</div>
+          </div>
+
+          <div class="arbitro-input-area">
+            <div class="s-lbl" style="margin-top:0">Describe la situación del duelo</div>
+            <textarea class="arbitro-textarea" id="arb-text" placeholder="Ej: Mi rival activa Ash Blossom en respuesta a mi Monster Reborn. Yo tengo Called by the Grave en mano. ¿Puedo encadenar Called by the Grave para negar a Ash Blossom? ¿Cómo se resuelve la cadena?"></textarea>
+
+            <!-- Camera capture -->
+            <div class="cam-row">
+              <label class="cam-btn" style="cursor:pointer">
+                📷 FOTO DEL CAMPO
+                <input type="file" accept="image/*" capture="environment" id="arb-cam" style="display:none" onchange="handleArbPhoto(this)"/>
+              </label>
+              <label class="cam-btn" style="cursor:pointer">
+                🖼 SUBIR IMAGEN
+                <input type="file" accept="image/*" id="arb-img" style="display:none" onchange="handleArbPhoto(this)"/>
+              </label>
+            </div>
+            <img id="arb-preview" class="cam-preview"/>
+            <div style="font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4);margin-top:4px;line-height:1.5">Opcional: adjunta una foto del campo para que la IA analice visualmente la situación</div>
+
+            <button class="btn-red" style="width:100%;padding:11px;margin-top:12px;font-size:13px;letter-spacing:2px" onclick="consultarArbitro()">
+              ⚖ CONSULTAR AL ÁRBITRO
+            </button>
+          </div>
+
+          <div class="arbitro-response" id="arb-response">
+            <div class="arbitro-response-label">⚖ RESOLUCIÓN OFICIAL</div>
+            <div class="arbitro-response-text" id="arb-response-text"></div>
+            <button class="btn-ghost" style="width:100%;margin-top:12px;font-size:11px" onclick="clearArbitro()">↺ Nueva consulta</button>
+          </div>
+
+        </div><!-- /ay-arbitro -->
+
+      </div>
+    </div><!-- /v-ayuda -->
+
+  </div>
+</div>
+
+<!-- DICE / COIN POPUP MODAL -->
+<div id="dice-modal" class="mbg hidden" onclick="closeDiceModal()">
+  <div class="msh" style="max-height:60vh;text-align:center" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div id="dice-modal-anim" style="font-size:72px;min-height:90px;display:flex;align-items:center;justify-content:center;margin:10px 0"></div>
+    <div id="dice-modal-label" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--cream4);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px"></div>
+    <div id="dice-modal-result" style="font-family:'Black Ops One',sans-serif;font-size:42px;color:var(--cream);letter-spacing:4px;min-height:52px;display:flex;align-items:center;justify-content:center"></div>
+    <button class="mclose" style="margin-top:14px" onclick="closeDiceModal()">Cerrar</button>
+  </div>
+</div>
+
+<!-- HAND SIMULATION MODAL -->
+<div id="hand-modal" class="mbg hidden" onclick="closeHandModal(event)">
+  <div class="msh" onclick="event.stopPropagation()" style="max-height:90vh">
+    <div class="mhandle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="m-name">🃏 Simulación de Mano</div>
+      <button onclick="closeHandModal()" style="background:none;border:none;color:var(--cream3);font-size:20px;cursor:pointer;padding:4px">×</button>
+    </div>
+    <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);margin-bottom:12px;line-height:1.5">5 cartas aleatorias del deck principal — simula tu mano de inicio</div>
+    <div id="hand-cards" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;justify-content:center"></div>
+    <div id="hand-card-detail" style="margin-top:10px"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn-red" style="flex:1;padding:10px;font-size:11px;letter-spacing:1px" onclick="drawHand()">🔀 NUEVA MANO</button>
+      <button class="mclose" style="flex:1;margin-top:0" onclick="closeHandModal()">← VOLVER AL DECK</button>
+    </div>
+  </div>
+</div>
+
+<!-- DECK CARD ACTION MODAL (ver / eliminar / mover a side) -->
+<div id="deck-card-modal" class="mbg hidden" onclick="closeDeckCardModal(event)">
+  <div class="msh" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div id="deck-card-modal-inner"></div>
   </div>
 </div>
 
@@ -1759,6 +2519,7 @@ const RANKS = [
 ];
 
 function getRank(w){
+  // Rank based on total wins (progreso absoluto como en YGO oficial)
   let rank=RANKS[0];
   for(let i=1;i<RANKS.length;i++){if(w>=RANKS[i].min)rank=RANKS[i];else break;}
   return rank;
@@ -1767,6 +2528,10 @@ function getRankName(w){return getRank(w).name;}
 function getRankNext(w){
   for(let i=0;i<RANKS.length-1;i++){if(w<RANKS[i+1].min)return{rank:RANKS[i+1],needed:RANKS[i+1].min-w};}
   return null;
+}
+function getWinRate(){
+  const total=G.wins+G.losses;
+  return total>0?Math.round((G.wins/total)*100):0;
 }
 
 const G={
@@ -1834,6 +2599,8 @@ function gv(v){
   if(v==='deck')renderDG();
   if(v==='profile'){renderHistory();updateStats();}
   if(v==='torneo')renderTrn();
+  if(v==='about')renderAbout();
+  if(v==='ayuda'){/* sections handled internally */}
 }
 
 /* ══════════════════════════════════════
@@ -1851,10 +2618,15 @@ function beginDuel(){
   G.initLP=lp;G.p1=lp;G.p2=lp;G.h1=[];G.h2=[];
   document.getElementById('lp-setup').style.display='none';
   const d=document.getElementById('duel');d.style.display='block';d.style.padding='12px';
-  // sync name+avatar from profile
   document.getElementById('pn1').value=G.profile.name;
-  document.getElementById('av1').textContent=G.profile.avatar;
+  const av1=document.getElementById('av1');
+  if(av1){
+    const iconData=YGO_ICONS.find(i=>i.id===G.profile.avatar);
+    if(iconData){av1.innerHTML='';av1.style.padding='2px';const t=document.createElement('div');t.style.cssText='width:20px;height:20px;display:flex;align-items:center';t.innerHTML=iconData.svg;av1.appendChild(t);}
+    else av1.textContent=G.profile.avatar||'⚔️';
+  }
   renderLP(1);renderLP(2);
+  applyOnlineMode();
 }
 
 function dmg(p,v){
@@ -2027,52 +2799,74 @@ function flashScreen(type){
 }
 
 /* ══════════════════════════════════════
-   TOOLS — ANIMATED
+   TOOLS — DADO / MONEDA CON POP-UP
 ══════════════════════════════════════ */
 const FC=['⚀','⚁','⚂','⚃','⚄','⚅'];
 
-function animTool(id,val,cls='dice-anim'){
-  const el=document.getElementById(id);
-  el.innerHTML=`<span class="${cls}">${val}</span>`;
+function showDiceModal(label, animFn, resultFn){
+  const modal=document.getElementById('dice-modal');
+  const animEl=document.getElementById('dice-modal-anim');
+  const labelEl=document.getElementById('dice-modal-label');
+  const resultEl=document.getElementById('dice-modal-result');
+  labelEl.textContent=label;
+  resultEl.textContent='';
+  animEl.innerHTML='<div style="animation:diceRoll .5s ease infinite">🎲</div>';
+  modal.classList.remove('hidden');
+  // Shuffle animation
+  let count=0;
+  const interval=setInterval(()=>{
+    animEl.innerHTML=animFn(count);
+    count++;
+    if(count>=10){
+      clearInterval(interval);
+      const {anim,result}=resultFn();
+      animEl.innerHTML=anim;
+      setTimeout(()=>{resultEl.innerHTML=result;},200);
+    }
+  },80);
 }
 
 function rollD(){
   playDiceSound();
   const v=Math.floor(Math.random()*6);
-  // Brief shuffle animation
-  let count=0;
-  const interval=setInterval(()=>{
-    const r=Math.floor(Math.random()*6);
-    document.getElementById('dr').innerHTML=`<span style="opacity:.5">${FC[r]}</span>`;
-    count++;
-    if(count>=6){clearInterval(interval);animTool('dr',FC[v],'dice-anim');}
-  },60);
+  showDiceModal(
+    'RESULTADO DEL DADO',
+    ()=>`<span style="font-size:72px;opacity:.6">${FC[Math.floor(Math.random()*6)]}</span>`,
+    ()=>({
+      anim:`<span class="dice-anim" style="font-size:72px">${FC[v]}</span>`,
+      result:`<span style="color:var(--gx)">${v+1}</span>`
+    })
+  );
 }
 
 function roll2D(){
   playDiceSound();
-  const a=Math.floor(Math.random()*6),b=Math.floor(Math.random()*6);
-  let count=0;
-  const interval=setInterval(()=>{
-    const ra=Math.floor(Math.random()*6),rb=Math.floor(Math.random()*6);
-    document.getElementById('d2r').innerHTML=`<span style="opacity:.5;font-size:13px">${FC[ra]}${FC[rb]}</span>`;
-    count++;
-    if(count>=6){
-      clearInterval(interval);
-      document.getElementById('d2r').innerHTML=`<span class="dice-anim" style="font-size:13px">${FC[a]}${FC[b]}</span>`;
-    }
-  },60);
+  const a=Math.floor(Math.random()*6), b=Math.floor(Math.random()*6);
+  showDiceModal(
+    'RESULTADO — 2 DADOS',
+    ()=>`<span style="font-size:52px;opacity:.6">${FC[Math.floor(Math.random()*6)]}${FC[Math.floor(Math.random()*6)]}</span>`,
+    ()=>({
+      anim:`<span class="dice-anim" style="font-size:52px">${FC[a]}${FC[b]}</span>`,
+      result:`<span style="color:var(--gx)">${a+1} + ${b+1} = ${a+b+2}</span>`
+    })
+  );
 }
 
 function flipC(){
   playCoinSound();
-  const val=Math.random()<.5;
-  const el=document.getElementById('cr');
-  // Flip animation sequence
-  el.innerHTML=`<span class="coin-anim">🪙</span>`;
-  setTimeout(()=>{
-    el.innerHTML=`<span class="coin-anim" style="font-size:12px;letter-spacing:.5px">${val?'CARA':'CRUZ'}</span>`;
-  },300);
+  const val=Math.random()<0.5;
+  showDiceModal(
+    'CARA O CRUZ',
+    (i)=>`<span class="coin-anim" style="font-size:72px">${i%2===0?'🟡':'⚪'}</span>`,
+    ()=>({
+      anim:`<span class="coin-anim" style="font-size:72px">${val?'🟡':'⚪'}</span>`,
+      result:`<span style="color:${val?'#d4a830':'var(--cream2)'};font-size:28px">${val?'CARA':'CRUZ'}</span>`
+    })
+  );
+}
+
+function closeDiceModal(){
+  document.getElementById('dice-modal').classList.add('hidden');
 }
 
 /* ══════════════════════════════════════
@@ -2234,15 +3028,69 @@ function refreshList(){
 function renderDG(){
   const el=document.getElementById('dg');
   const lst=G.deck[G.zone];
-  if(!lst||!lst.length){const L={main:'DECK PRINCIPAL VACÍO',extra:'EXTRA DECK VACÍO',side:'SIDE DECK VACÍO'};el.innerHTML=`<div class="dge">${L[G.zone]}</div>`;return}
+  if(!lst||!lst.length){
+    const L={main:'DECK PRINCIPAL VACÍO',extra:'EXTRA DECK VACÍO',side:'SIDE DECK VACÍO'};
+    el.innerHTML=`<div class="dge">${L[G.zone]}</div>`;return;
+  }
   el.innerHTML=lst.map(c=>{
     const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-    return`<div class="mc" title="${c.name}" onclick="remC(${c.id},'${G.zone}')">
+    return`<div class="mc" title="${c.name}" onclick="openDeckCardModal(${c.id},'${G.zone}')">
       ${img?`<img src="${img}" loading="lazy" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
       ${(c.qty||1)>1?`<div class="mc-b">x${c.qty}</div>`:''}
-      <div class="del">×</div>
     </div>`;
   }).join('');
+}
+
+function openDeckCardModal(id, zone){
+  const c=G.deck[zone].find(x=>x.id===id);
+  if(!c)return;
+  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  const canMoveToSide=zone!=='side'&&G.deck.side.reduce((s,x)=>s+(x.qty||1),0)<15;
+  document.getElementById('deck-card-modal-inner').innerHTML=`
+    <div class="m-name">${c.name}</div>
+    <span class="tpill ${tC(c.type)}" style="margin-bottom:10px;display:inline-block">${tL(c.type)}${c.race?' · '+c.race:''}</span>
+    ${img?`<img class="m-img" src="${img}" alt="${c.name}"/>`:`<div class="m-img-ph">${tE(c.type)}</div>`}
+    ${c.atk!==undefined?`<div class="mstats">
+      <div class="mstat"><span class="msl">ATK</span><span class="msv">${c.atk}</span></div>
+      <div class="mstat"><span class="msl">DEF</span><span class="msv">${c.def??'—'}</span></div>
+      <div class="mstat"><span class="msl">Nivel</span><span class="msv">${c.level??'—'}</span></div>
+      <div class="mstat"><span class="msl">Atrib.</span><span class="msv" style="font-size:11px">${c.attribute??'—'}</span></div>
+    </div>`:''}
+    <div class="mdesc" style="max-height:80px;overflow-y:auto">${c.desc||''}</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
+      ${canMoveToSide?`<button class="btn-ghost" style="width:100%;padding:10px;font-size:11px;letter-spacing:1px" onclick="moveToDeckZone(${id},'${zone}','side');closeDeckCardModal()">
+        ↔ MOVER AL SIDE DECK
+      </button>`:''}
+      ${zone==='side'?`<button class="btn-ghost" style="width:100%;padding:10px;font-size:11px;letter-spacing:1px;border-color:rgba(56,200,136,.3);color:rgba(56,200,136,.7)" onclick="moveToDeckZone(${id},'side','main');closeDeckCardModal()">
+        ↑ MOVER AL DECK PRINCIPAL
+      </button>`:''}
+      <button onclick="remC(${id},'${zone}');closeDeckCardModal()" style="width:100%;padding:10px;background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.3);border-radius:2px;color:var(--red2);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all var(--trans)">
+        🗑 ELIMINAR DEL DECK
+      </button>
+      <button class="mclose" onclick="closeDeckCardModal()">Cerrar</button>
+    </div>
+  `;
+  document.getElementById('deck-card-modal').classList.remove('hidden');
+}
+function closeDeckCardModal(e){
+  if(!e||e.target===document.getElementById('deck-card-modal'))
+    document.getElementById('deck-card-modal').classList.add('hidden');
+}
+function moveToDeckZone(id, fromZone, toZone){
+  const fromList=G.deck[fromZone];
+  const idx=fromList.findIndex(c=>c.id===id);
+  if(idx<0)return;
+  const card={...fromList[idx]};
+  // Remove one copy from source
+  if((fromList[idx].qty||1)>1)fromList[idx].qty--;
+  else fromList.splice(idx,1);
+  // Add to target
+  const toList=G.deck[toZone];
+  const existing=toList.find(c=>c.id===id);
+  if(existing)existing.qty=(existing.qty||1)+1;
+  else toList.push({...card,qty:1});
+  renderDG();updateZC();saveDeck();
+  toast(`Movida a ${toZone==='side'?'Side Deck':'Deck Principal'}`);
 }
 function updateZC(){
   ['main','extra','side'].forEach(z=>{
@@ -2364,12 +3212,15 @@ function updateStats(){
   const rank=getRank(G.wins);
   const rankEl=document.getElementById('prf-rank');
   if(rankEl){rankEl.textContent=rank.icon+' '+rank.name;rankEl.style.color=rank.color;}
-  // Win rate bar
-  const pct=total>0?Math.round((G.wins/total)*100):0;
+  // Win rate
+  const wr=getWinRate();
   const wrEl=document.getElementById('wr-pct');
   const wrBar=document.getElementById('wr-bar');
-  if(wrEl)wrEl.textContent=pct+'% victorias';
-  if(wrBar)wrBar.style.width=pct+'%';
+  if(wrEl)wrEl.textContent=`${wr}% win rate (${G.wins}V / ${G.losses}D)`;
+  if(wrBar){
+    wrBar.style.width=wr+'%';
+    wrBar.style.background=wr>=60?'var(--gx)':wr>=40?'#d4a830':'var(--red2)';
+  }
   updateRankProgress();
 }
 function saveProfile(){
@@ -2420,6 +3271,133 @@ function renderHistory(){
       <div class="dh-lp">${myLP.toLocaleString()}</div>
     </div>`;
   }).join('');
+}
+
+function renderHistory(){
+  const el=document.getElementById('duel-hist');
+  if(!G.history.length){el.innerHTML='<div class="no-hist">Sin duelos registrados aún</div>';return}
+  el.innerHTML=G.history.map((h,idx)=>{
+    const myName=G.profile.name.toUpperCase();
+    const isWin=h.winner&&h.winner.toUpperCase()===myName;
+    const opp=isWin?h.loser:h.winner;
+    const myLP=h.p1n&&h.p1n.toUpperCase()===myName?h.p1lp:h.p2lp;
+    const date=new Date(h.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'2-digit'});
+    return`<div class="dh-entry">
+      <div class="dh-res ${isWin?'w':'l'}">${isWin?'WIN':'LOSS'}</div>
+      <div class="dh-info">
+        <div class="dh-vs">vs ${opp||'Desconocido'}</div>
+        <div class="dh-meta">${date} · ${h.initLP||'?'} LP</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="dh-lp">${(myLP||0).toLocaleString()}</div>
+        <button onclick="deleteHistory(${idx})" style="background:none;border:none;color:rgba(196,24,24,.35);font-size:15px;cursor:pointer;padding:2px;line-height:1;transition:color var(--trans)" title="Eliminar">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteHistory(idx){
+  if(!confirm('¿Eliminar este duelo del historial?'))return;
+  const h=G.history[idx];
+  const myName=G.profile.name.toUpperCase();
+  // Recalculate win/loss count
+  if(h.winner&&h.winner.toUpperCase()===myName&&G.wins>0)G.wins--;
+  else if(h.loser&&h.loser.toUpperCase()===myName&&G.losses>0)G.losses--;
+  G.history.splice(idx,1);
+  saveAll();renderHistory();updateStats();
+  toast('DUELO ELIMINADO · STATS ACTUALIZADOS');
+}
+
+/* ══════════════════════════════════════
+   ONLINE MODE — pasar teléfono
+══════════════════════════════════════ */
+let G_duelMode='local';
+let G_onlineTurn=1;
+
+function pickMode(mode,el){
+  G_duelMode=mode;
+  document.querySelectorAll('#mode-local,#mode-online').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('mode-online-hint').style.display=mode==='online'?'block':'none';
+}
+
+function passPhone(){
+  G_onlineTurn=G_onlineTurn===1?2:1;
+  const name=G_onlineTurn===1
+    ?(document.getElementById('pn1').value||'Jugador 1')
+    :(document.getElementById('pn2').value||'Jugador 2');
+  document.getElementById('pb1').style.display=G_onlineTurn===1?'':'none';
+  document.getElementById('pb2').style.display=G_onlineTurn===2?'':'none';
+  document.querySelector('.vs-div').style.display='none';
+  toast(`📱 TURNO DE ${name.toUpperCase()}`);
+}
+
+function applyOnlineMode(){
+  const isOnline=G_duelMode==='online';
+  document.getElementById('pass-phone-btn').style.display=isOnline?'block':'none';
+  if(isOnline){
+    G_onlineTurn=1;
+    document.getElementById('pb2').style.display='none';
+    const vs=document.querySelector('.vs-div');
+    if(vs)vs.style.display='none';
+  } else {
+    document.getElementById('pb2').style.display='';
+    const vs=document.querySelector('.vs-div');
+    if(vs)vs.style.display='';
+  }
+}
+
+/* ══════════════════════════════════════
+   HAND SIMULATION — 5 cartas de inicio
+══════════════════════════════════════ */
+function openHandModal(){
+  const main=G.deck.main;
+  const total=main.reduce((s,c)=>s+(c.qty||1),0);
+  if(total<5){toast('Necesitas al menos 5 cartas en el deck principal');return;}
+  drawHand();
+  document.getElementById('hand-modal').classList.remove('hidden');
+}
+
+function drawHand(){
+  const main=G.deck.main;
+  let pool=[];
+  main.forEach(c=>{for(let i=0;i<(c.qty||1);i++)pool.push(c)});
+  // Fisher-Yates shuffle
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  const hand=pool.slice(0,5);
+  window._currentHand=hand;
+  document.getElementById('hand-card-detail').innerHTML='';
+  document.getElementById('hand-cards').innerHTML=hand.map((c,i)=>{
+    const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+    return`<div onclick="showHandCardDetail(${i})" style="flex-shrink:0;cursor:pointer;transition:transform .15s;text-align:center"
+      onmouseenter="this.style.transform='scale(1.1) translateY(-5px)'"
+      onmouseleave="this.style.transform='scale(1)'">
+      <div style="width:68px;height:96px;border-radius:3px;border:2px solid var(--border);overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:4px;transition:border-color .15s">
+        ${img?`<img src="${img}" style="width:100%;height:100%;object-fit:cover" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
+      </div>
+      <div style="width:68px;font-family:'Barlow Condensed',sans-serif;font-size:7.5px;font-weight:700;color:var(--cream4);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+    </div>`;
+  }).join('');
+}
+
+function showHandCardDetail(idx){
+  const c=window._currentHand[idx];if(!c)return;
+  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  document.getElementById('hand-card-detail').innerHTML=`
+    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:10px;display:flex;gap:10px;margin-top:8px;animation:fadeU .2s ease">
+      ${img?`<img src="${img}" style="width:52px;height:72px;border-radius:2px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)" alt="${c.name}"/>`:
+        `<div style="width:52px;height:72px;background:var(--bg3);border-radius:2px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${tE(c.type)}</div>`}
+      <div style="flex:1;min-width:0">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:var(--cream);margin-bottom:3px">${c.name}</div>
+        ${c.atk!==undefined?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--cream3);margin-bottom:4px">ATK ${c.atk} · DEF ${c.def??'—'} · Nv.${c.level??'?'} · ${c.attribute||''}</div>`:''}
+        <div style="font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4);line-height:1.5;overflow-y:auto;max-height:70px">${(c.desc||'Sin descripción').substring(0,220)}${c.desc&&c.desc.length>220?'…':''}</div>
+      </div>
+    </div>`;
+}
+
+function closeHandModal(e){
+  if(!e||e.target===document.getElementById('hand-modal'))
+    document.getElementById('hand-modal').classList.add('hidden');
 }
 
 /* ══════════════════════════════════════
@@ -2986,6 +3964,212 @@ function trnTimerReset(){
 function stopTimer(){
   G.trn.timerRunning=false;
   if(G.trn.timerInterval){clearInterval(G.trn.timerInterval);G.trn.timerInterval=null;}
+}
+
+/* ══════════════════════════════════════
+   AYUDA — MANUAL / REGLAS / ÁRBITRO IA
+══════════════════════════════════════ */
+
+function setAyudaTab(tab, el){
+  document.querySelectorAll('.ayuda-tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.ayuda-section').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('ay-'+tab).classList.add('on');
+}
+
+function toggleManual(block){
+  block.classList.toggle('open');
+}
+
+// Camera / image handler
+function handleArbPhoto(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const prev=document.getElementById('arb-preview');
+    prev.src=e.target.result;
+    prev.style.display='block';
+    // Store base64 for API
+    window._arbImageData=e.target.result.split(',')[1];
+    window._arbImageType=file.type;
+  };
+  reader.readAsDataURL(file);
+}
+
+// IA Árbitro — calls Claude API internally
+async function consultarArbitro(){
+  const text=document.getElementById('arb-text').value.trim();
+  if(!text){toast('DESCRIBE LA SITUACIÓN DEL DUELO');return;}
+
+  const respBox=document.getElementById('arb-response');
+  const respText=document.getElementById('arb-response-text');
+  respBox.style.display='block';
+  respText.innerHTML=`<div class="arbitro-loading">
+    <div class="arbitro-loading-dots"><span></span><span></span><span></span></div>
+    <span>CONSULTANDO AL ÁRBITRO…</span>
+  </div>`;
+
+  const systemPrompt=`Eres un Juez Oficial certificado de Yu-Gi-Oh! con profundo conocimiento del reglamento, el sistema de cadenas (LIFO), las velocidades de cadena, las fases del turno y las interacciones entre cartas específicas.
+
+Cuando te presenten una situación de duelo:
+1. Identifica las cartas y efectos involucrados
+2. Explica el orden de resolución paso a paso
+3. Cita la regla oficial aplicable
+4. Da el veredicto final claro y conciso
+5. Si hay imagen del campo, analízala visualmente
+
+Usa lenguaje preciso de juez oficial. Sé directo y didáctico. Responde en español.`;
+
+  const messages=[];
+  if(window._arbImageData){
+    messages.push({role:'user',content:[
+      {type:'image',source:{type:'base64',media_type:window._arbImageType||'image/jpeg',data:window._arbImageData}},
+      {type:'text',text:`Como juez oficial de Yu-Gi-Oh!, analiza esta situación del campo y resuelve la siguiente consulta:\n\n${text}`}
+    ]});
+  } else {
+    messages.push({role:'user',content:`Como juez oficial de Yu-Gi-Oh!, resuelve esta situación del duelo:\n\n${text}`});
+  }
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:systemPrompt,
+        messages
+      })
+    });
+    const data=await res.json();
+    const reply=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('\n')||'Sin respuesta del árbitro.';
+    respText.textContent=reply;
+  }catch(e){
+    respText.textContent='Error al conectar con el Árbitro IA. Verifica tu conexión e inténtalo de nuevo.';
+  }
+}
+
+function clearArbitro(){
+  document.getElementById('arb-text').value='';
+  document.getElementById('arb-response').style.display='none';
+  document.getElementById('arb-preview').style.display='none';
+  document.getElementById('arb-preview').src='';
+  window._arbImageData=null;
+  window._arbImageType=null;
+}
+
+// Wire gv for ayuda
+const _gvOrig=typeof gv==='function'?gv:null;
+
+/* ══════════════════════════════════════
+   ABOUT — FRASES + TIPS + STATS
+══════════════════════════════════════ */
+
+const QUOTES = [
+  {text:"El corazón de las cartas nunca miente. Confía en tu mazo.",src:"Yugi Muto — DM"},
+  {text:"No importa cuántas veces caigas. Lo que importa es que te levantes.",src:"Joey Wheeler — DM"},
+  {text:"El duelo no termina mientras tengas un solo punto de vida.",src:"Reglamento oficial YGO"},
+  {text:"Un duelista verdadero nunca se rinde, no importa cuán desesperada sea la situación.",src:"Jaden Yuki — GX"},
+  {text:"Cree en el poder de tus cartas y ellas creerán en ti.",src:"Yugi Muto — DM"},
+  {text:"El futuro pertenece a quienes creen en sus sueños y luchan por ellos en el campo de duelo.",src:"Yusei Fudo — 5D's"},
+  {text:"Las cartas son el espejo del alma. Tu deck refleja quién eres.",src:"Maximillion Pegasus — DM"},
+  {text:"Cada derrota es una lección. Cada victoria, una confirmación.",src:"Kaiba Corp — DM"},
+  {text:"Duela con tu corazón, no con tu mente.",src:"Zane Truesdale — GX"},
+  {text:"Un duelo verdadero va más allá de las cartas. Es una batalla de almas.",src:"Seto Kaiba — DM"},
+  {text:"La diferencia entre el campeón y el perdedor es que el campeón nunca deja de intentarlo.",src:"Atticus Rhodes — GX"},
+  {text:"Cada carta que robas puede cambiar el destino del duelo.",src:"Jack Atlas — 5D's"},
+  {text:"El verdadero poder no está en las cartas, está en el duelista que las usa.",src:"Crow Hogan — 5D's"},
+  {text:"Confía en tu instinto. Tu primera lectura del campo casi siempre es la correcta.",src:"Tip de campeón"},
+  {text:"Un deck bien construido es tan importante como la habilidad del duelista.",src:"Principio del deckbuilding"},
+];
+
+const TIPS = [
+  "💡 Nunca uses todas tus cartas de negación en el primer turno. Guarda al menos una respuesta para el turno del rival.",
+  "💡 El Side Deck es tan importante como el Main Deck. Prepáralo para las debilidades específicas de cada matchup.",
+  "💡 Aprende a leer el campo rival. Las cartas boca abajo y las zonas vacías dicen mucho sobre su estrategia.",
+  "💡 Las cadenas se resuelven de última a primera (LIFO). Activa tus respuestas al final de la cadena para maximizar su efecto.",
+  "💡 Gestiona bien tus recursos. Un duelista que agota su mano demasiado rápido pierde ventaja a largo plazo.",
+  "💡 Simula tu mano de inicio con el botón 🎴 Mano para testear la consistencia de tu deck.",
+  "💡 En torneos Swiss, un empate puede ser mejor que arriesgar una derrota en tiempo. Conoce el procedimiento de final.",
+  "💡 Guarda tus Contratrampas (Velocidad 3) para responder a las respuestas del rival, no al primer efecto.",
+  "💡 Un monstruo invocado en el mismo turno no puede atacar a menos que tenga un efecto que lo permita.",
+  "💡 Los efectos de Fusión y Sincro en el Extra Deck se invocan desde zonas especiales. Planifica el uso del Link.",
+  "💡 Practica el control del tempo. A veces NO jugar una carta es la mejor jugada del turno.",
+  "💡 El Called by the Grave es uno de los mejores handtraps del formato. Considera incluirlo en tu main deck.",
+  "💡 Revisa siempre la lista de Prohibidas/Limitadas antes de un torneo oficial.",
+  "💡 Un buen duelista estudia los decks más populares del meta para preparar respuestas específicas.",
+  "💡 La mano de inicio ideal tiene balance entre buscadores, extenders y al menos 1 handtrap de respuesta.",
+];
+
+let _quoteIdx = Math.floor(Math.random()*QUOTES.length);
+let _tipIdx = Math.floor(Math.random()*TIPS.length);
+
+function renderAbout(){
+  newQuote(false);
+  newTip(false);
+  renderAboutStats();
+  renderAboutCta();
+}
+
+function newQuote(animate=true){
+  _quoteIdx=(_quoteIdx+1)%QUOTES.length;
+  const q=QUOTES[_quoteIdx];
+  const el=document.getElementById('ai-quote');
+  const src=document.getElementById('ai-quote-src');
+  if(!el)return;
+  if(animate){el.style.opacity='0';setTimeout(()=>{el.textContent=q.text;src.textContent='— '+q.src;el.style.opacity='1';},200);}
+  else{el.textContent=q.text;if(src)src.textContent='— '+q.src;}
+}
+
+function newTip(animate=true){
+  _tipIdx=(_tipIdx+1)%TIPS.length;
+  const el=document.getElementById('ai-tip');
+  if(!el)return;
+  if(animate){el.style.opacity='0';setTimeout(()=>{el.textContent=TIPS[_tipIdx];el.style.opacity='1';},200);}
+  else{el.textContent=TIPS[_tipIdx];}
+}
+
+function renderAboutStats(){
+  const grid=document.getElementById('ai-stats-grid');
+  if(!grid)return;
+  const total=G.wins+G.losses;
+  const wr=total>0?Math.round((G.wins/total)*100):0;
+  const rank=getRank(G.wins);
+  const streak=calcStreak();
+  grid.innerHTML=`
+    <div class="ai-stat"><span class="ai-stat-val">${total}</span><span class="ai-stat-lbl">Duelos</span></div>
+    <div class="ai-stat wr"><span class="ai-stat-val">${wr}%</span><span class="ai-stat-lbl">Win Rate</span></div>
+    <div class="ai-stat"><span class="ai-stat-val">${streak>0?'+'+streak:streak}</span><span class="ai-stat-lbl">Racha</span></div>
+    <div class="ai-stat"><span class="ai-stat-val">${G.wins}</span><span class="ai-stat-lbl">Victorias</span></div>
+    <div class="ai-stat"><span class="ai-stat-val">${G.losses}</span><span class="ai-stat-lbl">Derrotas</span></div>
+    <div class="ai-stat rk"><span class="ai-stat-val">${rank.icon}</span><span class="ai-stat-lbl">${rank.name.split(' ').slice(0,2).join(' ')}</span></div>
+  `;
+}
+
+function calcStreak(){
+  // positive = win streak, negative = loss streak
+  if(!G.history.length)return 0;
+  const myName=G.profile.name.toUpperCase();
+  let streak=0;
+  const first=G.history[0];
+  const isFirstWin=first.winner&&first.winner.toUpperCase()===myName;
+  for(const h of G.history){
+    const isWin=h.winner&&h.winner.toUpperCase()===myName;
+    if(isWin===isFirstWin)streak+=(isWin?1:-1);
+    else break;
+  }
+  return streak;
+}
+
+function renderAboutCta(){
+  const sub=document.getElementById('ai-cta-sub');
+  if(!sub)return;
+  const total=G.wins+G.losses;
+  const rank=getRank(G.wins);
+  const next=getRankNext(G.wins);
+  if(total===0) sub.textContent='¡Es hora de tu primer duelo!';
+  else if(next) sub.textContent=`${next.needed} victorias para "${next.rank.icon} ${next.rank.name}"`;
+  else sub.textContent=`¡Leyenda Milenaria! El rango máximo es tuyo 👑`;
 }
 
 /* ══════════════════════════════════════
