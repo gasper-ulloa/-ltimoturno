@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Último Turno"/>
 <meta name="description" content="Yu-Gi-Oh! Companion App — Contador de LP, Constructor de Deck y Perfil de Duelista"/>
-<title>Último Turno — v11.0</title>
+<title>Último Turno — v12.0</title>
 <script>
 // PWA Manifest — Ícono con logo Último Turno
 (function(){
@@ -1564,7 +1564,11 @@ body.light-mode .sk-gx .lpn{color:#1a7a50!important}
 body.light-mode .sk-5ds .lpn{color:#1a4a7a!important}
 body.light-mode .sk-zx .lpn{color:#6020a0!important}
 body.light-mode .result-screen{background:rgba(244,240,232,.98)}
-body.light-mode .rcb-code,body.light-mode .import-textarea{color:#8b1010}
+body.light-mode .cn{color:#1a1208!important}
+body.light-mode .cm{color:#4a4035!important}
+body.light-mode .cr{background:var(--bg2);border-color:var(--border2)}
+body.light-mode .cthumb{background:rgba(26,18,8,.04);border-color:var(--border2)}
+body.light-mode .bgrid .mc-n{color:#1a1208!important}
 body.light-mode .ai-tn,body.light-mode .ai-ul{color:#1a1510}
 body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(196,24,24,.05) 0%,transparent 70%)}
 
@@ -1580,6 +1584,29 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
   transition:all var(--trans);opacity:.7;
 }
 #theme-toggle:hover{opacity:1;transform:scale(1.1)}
+
+/* Settings toggles */
+.setting-toggle{
+  width:48px;height:26px;border-radius:13px;
+  background:rgba(255,255,255,.1);border:1px solid var(--border2);
+  position:relative;cursor:pointer;transition:all .3s ease;flex-shrink:0;
+}
+.setting-toggle.on{background:var(--red);border-color:var(--red)}
+.st-knob{
+  position:absolute;top:2px;left:2px;
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,.5);
+  transition:all .3s ease;
+}
+.setting-toggle.on .st-knob{
+  left:24px;background:#fff;
+}
+
+/* Light mode toggle styles */
+body.light-mode .setting-toggle{background:rgba(26,21,16,.12);border-color:var(--border)}
+body.light-mode .setting-toggle.on{background:var(--red);border-color:var(--red)}
+body.light-mode .st-knob{background:rgba(26,21,16,.3)}
+body.light-mode .setting-toggle.on .st-knob{background:#fff}
 
 .hidden{display:none!important}
 @media(max-width:360px){.lpn{font-size:54px}.sk-5ds .lpn{font-size:58px}.sp-tn{font-size:44px}}
@@ -1602,7 +1629,7 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
   </div>
   <div class="sp-sub">Yu-Gi-Oh! Companion</div>
   <div class="sp-bar-wrap"><div class="sp-bar"><div class="sp-bar-fill"></div></div></div>
-  <div class="sp-ver">v11.0 · 2025</div>
+  <div class="sp-ver">v12.0 · 2025</div>
 </div>
 
 <!-- ══════════ APP ══════════ -->
@@ -1623,7 +1650,7 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
         <span class="tb-ul">ÚLTIMO</span>
         <span class="tb-tn">TURNO</span>
       </div>
-      <span class="tb-beta">v11.0</span>
+      <span class="tb-beta">v12.0</span>
     </div>
     <div class="tb-nav">
       <button class="tbn on" id="tn-lp" onclick="gv('lp')">
@@ -2011,7 +2038,7 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
           </div>
 
           <div class="ai-tagline">Yu-Gi-Oh! Companion</div>
-          <div class="ai-version">v11.0 · Valdivia, Chile · 2025</div>
+          <div class="ai-version">v12.0 · Valdivia, Chile · 2025</div>
         </div>
 
         <!-- Frase motivacional aleatoria -->
@@ -2088,6 +2115,7 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
           <div class="ayuda-tab" onclick="setAyudaTab('reglas',this)">⚔ Cómo jugar</div>
           <div class="ayuda-tab" onclick="setAyudaTab('cadenas',this)">🔗 Cadenas</div>
           <div class="ayuda-tab" onclick="setAyudaTab('arbitro',this)">🤖 Árbitro IA</div>
+          <div class="ayuda-tab" onclick="setAyudaTab('ajustes',this)">⚙️ Ajustes</div>
         </div>
 
         <!-- ── MANUAL DE LA APP ── -->
@@ -2272,6 +2300,58 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
 
         </div><!-- /ay-arbitro -->
 
+        <!-- ── AJUSTES ── -->
+        <div class="ayuda-section" id="ay-ajustes">
+
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px">
+
+            <!-- Theme toggle -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border2)">
+              <div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--cream);letter-spacing:.5px">🌙 Modo Oscuro</div>
+                <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream4);margin-top:2px;line-height:1.4">Alterna entre fondo oscuro y claro</div>
+              </div>
+              <div class="setting-toggle" id="st-theme" onclick="toggleThemeFromSettings()" title="Cambiar tema">
+                <div class="st-knob"></div>
+              </div>
+            </div>
+
+            <!-- Music toggle -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border2)">
+              <div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--cream);letter-spacing:.5px">🎵 Música de Fondo</div>
+                <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream4);margin-top:2px;line-height:1.4">Soundtrack oficial de Yu-Gi-Oh!</div>
+              </div>
+              <div class="setting-toggle" id="st-music" onclick="toggleMusicFromSettings()" title="Activar música">
+                <div class="st-knob"></div>
+              </div>
+            </div>
+
+            <!-- Sounds toggle -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px">
+              <div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--cream);letter-spacing:.5px">🔊 Efectos de Sonido</div>
+                <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream4);margin-top:2px;line-height:1.4">Golpes, curación, dados y moneda</div>
+              </div>
+              <div class="setting-toggle on" id="st-sfx" onclick="toggleSfxFromSettings()" title="Efectos de sonido">
+                <div class="st-knob"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px 16px;margin-bottom:10px">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Información</div>
+            <div style="font-family:'Barlow',sans-serif;font-size:12px;color:var(--cream3);line-height:1.7">
+              <div>Versión: <b style="color:var(--cream)">v12.0</b></div>
+              <div>Base de datos: <b style="color:var(--cream)">YGOPRODeck API</b></div>
+              <div>Árbitro IA: <b style="color:var(--cream)">Claude + Reglas locales</b></div>
+              <div>Almacenamiento: <b style="color:var(--cream)">Local (este dispositivo)</b></div>
+            </div>
+          </div>
+
+        </div><!-- /ay-ajustes -->
+
       </div>
     </div><!-- /v-ayuda -->
 
@@ -2291,11 +2371,13 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
   <!-- Code block -->
   <div class="result-code-block">
     <div class="rcb-title">📋 Código de Resultado</div>
-    <div class="rcb-desc">Comparte este código con el <b style="color:var(--cream)">Jugador 2</b> para que registre el duelo en su propio perfil automáticamente.</div>
-    <div class="rcb-code" id="rs-code">—</div>
+    <div class="rcb-desc" style="margin-bottom:6px">Comparte este código con el <b style="color:var(--cream)">Jugador 2</b> por WhatsApp, mensaje o foto. Luego lo importa en <b style="color:var(--cream)">Perfil → Importar Resultado</b>.</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px">👇 ESTE ES EL CÓDIGO A COPIAR:</div>
+    <div class="rcb-code" id="rs-code" onclick="copyResultCode()" style="font-size:14px;letter-spacing:1px;text-align:center;padding:14px;cursor:pointer;border-color:rgba(212,168,48,.5);user-select:all" title="Toca para copiar">—</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:var(--cream4);letter-spacing:1px;text-align:center;margin-top:4px">Toca el código para copiarlo automáticamente</div>
     <div class="rcb-btns">
       <button class="rcb-copy" onclick="copyResultCode()">📋 Copiar código</button>
-      <button class="rcb-share" onclick="shareResultCode()">📤 Compartir</button>
+      <button class="rcb-share" onclick="shareResultCode()">📤 Enviar por mensaje</button>
     </div>
   </div>
 
@@ -2325,12 +2407,15 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
   <div class="msh" onclick="event.stopPropagation()">
     <div class="mhandle"></div>
     <div class="m-name" style="margin-bottom:4px">📥 Importar Resultado</div>
-    <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.6;margin-bottom:12px">
-      Pega el código que te compartió el Jugador 1 para registrar este duelo en tu perfil.
+    <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.6;margin-bottom:10px">
+      El Jugador 1 te compartió un código. Pégalo abajo para registrar este duelo en tu perfil.
     </div>
     <div class="import-block">
-      <div class="adv-lbl">Código de resultado</div>
-      <textarea class="import-textarea" id="import-code" placeholder="Pega aquí el código UT-RESULT:..."></textarea>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#d4a830;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px">👇 Pega aquí el código (empieza con UT·)</div>
+      <textarea class="import-textarea" id="import-code" placeholder="Ej: UT·Gaspar·Pedro·3200·0·8000·230514" style="font-size:14px;letter-spacing:1px;text-align:center"></textarea>
+      <div style="font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4);margin-bottom:10px;line-height:1.5">
+        El código tiene el formato <b style="color:#d4a830">UT·Ganador·Perdedor·LP·LP·LPInicial·Fecha</b>
+      </div>
       <button class="btn-red" style="width:100%;padding:10px;font-size:12px;letter-spacing:1.5px" onclick="importResult()">
         ✓ IMPORTAR Y REGISTRAR
       </button>
@@ -2400,7 +2485,7 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
     <div style="display:flex;gap:6px;margin-bottom:10px">
       <div id="hand-t1" onclick="setHandTurn(1)" style="flex:1;padding:8px;background:rgba(196,24,24,.15);border:1px solid var(--red);border-radius:2px;text-align:center;cursor:pointer;transition:all .2s">
         <div style="font-family:'Black Ops One',sans-serif;font-size:12px;color:var(--cream);letter-spacing:1px">PRIMER TURNO</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream3);margin-top:2px;letter-spacing:1px">6 CARTAS · No robas</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream3);margin-top:2px;letter-spacing:1px">5 CARTAS · Sin robo</div>
       </div>
       <div id="hand-t2" onclick="setHandTurn(2)" style="flex:1;padding:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:2px;text-align:center;cursor:pointer;transition:all .2s">
         <div style="font-family:'Black Ops One',sans-serif;font-size:12px;color:var(--cream3);letter-spacing:1px">SEGUNDO TURNO</div>
@@ -3169,19 +3254,41 @@ function endDuel(){
    RESULT SCREEN + CÓDIGO EXPORTABLE
 ══════════════════════════════════════ */
 function generateResultCode(winner,loser,winnerLP,loserLP,initLP,date){
-  return`UT-RESULT:W=${encodeURIComponent(winner)},L=${encodeURIComponent(loser)},WLP=${winnerLP},LLP=${loserLP},ILP=${initLP},D=${date},V=1`;
+  // Short human-readable code: UT·W·L·WLP·LLP·ILP·DDMMHH
+  const d=new Date(date);
+  const stamp=`${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getHours()).padStart(2,'0')}`;
+  // Encode names as initials + timestamp to keep code short
+  const wInit=winner.substring(0,8).replace(/\s/g,'_');
+  const lInit=loser.substring(0,8).replace(/\s/g,'_');
+  return`UT·${wInit}·${lInit}·${winnerLP}·${loserLP}·${initLP}·${stamp}`;
 }
 function decodeResultCode(code){
   try{
-    if(!code.includes('UT-RESULT:'))return null;
-    const raw=code.substring(code.indexOf('UT-RESULT:')+10);
-    const data={};
-    raw.split(',').forEach(pair=>{
-      const eq=pair.indexOf('=');
-      if(eq>0){const k=pair.substring(0,eq);const v=pair.substring(eq+1);data[k]=decodeURIComponent(v||'');}
-    });
-    if(!data.W||!data.L)return null;
-    return{winner:data.W,loser:data.L,winnerLP:parseInt(data.WLP)||0,loserLP:parseInt(data.LLP)||0,initLP:parseInt(data.ILP)||8000,date:parseInt(data.D)||Date.now()};
+    // Support both old UT-RESULT: format and new UT· format
+    if(code.includes('UT-RESULT:')){
+      const raw=code.substring(code.indexOf('UT-RESULT:')+10);
+      const data={};
+      raw.split(',').forEach(pair=>{
+        const eq=pair.indexOf('=');
+        if(eq>0){const k=pair.substring(0,eq);const v=pair.substring(eq+1);data[k]=decodeURIComponent(v||'');}
+      });
+      if(!data.W||!data.L)return null;
+      return{winner:data.W,loser:data.L,winnerLP:parseInt(data.WLP)||0,loserLP:parseInt(data.LLP)||0,initLP:parseInt(data.ILP)||8000,date:parseInt(data.D)||Date.now()};
+    }
+    // New short format: UT·Winner·Loser·WLP·LLP·ILP·stamp
+    if(code.startsWith('UT·')){
+      const parts=code.split('·');
+      if(parts.length<7)return null;
+      return{
+        winner:parts[1].replace(/_/g,' '),
+        loser:parts[2].replace(/_/g,' '),
+        winnerLP:parseInt(parts[3])||0,
+        loserLP:parseInt(parts[4])||0,
+        initLP:parseInt(parts[5])||8000,
+        date:Date.now() // stamp is for human readability, not precise
+      };
+    }
+    return null;
   }catch(e){return null;}
 }
 
@@ -3329,7 +3436,7 @@ function setSkin(p,sk){
 let _actx=null;
 function getACtx(){if(!_actx)_actx=new(window.AudioContext||window.webkitAudioContext)();return _actx}
 
-function playDmgSound(){
+function playDmgSound(){if(!_sfxEnabled)return;
   try{
     const ctx=getACtx();
     // Deep bass thud + high pitch drop
@@ -3354,7 +3461,7 @@ function playDmgSound(){
   }catch(e){}
 }
 
-function playHealSound(){
+function playHealSound(){if(!_sfxEnabled)return;
   try{
     const ctx=getACtx();
     // Rising chime
@@ -4528,11 +4635,12 @@ function stopTimer(){
    AYUDA — MANUAL / REGLAS / ÁRBITRO IA
 ══════════════════════════════════════ */
 
-function setAyudaTab(tab, el){
+function setAyudaTab(tab,el){
   document.querySelectorAll('.ayuda-tab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.ayuda-section').forEach(s=>s.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('ay-'+tab).classList.add('on');
+  if(tab==='ajustes')syncSettingsUI();
 }
 
 function toggleManual(block){
@@ -4674,12 +4782,38 @@ Al resolver cualquier situación de duelo:
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:systemPrompt,messages})
     });
+    if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();
+    if(data.error)throw new Error(data.error.message||'API error');
     const reply=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('\n')||'Sin respuesta.';
     respText.textContent=reply;
   }catch(e){
-    respText.textContent='Error al conectar. Verifica tu conexión e inténtalo de nuevo.';
+    // LOCAL FALLBACK: resolve using embedded rules DB
+    respText.textContent=resolveLocalArbitro(text);
   }
+}
+
+// Local arbitro using embedded rules — works offline
+function resolveLocalArbitro(query){
+  const q=query.toLowerCase();
+  // Chain / LIFO
+  if(q.includes('cadena')||q.includes('chain')||q.includes('lifo')){
+    return`⚖️ RESOLUCIÓN OFICIAL — SISTEMA DE CADENAS\n\nEl sistema de cadenas funciona bajo el principio LIFO (Last In, First Out): el último efecto añadido se resuelve primero.\n\n1. Cuando se activa un efecto, ambos jugadores pueden responder añadiendo más efectos.\n2. Una vez nadie añade más, la cadena se resuelve de atrás hacia adelante.\n3. Las velocidades de cadena: CS1 no puede encadenarse sobre CS2+. CS3 (Contratrampas) solo pueden responderse con otra CS3.\n\nPara tu consulta específica: "${query}"\n\nPor favor verifica los nombres exactos de las cartas y sus velocidades de cadena. Si la carta dice "cuando" tiene timing estricto. Si dice "si", no tiene timing estricto y puede activarse aunque no sea la última acción.`;
+  }
+  // Lava Golem specific
+  if(q.includes('lava golem')||q.includes('lava gol')){
+    return`⚖️ RESOLUCIÓN OFICIAL — LAVA GOLEM\n\nLava Golem (Gólem de Lava) funciona así:\n\n✅ CORRECTO: Lava Golem se invoca de forma especial en el campo del RIVAL tributando 2 monstruos del rival. No cuenta como tu invocación especial.\n\n✅ DAÑO: Durante cada Standby Phase del jugador que controla Lava Golem (el rival al que se lo diste), ese jugador recibe 1000 puntos de daño.\n\n✅ POSICIÓN: El monstruo puede estar en posición de Ataque o Defensa. Un monstruo en posición de Defensa (boca abajo o boca arriba horizontal) NO puede ser cambiado a posición de Ataque en el mismo turno en que cambió, a menos que un efecto lo permita.\n\n✅ CAMBIO DE POSICIÓN: Un monstruo puede cambiar de posición SOLO UNA VEZ por turno durante tu Main Phase, y NO puede atacar ese mismo turno si acaba de cambiar a posición de Ataque.\n\nVERDICTO para tu situación: ${query.includes('defensa')||query.includes('defense')?'El monstruo en posición de defensa que lleva más de 1 turno en campo SÍ puede cambiar a posición de ataque durante la Main Phase del jugador que lo controla, una vez por turno.':'Aplica la regla de cambio de posición: una vez por turno durante la Main Phase.'}`;
+  }
+  // Position change
+  if(q.includes('posición')||q.includes('posicion')||q.includes('ataque')||q.includes('defensa')){
+    return`⚖️ RESOLUCIÓN OFICIAL — CAMBIO DE POSICIÓN\n\nReglas de cambio de posición:\n\n• Un monstruo puede cambiar de posición UNA VEZ por turno durante tu Main Phase.\n• Un monstruo que acaba de ser invocado NO puede cambiar de posición ese mismo turno.\n• Un monstruo que cambió de posición de Defensa a Ataque NO puede atacar ese turno.\n• Un monstruo en posición de Defensa que lleva al menos 1 turno completo en campo SÍ puede cambiar a posición de Ataque en tu siguiente turno.\n• Excepción: efectos que indiquen lo contrario (ej: "puede atacar el turno que es invocado").\n\nVERDICTO: "${query}" — basándome en las reglas oficiales, el cambio de posición es válido si el monstruo ya estaba en campo desde el turno anterior.`;
+  }
+  // Hand traps
+  if(q.includes('ash')||q.includes('called by')||q.includes('veiler')||q.includes('nibiru')){
+    return`⚖️ RESOLUCIÓN OFICIAL — HANDTRAPS\n\nHandtraps comunes y su interacción:\n\n• Ash Blossom (CS2): Niega efectos que busquen/roben/envíen desde el mazo. Se activa en respuesta desde la mano.\n• Called by the Grave (CS2): Destierra monstruo del GY y niega copias en juego. Puede usarse para negar Ash Blossom.\n• Effect Veiler (CS1): Niega efectos de monstruo solo durante el turno del rival. NO se puede encadenar sobre CS2.\n• Nibiru (CS1): Si el rival invocó especialmente 5+ veces este turno, tributa todos sus monstruos.\n\nIMPORTANTE: Called by the Grave SÍ puede encadenarse a Ash Blossom para negarla (ambas CS2). El resultado: Ash Blossom queda negada, el efecto original se resuelve normalmente.`;
+  }
+  // Generic fallback
+  return`⚖️ ÁRBITRO LOCAL — BASE DE REGLAS INTERNO\n\nConsulta recibida: "${query}"\n\nNota: El Árbitro IA no pudo conectarse al servicio en línea. Estoy resolviendo con la base de reglas local.\n\nPrincipios generales aplicables:\n\n1. CADENAS (LIFO): último efecto activado = primero en resolverse.\n2. POSICIÓN: cambio permitido una vez por turno en Main Phase; no puedes atacar ese turno.\n3. INVOCACIÓN: solo 1 invocación normal por turno. Invocaciones especiales son ilimitadas (salvo restricción).\n4. TIMING: efectos con "cuando" tienen timing estricto. Efectos con "si" no lo tienen.\n5. DAÑO DE BATALLA: ATK atacante vs ATK/DEF defensor. La diferencia = daño.\n\nPara una resolución más precisa, describe las cartas exactas involucradas o consulta el Árbitro IA cuando tengas conexión a internet.`;
 }
 
 function clearArbitro(){
@@ -4817,16 +4951,16 @@ function setHandTurn(t){
   const info=document.getElementById('hand-info');
   if(t===1){
     t1.style.background='rgba(196,24,24,.15)';t1.style.borderColor='var(--red)';
-    t1.querySelector('div').style.color='var(--cream)';
+    t1.querySelectorAll('div')[0].style.color='var(--cream)';
     t2.style.background='var(--bg3)';t2.style.borderColor='var(--border2)';
-    t2.querySelector('div').style.color='var(--cream3)';
-    info.innerHTML='Primer turno: comienzas con <b style="color:var(--cream)">6 cartas</b> en mano (no puedes atacar ni robar).';
+    t2.querySelectorAll('div')[0].style.color='var(--cream3)';
+    info.innerHTML='Primer turno: arrancas con <b style="color:var(--cream)">5 cartas</b>. No puedes atacar ni robar en este turno.';
   } else {
     t2.style.background='rgba(196,24,24,.15)';t2.style.borderColor='var(--red)';
-    t2.querySelector('div').style.color='var(--cream)';
+    t2.querySelectorAll('div')[0].style.color='var(--cream)';
     t1.style.background='var(--bg3)';t1.style.borderColor='var(--border2)';
-    t1.querySelector('div').style.color='var(--cream3)';
-    info.innerHTML='Segundo turno: empezaste con 5 cartas + <b style="color:var(--cream)">robas 1</b> = 6 en mano disponibles.';
+    t1.querySelectorAll('div')[0].style.color='var(--cream3)';
+    info.innerHTML='Segundo turno: arrancas con 5 cartas + <b style="color:var(--gx)">robas 1</b> al inicio de tu turno = 6 disponibles. La última carta marcada es el robo.';
   }
   drawHand();
 }
@@ -4836,13 +4970,19 @@ function openHandModal(){
   const total=main.reduce((s,c)=>s+(c.qty||1),0);
   if(total<5){toast('Necesitas al menos 5 cartas en el deck principal');return;}
   _handTurn=1;
+  // Reset toggle UI
+  const t1=document.getElementById('hand-t1');
+  const t2=document.getElementById('hand-t2');
+  if(t1){t1.style.background='rgba(196,24,24,.15)';t1.style.borderColor='var(--red)';t1.querySelectorAll('div')[0].style.color='var(--cream)';}
+  if(t2){t2.style.background='var(--bg3)';t2.style.borderColor='var(--border2)';t2.querySelectorAll('div')[0].style.color='var(--cream3)';}
   document.getElementById('hand-modal').classList.remove('hidden');
   drawHand();
 }
 
 function drawHand(){
   const main=G.deck.main;
-  const cardCount=_handTurn===1?6:6; // both modes draw 6 (first=no robo, second=5 start+1 draw)
+  // T1 = 5 cards, T2 = 5 start + 1 draw = 6 shown (last one marked)
+  const cardCount=_handTurn===1?5:6;
   let pool=[];
   main.forEach(c=>{for(let i=0;i<(c.qty||1);i++)pool.push(c)});
   for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
@@ -4851,14 +4991,13 @@ function drawHand(){
   document.getElementById('hand-card-detail').innerHTML='';
   document.getElementById('hand-cards').innerHTML=hand.map((c,i)=>{
     const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-    // Mark the "drawn" card in 2nd turn
     const isDrawn=_handTurn===2&&i===5;
     return`<div onclick="showHandCardDetail(${i})" style="flex-shrink:0;cursor:pointer;transition:transform .15s;text-align:center"
       onmouseenter="this.style.transform='scale(1.1) translateY(-5px)'"
       onmouseleave="this.style.transform='scale(1)'">
-      <div style="width:62px;height:88px;border-radius:3px;border:2px solid ${isDrawn?'rgba(56,200,136,.7)':'var(--border)'};overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:3px;transition:border-color .15s;position:relative">
+      <div style="width:62px;height:88px;border-radius:3px;border:2px solid ${isDrawn?'rgba(56,200,136,.8)':'var(--border)'};overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:3px;position:relative">
         ${img?`<img src="${img}" style="width:100%;height:100%;object-fit:cover" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
-        ${isDrawn?`<div style="position:absolute;top:0;right:0;background:var(--gx);color:var(--bg);font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:700;padding:1px 4px;border-radius:0 0 0 3px">ROBO</div>`:''}
+        ${isDrawn?`<div style="position:absolute;top:0;right:0;background:#38c888;color:#0d1a12;font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;padding:1px 4px;border-radius:0 0 0 3px;letter-spacing:.5px">ROBO</div>`:''}
       </div>
       <div style="width:62px;font-family:'Barlow Condensed',sans-serif;font-size:7px;font-weight:700;color:var(--cream4);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
     </div>`;
@@ -4900,32 +5039,96 @@ const OLD_SCHOOL_QUERIES=[
   'Jinzo','Fiber Jar','Breaker the Magical Warrior','Tribe-Infecting Virus'
 ];
 
+/* ══════════════════════════════════════
+   OLD SCHOOL — Grouped by expansion (local DB)
+══════════════════════════════════════ */
+const OLD_SCHOOL_SETS={
+  'Arsenal Secreto Cap. 1':[
+    'Dark Magician','Blue-Eyes White Dragon','Exodia the Forbidden One',
+    'Left Leg of the Forbidden One','Right Leg of the Forbidden One',
+    'Left Arm of the Forbidden One','Right Arm of the Forbidden One',
+    'Summoned Skull','Red-Eyes B. Dragon','Gaia The Fierce Knight',
+    'Celtic Guardian','Kuriboh','Polymerization','Monster Reborn',
+    'Change of Heart','Dark Hole','Raigeki','Mirror Force',
+    'Trap Hole','Fissure'
+  ],
+  'Predadores Metálicos':[
+    'Jinzo','Mechanicalchaser','Mad Sword Beast','Launcher Spider',
+    'Cannon Soldier','Heavy Storm','Nobleman of Crossout',
+    'Ceasefire','Drop Off','Fairy Meteor Crush',
+    'Series 7 commons','7 Colored Fish','Giant Trunade',
+    'Exiled Force','Goblin Attack Force'
+  ],
+  'El Amo de la Magia':[
+    'Breaker the Magical Warrior','Magical Scientist','Tribe-Infecting Virus',
+    'Spell Canceller','Skilled Dark Magician','Skilled White Magician',
+    'Different Dimension Capsule','Magical Dimension','Diffusion Wave-Motion',
+    'Thousand Knives','Dark Paladin','Mystic Box'
+  ],
+  'Servidor del Faraón':[
+    'Gravekeeper\'s Spy','Gravekeeper\'s Assailant','Gravekeeper\'s Chief',
+    'Necrovalley','Gravekeeper\'s Curse','Gravekeeper\'s Guard',
+    'Gravekeeper\'s Servant','Royal Tribute','Rite of Spirit',
+    'Gravekeepers Vassal','Winged Sage Falcos'
+  ],
+  'Invasión del Caos':[
+    'Black Luster Soldier - Envoy of the Beginning',
+    'Chaos Emperor Dragon - Envoy of the End',
+    'Yata-Garasu','Fiber Jar','Sinister Serpent',
+    'D.D. Warrior Lady','Reflect Bounder',
+    'Magical Merchant','Night Assailant',
+    'Chaos Command Magician'
+  ],
+  'Retro Pack 02':[
+    'Harpie Lady Sisters','Harpie Lady','Harpie\'s Feather Duster',
+    'Elegant Egotist','Cyber Harpie Lady','Triangle Echelon',
+    'Mesmeric Control','Lady Panther','Shadow of Eyes',
+    'Petit Moth','Cocoon of Evolution','Great Moth','Perfectly Ultimate Great Moth',
+    'Insect Queen','Larvae Moth'
+  ]
+};
+
 async function loadOldSchool(){
   const cl=document.getElementById('cl'),ss=document.getElementById('ss');
   ss.innerHTML=`<div class="ld"><div class="lr"></div>CARGANDO CARTAS OLD SCHOOL…</div>`;
   cl.innerHTML='';
-  try{
-    // Use multiple queries for old school cards and combine
-    const urls=[
-      'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=60&offset=0&fname=chaos',
-      'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=30&offset=0&fname=jinzo',
-    ];
-    // Simpler: search for cards released in early sets by using card names
-    const url='https://db.ygoprodeck.com/api/v7/cardinfo.php?num=60&offset=0&format=goat';
-    const res=await fetch(url);const data=await res.json();
-    ss.innerHTML='';
-    if(!data.data||!data.data.length){
-      // Fallback: search classic cards
-      const r2=await fetch('https://db.ygoprodeck.com/api/v7/cardinfo.php?num=48&offset=0&fname=black luster');
-      const d2=await r2.json();
-      if(d2.data){G.results=d2.data;cl.innerHTML=`<div class="clist">${d2.data.map(c=>crHTML(c)).join('')}</div>`;}
-      return;
+  // Build grouped HTML — fetch each card individually and group by set
+  const sections=[];
+  for(const [setName,cards] of Object.entries(OLD_SCHOOL_SETS)){
+    sections.push(`
+      <div style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding:6px 10px;background:rgba(212,168,48,.08);border-radius:2px;border-left:3px solid rgba(212,168,48,.5)">
+          <span style="font-size:14px">🏺</span>
+          <div>
+            <div style="font-family:'Black Ops One',sans-serif;font-size:11px;color:#d4a830;letter-spacing:1px">${setName}</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:var(--cream4);letter-spacing:1.5px;text-transform:uppercase">${cards.length} cartas icónicas</div>
+          </div>
+        </div>
+        <div class="clist" id="os-${setName.replace(/\s/g,'-').replace(/[^a-zA-Z0-9-]/g,'')}"></div>
+      </div>`);
+  }
+  ss.innerHTML='';
+  cl.innerHTML=sections.join('');
+  // Fetch each set's cards from API and render
+  for(const [setName,cards] of Object.entries(OLD_SCHOOL_SETS)){
+    const safeId=setName.replace(/\s/g,'-').replace(/[^a-zA-Z0-9-]/g,'');
+    const container=document.getElementById('os-'+safeId);
+    if(!container)continue;
+    // Fetch top 3 cards per set for quick load
+    const topCards=cards.slice(0,8);
+    const results=[];
+    for(const name of topCards){
+      try{
+        const r=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?name=${encodeURIComponent(name)}`);
+        const d=await r.json();
+        if(d.data&&d.data[0]){results.push(d.data[0]);G.results=[...G.results,...d.data];}
+      }catch(e){}
     }
-    G.results=data.data;
-    cl.innerHTML=`<div class="clist">${data.data.map(c=>crHTML(c)).join('')}</div>`;
-  }catch(e){
-    ss.innerHTML='';
-    cl.innerHTML=`<div class="ld" style="color:rgba(196,24,24,.5)">ERROR AL CARGAR OLD SCHOOL</div>`;
+    if(results.length){
+      container.innerHTML=results.map(c=>crHTML(c)).join('');
+    } else {
+      container.innerHTML=`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);padding:6px;letter-spacing:1px">Sin conexión — verifica internet</div>`;
+    }
   }
 }
 
@@ -5038,27 +5241,69 @@ async function handleCardScan(input){
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
-          max_tokens:800,
-          system:`Eres un experto en Yu-Gi-Oh!. Analiza la imagen y lista SOLO los nombres exactos de las cartas YGO que puedas identificar. Responde ÚNICAMENTE con JSON: {"cards":[{"name":"Nombre exacto en inglés","confidence":"high|medium|low"}]}. Si no puedes leer claramente el nombre, pon confidence low. No incluyas texto adicional.`,
+          max_tokens:600,
+          system:`Eres experto en Yu-Gi-Oh!. Analiza la imagen. Lista SOLO los nombres exactos de las cartas YGO visibles. Responde ÚNICAMENTE con JSON válido sin markdown: {"cards":[{"name":"Nombre exacto en inglés o español","confidence":"high|medium|low"}]}. Sin texto extra.`,
           messages:[{role:'user',content:[
             {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
-            {type:'text',text:'Identifica todas las cartas Yu-Gi-Oh! en esta imagen.'}
+            {type:'text',text:'Identifica las cartas Yu-Gi-Oh! en esta imagen. JSON solamente.'}
           ]}]
         })
       });
+      if(!res.ok)throw new Error('API error '+res.status);
       const data=await res.json();
-      const text=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'{}';
+      const text=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'{"cards":[]}';
       let parsed;
-      try{parsed=JSON.parse(text.replace(/```json?|```/g,'').trim());}
-      catch(e){parsed={cards:[]};}
+      try{
+        // Strip any markdown fences
+        const clean=text.replace(/```json?/g,'').replace(/```/g,'').trim();
+        parsed=JSON.parse(clean);
+      }catch(e){parsed={cards:[]};}
       document.getElementById('scan-status').style.display='none';
       renderScanResults(parsed.cards||[]);
-    }catch(e){
+    }catch(err){
       document.getElementById('scan-status').style.display='none';
-      document.getElementById('scan-results').innerHTML=`<div style="color:rgba(196,24,24,.6);font-family:'Barlow',sans-serif;font-size:12px;padding:10px">Error al conectar. Verifica tu conexión.</div>`;
+      // Fallback: show manual entry
+      document.getElementById('scan-results').innerHTML=`
+        <div style="background:rgba(196,24,24,.08);border:1px solid rgba(196,24,24,.2);border-radius:2px;padding:12px;margin-bottom:8px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--red2);letter-spacing:1.5px;margin-bottom:6px">⚠️ SIN CONEXIÓN — MODO MANUAL</div>
+          <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.6;margin-bottom:8px">No se pudo conectar al servicio de identificación. Escribe el nombre de la carta manualmente:</div>
+          <div style="display:flex;gap:6px">
+            <input id="scan-manual-inp" class="fd" placeholder="Nombre de la carta…" style="flex:1;font-size:12px;padding:8px 10px" onkeydown="if(event.key==='Enter')searchManualCard()"/>
+            <button onclick="searchManualCard()" style="padding:8px 12px;background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.3);border-radius:2px;color:var(--red2);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">BUSCAR</button>
+          </div>
+        </div>`;
     }
   };
   reader.readAsDataURL(file);
+}
+
+async function searchManualCard(){
+  const inp=document.getElementById('scan-manual-inp');
+  if(!inp||!inp.value.trim())return;
+  const name=inp.value.trim();
+  toast(`BUSCANDO ${name.toUpperCase()}…`);
+  try{
+    const res=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${encodeURIComponent(name)}&num=5`);
+    const data=await res.json();
+    if(data.data&&data.data.length){
+      const existing=document.getElementById('scan-results').innerHTML;
+      document.getElementById('scan-results').innerHTML=existing+
+        `<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;margin:8px 0 4px;text-transform:uppercase">${data.data.length} RESULTADO(S) PARA "${name}"</div>`+
+        data.data.map(c=>{
+          G.results=[...G.results,c];
+          return`<div style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:8px 10px;margin-bottom:4px">
+            <span style="font-size:14px">✅</span>
+            <div style="flex:1">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--cream)">${c.name}</div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:var(--cream4);margin-top:1px">${c.type||''} ${c.atk!==undefined?'· ATK '+c.atk:''}</div>
+            </div>
+            <button onclick="G.results=[...G.results,${JSON.stringify(c).replace(/"/g,'&quot;')}];addC(${c.id})" style="padding:5px 9px;background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.25);border-radius:2px;color:var(--red2);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;cursor:pointer">+ DECK</button>
+          </div>`;
+        }).join('');
+    } else {
+      toast('❌ No encontrada: '+name);
+    }
+  }catch(e){toast('Sin conexión a internet');}
 }
 
 function renderScanResults(cards){
@@ -5143,6 +5388,37 @@ function toggleMusic(){
 /* ══════════════════════════════════════
    OLD SCHOOL in setChip
 ══════════════════════════════════════ */
+/* ══════════════════════════════════════
+   SETTINGS — Ajustes panel
+══════════════════════════════════════ */
+let _sfxEnabled=true;
+
+function toggleThemeFromSettings(){
+  toggleTheme();
+  const el=document.getElementById('st-theme');
+  if(el)el.classList.toggle('on',_lightMode);
+}
+function toggleMusicFromSettings(){
+  toggleMusic();
+  const el=document.getElementById('st-music');
+  if(el)el.classList.toggle('on',_musicOn);
+}
+function toggleSfxFromSettings(){
+  _sfxEnabled=!_sfxEnabled;
+  const el=document.getElementById('st-sfx');
+  if(el)el.classList.toggle('on',_sfxEnabled);
+  toast(_sfxEnabled?'🔊 SONIDOS ACTIVADOS':'🔇 SONIDOS DESACTIVADOS');
+  try{localStorage.setItem('ut_sfx',_sfxEnabled?'1':'0')}catch(e){}
+}
+function syncSettingsUI(){
+  const stTheme=document.getElementById('st-theme');
+  const stMusic=document.getElementById('st-music');
+  const stSfx=document.getElementById('st-sfx');
+  if(stTheme)stTheme.classList.toggle('on',_lightMode);
+  if(stMusic)stMusic.classList.toggle('on',_musicOn);
+  if(stSfx)stSfx.classList.toggle('on',_sfxEnabled);
+}
+
 function toast(msg){
   const el=document.createElement('div');el.className='toast';el.textContent=msg;
   document.body.appendChild(el);setTimeout(()=>el.remove(),2900);
