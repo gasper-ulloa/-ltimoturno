@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Último Turno"/>
 <meta name="description" content="Yu-Gi-Oh! Companion App — Contador de LP, Constructor de Deck y Perfil de Duelista"/>
-<title>Último Turno — v10.0</title>
+<title>Último Turno — v11.0</title>
 <script>
 // PWA Manifest — Ícono con logo Último Turno
 (function(){
@@ -1602,13 +1602,20 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
   </div>
   <div class="sp-sub">Yu-Gi-Oh! Companion</div>
   <div class="sp-bar-wrap"><div class="sp-bar"><div class="sp-bar-fill"></div></div></div>
-  <div class="sp-ver">v10.0 · 2025</div>
+  <div class="sp-ver">v11.0 · 2025</div>
 </div>
 
 <!-- ══════════ APP ══════════ -->
 <div class="flash-overlay" id="flash"></div>
 <!-- Theme toggle: discrete, above bottom nav -->
 <div id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</div>
+
+<!-- Music player: floating button -->
+<div id="music-btn" onclick="toggleMusic()" title="Música YGO" style="position:fixed;bottom:74px;right:46px;width:30px;height:30px;background:var(--bg2);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.15);transition:all var(--trans);opacity:.7">🎵</div>
+<audio id="bgm" loop style="display:none">
+  <!-- YouTube no permite embed directo en audio tag, usamos iframe oculto -->
+</audio>
+<iframe id="yt-player" style="display:none;position:fixed;bottom:-200px;left:-200px;width:1px;height:1px;border:none" allow="autoplay" title="bgm"></iframe>
 <div id="shell">
   <div id="topbar">
     <div class="tb-brand">
@@ -1616,7 +1623,7 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
         <span class="tb-ul">ÚLTIMO</span>
         <span class="tb-tn">TURNO</span>
       </div>
-      <span class="tb-beta">v10.0</span>
+      <span class="tb-beta">v11.0</span>
     </div>
     <div class="tb-nav">
       <button class="tbn on" id="tn-lp" onclick="gv('lp')">
@@ -1870,6 +1877,7 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
         <div class="mode-row">
           <div class="mode-btn on" id="mb-search" onclick="setMode('search')">🔍 Buscar</div>
           <div class="mode-btn" id="mb-browse" onclick="setMode('browse')">📚 Explorar</div>
+          <div class="mode-btn" id="mb-scan" onclick="setMode('scan')">📷 Escanear</div>
         </div>
 
         <div class="chips">
@@ -1881,6 +1889,14 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
           <div class="chip" onclick="setChip('synchro',this)">Sincro</div>
           <div class="chip" onclick="setChip('xyz',this)">XYZ</div>
           <div class="chip" onclick="setChip('link',this)">Link</div>
+          <div class="chip" onclick="setChip('oldschool',this)" style="border-color:rgba(212,168,48,.4);color:#d4a830">🏺 Old School</div>
+        </div>
+
+        <!-- Deck name + save -->
+        <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
+          <input class="sf" id="deck-name-inp" placeholder="Nombre del deck…" style="flex:1;padding:7px 10px;font-size:12px" oninput="G.currentDeckName=this.value"/>
+          <button onclick="saveNamedDeck()" style="flex-shrink:0;padding:7px 10px;background:rgba(56,200,136,.1);border:1px solid rgba(56,200,136,.3);border-radius:2px;color:var(--gx);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all var(--trans);white-space:nowrap">💾 GUARDAR</button>
+          <button onclick="openSavedDecks()" style="flex-shrink:0;padding:7px 10px;background:rgba(212,168,48,.08);border:1px solid rgba(212,168,48,.25);border-radius:2px;color:#d4a830;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all var(--trans);white-space:nowrap">📂 MAZOS</button>
         </div>
 
         <div class="ztabs">
@@ -1891,7 +1907,7 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
         <div class="dgrid" id="dg"></div>
         <div style="display:flex;gap:6px;margin-bottom:12px">
           <button class="export-btn" style="flex:1;margin-bottom:0" onclick="exportDeck()">📋 Exportar</button>
-          <button class="export-btn" style="flex:1;margin-bottom:0;border-color:rgba(56,200,136,.3);color:rgba(56,200,136,.7)" onclick="openHandModal()" title="Simular mano de inicio">🎴 Mano</button>
+          <button class="export-btn" style="flex:1;margin-bottom:0;border-color:rgba(56,200,136,.3);color:rgba(56,200,136,.7)" onclick="openHandModal()" title="Simular mano">🎴 Mano</button>
           <button class="export-btn" style="flex:0 0 auto;margin-bottom:0;padding:8px 12px;border-color:rgba(196,24,24,.3);color:rgba(196,24,24,.5)" onclick="clearDeck()" title="Vaciar deck">🗑</button>
         </div>
         <div id="ss"></div>
@@ -1995,7 +2011,7 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
           </div>
 
           <div class="ai-tagline">Yu-Gi-Oh! Companion</div>
-          <div class="ai-version">v10.0 · Valdivia, Chile · 2025</div>
+          <div class="ai-version">v11.0 · Valdivia, Chile · 2025</div>
         </div>
 
         <!-- Frase motivacional aleatoria -->
@@ -2324,6 +2340,43 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
   </div>
 </div>
 
+<!-- SAVED DECKS MODAL -->
+<div id="saved-decks-modal" class="mbg hidden" onclick="closeSavedDecks(event)">
+  <div class="msh" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div class="m-name" style="margin-bottom:8px">📂 Mis Mazos Guardados</div>
+    <div id="saved-decks-list"></div>
+    <button class="mclose" style="margin-top:10px" onclick="closeSavedDecks()">Cerrar</button>
+  </div>
+</div>
+
+<!-- CARD SCAN MODAL -->
+<div id="scan-modal" class="mbg hidden" onclick="closeScanModal(event)">
+  <div class="msh" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div class="m-name" style="margin-bottom:4px">📷 Escanear Cartas Reales</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.6;margin-bottom:12px">
+      Toma una foto de tus cartas físicas. La IA identificará los nombres y los cargará al constructor de deck automáticamente. Las cartas con baja confianza se marcarán con ⚠️.
+    </div>
+    <div class="cam-row" style="margin-bottom:10px">
+      <label class="cam-btn" style="cursor:pointer">
+        📷 FOTOGRAFIAR CARTAS
+        <input type="file" accept="image/*" capture="environment" id="scan-cam" style="display:none" onchange="handleCardScan(this)"/>
+      </label>
+      <label class="cam-btn" style="cursor:pointer">
+        🖼 SUBIR IMAGEN
+        <input type="file" accept="image/*" id="scan-file" style="display:none" onchange="handleCardScan(this)"/>
+      </label>
+    </div>
+    <img id="scan-preview" class="cam-preview" style="display:none;margin-bottom:10px"/>
+    <div id="scan-status" style="display:none;padding:10px;background:var(--bg2);border-radius:2px;margin-bottom:8px">
+      <div class="arbitro-loading"><div class="arbitro-loading-dots"><span></span><span></span><span></span></div><span>IDENTIFICANDO CARTAS…</span></div>
+    </div>
+    <div id="scan-results" style="display:flex;flex-direction:column;gap:5px"></div>
+    <button class="mclose" style="margin-top:10px" onclick="closeScanModal()">Cerrar</button>
+  </div>
+</div>
+
 <!-- OTHER MODALS (existing) -->
 <div id="dice-modal" class="mbg hidden" onclick="closeDiceModal()">
   <div class="msh" style="max-height:60vh;text-align:center" onclick="event.stopPropagation()">
@@ -2337,16 +2390,29 @@ body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50
 
 <!-- HAND SIMULATION MODAL -->
 <div id="hand-modal" class="mbg hidden" onclick="closeHandModal(event)">
-  <div class="msh" onclick="event.stopPropagation()" style="max-height:90vh">
+  <div class="msh" onclick="event.stopPropagation()" style="max-height:92vh">
     <div class="mhandle"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div class="m-name">🃏 Simulación de Mano</div>
       <button onclick="closeHandModal()" style="background:none;border:none;color:var(--cream3);font-size:20px;cursor:pointer;padding:4px">×</button>
     </div>
-    <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);margin-bottom:12px;line-height:1.5">5 cartas aleatorias del deck principal — simula tu mano de inicio</div>
-    <div id="hand-cards" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;justify-content:center"></div>
-    <div id="hand-card-detail" style="margin-top:10px"></div>
-    <div style="display:flex;gap:8px;margin-top:14px">
+    <!-- Turn toggle -->
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      <div id="hand-t1" onclick="setHandTurn(1)" style="flex:1;padding:8px;background:rgba(196,24,24,.15);border:1px solid var(--red);border-radius:2px;text-align:center;cursor:pointer;transition:all .2s">
+        <div style="font-family:'Black Ops One',sans-serif;font-size:12px;color:var(--cream);letter-spacing:1px">PRIMER TURNO</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream3);margin-top:2px;letter-spacing:1px">6 CARTAS · No robas</div>
+      </div>
+      <div id="hand-t2" onclick="setHandTurn(2)" style="flex:1;padding:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:2px;text-align:center;cursor:pointer;transition:all .2s">
+        <div style="font-family:'Black Ops One',sans-serif;font-size:12px;color:var(--cream3);letter-spacing:1px">SEGUNDO TURNO</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);margin-top:2px;letter-spacing:1px">5 CARTAS + ROBO</div>
+      </div>
+    </div>
+    <div id="hand-info" style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);margin-bottom:10px;line-height:1.5;padding:6px 8px;background:rgba(196,24,24,.05);border-radius:2px;border-left:2px solid rgba(196,24,24,.3)">
+      Primer turno: comienzas con <b style="color:var(--cream)">6 cartas</b> en mano (no puedes atacar este turno).
+    </div>
+    <div id="hand-cards" style="display:flex;gap:5px;overflow-x:auto;padding-bottom:8px;justify-content:center"></div>
+    <div id="hand-card-detail" style="margin-top:8px"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
       <button class="btn-red" style="flex:1;padding:10px;font-size:11px;letter-spacing:1px" onclick="drawHand()">🔀 NUEVA MANO</button>
       <button class="mclose" style="flex:1;margin-top:0" onclick="closeHandModal()">← VOLVER AL DECK</button>
     </div>
@@ -3457,12 +3523,13 @@ async function doAdvSearch(){
 
 function setMode(m){
   G.mode=m;
-  ['search','browse'].forEach(k=>{
+  ['search','browse','scan'].forEach(k=>{
     const el=document.getElementById('mb-'+k);
-    el.classList.toggle('on',k===m);
+    if(el)el.classList.toggle('on',k===m);
   });
   if(m==='browse')loadBrowse();
-  else{document.getElementById('cl').innerHTML='';document.getElementById('ss').innerHTML=''}
+  else if(m==='scan'){openScanModal();}
+  else{document.getElementById('cl').innerHTML='';document.getElementById('ss').innerHTML='';}
 }
 
 async function loadBrowse(){
@@ -3473,6 +3540,7 @@ async function loadBrowse(){
 function setChip(f,el){
   document.querySelectorAll('.chip').forEach(e=>e.classList.remove('on'));
   el.classList.add('on');aF=f;
+  if(f==='oldschool'){loadOldSchool();return;}
   if(G.mode==='search'&&G.query.length>=2)doSearch(G.query);
   else if(G.mode==='browse')loadBrowseByFilter(f);
 }
@@ -3890,58 +3958,6 @@ function backToSetup(){
 }
 
 /* ══════════════════════════════════════
-   HAND SIMULATION — 5 cartas de inicio
-══════════════════════════════════════ */
-function openHandModal(){
-  const main=G.deck.main;
-  const total=main.reduce((s,c)=>s+(c.qty||1),0);
-  if(total<5){toast('Necesitas al menos 5 cartas en el deck principal');return;}
-  drawHand();
-  document.getElementById('hand-modal').classList.remove('hidden');
-}
-
-function drawHand(){
-  const main=G.deck.main;
-  let pool=[];
-  main.forEach(c=>{for(let i=0;i<(c.qty||1);i++)pool.push(c)});
-  // Fisher-Yates shuffle
-  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
-  const hand=pool.slice(0,5);
-  window._currentHand=hand;
-  document.getElementById('hand-card-detail').innerHTML='';
-  document.getElementById('hand-cards').innerHTML=hand.map((c,i)=>{
-    const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-    return`<div onclick="showHandCardDetail(${i})" style="flex-shrink:0;cursor:pointer;transition:transform .15s;text-align:center"
-      onmouseenter="this.style.transform='scale(1.1) translateY(-5px)'"
-      onmouseleave="this.style.transform='scale(1)'">
-      <div style="width:68px;height:96px;border-radius:3px;border:2px solid var(--border);overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:4px;transition:border-color .15s">
-        ${img?`<img src="${img}" style="width:100%;height:100%;object-fit:cover" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
-      </div>
-      <div style="width:68px;font-family:'Barlow Condensed',sans-serif;font-size:7.5px;font-weight:700;color:var(--cream4);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
-    </div>`;
-  }).join('');
-}
-
-function showHandCardDetail(idx){
-  const c=window._currentHand[idx];if(!c)return;
-  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-  document.getElementById('hand-card-detail').innerHTML=`
-    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:10px;display:flex;gap:10px;margin-top:8px;animation:fadeU .2s ease">
-      ${img?`<img src="${img}" style="width:52px;height:72px;border-radius:2px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)" alt="${c.name}"/>`:
-        `<div style="width:52px;height:72px;background:var(--bg3);border-radius:2px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${tE(c.type)}</div>`}
-      <div style="flex:1;min-width:0">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:var(--cream);margin-bottom:3px">${c.name}</div>
-        ${c.atk!==undefined?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--cream3);margin-bottom:4px">ATK ${c.atk} · DEF ${c.def??'—'} · Nv.${c.level??'?'} · ${c.attribute||''}</div>`:''}
-        <div style="font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4);line-height:1.5;overflow-y:auto;max-height:70px">${(c.desc||'Sin descripción').substring(0,220)}${c.desc&&c.desc.length>220?'…':''}</div>
-      </div>
-    </div>`;
-}
-
-function closeHandModal(e){
-  if(!e||e.target===document.getElementById('hand-modal'))
-    document.getElementById('hand-modal').classList.add('hidden');
-}
-
 /* ══════════════════════════════════════
    PERSIST
 ══════════════════════════════════════ */
@@ -4790,7 +4806,342 @@ function renderAboutCta(){
 }
 
 /* ══════════════════════════════════════
-   TOAST & KEYS
+   HAND SIMULATION — v11 with turn toggle
+══════════════════════════════════════ */
+let _handTurn=1; // 1=first(6 cards), 2=second(5 cards)
+
+function setHandTurn(t){
+  _handTurn=t;
+  const t1=document.getElementById('hand-t1');
+  const t2=document.getElementById('hand-t2');
+  const info=document.getElementById('hand-info');
+  if(t===1){
+    t1.style.background='rgba(196,24,24,.15)';t1.style.borderColor='var(--red)';
+    t1.querySelector('div').style.color='var(--cream)';
+    t2.style.background='var(--bg3)';t2.style.borderColor='var(--border2)';
+    t2.querySelector('div').style.color='var(--cream3)';
+    info.innerHTML='Primer turno: comienzas con <b style="color:var(--cream)">6 cartas</b> en mano (no puedes atacar ni robar).';
+  } else {
+    t2.style.background='rgba(196,24,24,.15)';t2.style.borderColor='var(--red)';
+    t2.querySelector('div').style.color='var(--cream)';
+    t1.style.background='var(--bg3)';t1.style.borderColor='var(--border2)';
+    t1.querySelector('div').style.color='var(--cream3)';
+    info.innerHTML='Segundo turno: empezaste con 5 cartas + <b style="color:var(--cream)">robas 1</b> = 6 en mano disponibles.';
+  }
+  drawHand();
+}
+
+function openHandModal(){
+  const main=G.deck.main;
+  const total=main.reduce((s,c)=>s+(c.qty||1),0);
+  if(total<5){toast('Necesitas al menos 5 cartas en el deck principal');return;}
+  _handTurn=1;
+  document.getElementById('hand-modal').classList.remove('hidden');
+  drawHand();
+}
+
+function drawHand(){
+  const main=G.deck.main;
+  const cardCount=_handTurn===1?6:6; // both modes draw 6 (first=no robo, second=5 start+1 draw)
+  let pool=[];
+  main.forEach(c=>{for(let i=0;i<(c.qty||1);i++)pool.push(c)});
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  const hand=pool.slice(0,cardCount);
+  window._currentHand=hand;
+  document.getElementById('hand-card-detail').innerHTML='';
+  document.getElementById('hand-cards').innerHTML=hand.map((c,i)=>{
+    const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+    // Mark the "drawn" card in 2nd turn
+    const isDrawn=_handTurn===2&&i===5;
+    return`<div onclick="showHandCardDetail(${i})" style="flex-shrink:0;cursor:pointer;transition:transform .15s;text-align:center"
+      onmouseenter="this.style.transform='scale(1.1) translateY(-5px)'"
+      onmouseleave="this.style.transform='scale(1)'">
+      <div style="width:62px;height:88px;border-radius:3px;border:2px solid ${isDrawn?'rgba(56,200,136,.7)':'var(--border)'};overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:3px;transition:border-color .15s;position:relative">
+        ${img?`<img src="${img}" style="width:100%;height:100%;object-fit:cover" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
+        ${isDrawn?`<div style="position:absolute;top:0;right:0;background:var(--gx);color:var(--bg);font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:700;padding:1px 4px;border-radius:0 0 0 3px">ROBO</div>`:''}
+      </div>
+      <div style="width:62px;font-family:'Barlow Condensed',sans-serif;font-size:7px;font-weight:700;color:var(--cream4);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+    </div>`;
+  }).join('');
+}
+
+function showHandCardDetail(idx){
+  const c=window._currentHand[idx];if(!c)return;
+  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  document.getElementById('hand-card-detail').innerHTML=`
+    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:10px;display:flex;gap:10px;margin-top:8px;animation:fadeU .2s ease">
+      ${img?`<img src="${img}" style="width:52px;height:72px;border-radius:2px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)" alt="${c.name}"/>`:
+        `<div style="width:52px;height:72px;background:var(--bg3);border-radius:2px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${tE(c.type)}</div>`}
+      <div style="flex:1;min-width:0">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:var(--cream);margin-bottom:3px">${c.name}</div>
+        ${c.atk!==undefined?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--cream3);margin-bottom:4px">ATK ${c.atk} · DEF ${c.def??'—'} · Nv.${c.level??'?'} · ${c.attribute||''}</div>`:''}
+        <div style="font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4);line-height:1.5;overflow-y:auto;max-height:70px">${(c.desc||'Sin descripción').substring(0,220)}${c.desc&&c.desc.length>220?'…':''}</div>
+      </div>
+    </div>`;
+}
+
+function closeHandModal(e){
+  if(!e||e.target===document.getElementById('hand-modal'))
+    document.getElementById('hand-modal').classList.add('hidden');
+}
+
+/* ══════════════════════════════════════
+   OLD SCHOOL FILTER
+══════════════════════════════════════ */
+// Cards from these classic sets — searched by archetype/set keywords
+const OLD_SCHOOL_SETS=[
+  'Arsenal Secreto','Predadores Metálicos','Amo de la Magia',
+  'Servidor del Faraón','Invasión del Caos','Retro Pack'
+];
+// We search these as archetypes/names in the API
+const OLD_SCHOOL_QUERIES=[
+  'Injection Fairy Lily','Spellbinding Circle','Dark Ruler Ha Des',
+  'Chaos Emperor Dragon','Black Luster Soldier','Yata-Garasu',
+  'Jinzo','Fiber Jar','Breaker the Magical Warrior','Tribe-Infecting Virus'
+];
+
+async function loadOldSchool(){
+  const cl=document.getElementById('cl'),ss=document.getElementById('ss');
+  ss.innerHTML=`<div class="ld"><div class="lr"></div>CARGANDO CARTAS OLD SCHOOL…</div>`;
+  cl.innerHTML='';
+  try{
+    // Use multiple queries for old school cards and combine
+    const urls=[
+      'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=60&offset=0&fname=chaos',
+      'https://db.ygoprodeck.com/api/v7/cardinfo.php?num=30&offset=0&fname=jinzo',
+    ];
+    // Simpler: search for cards released in early sets by using card names
+    const url='https://db.ygoprodeck.com/api/v7/cardinfo.php?num=60&offset=0&format=goat';
+    const res=await fetch(url);const data=await res.json();
+    ss.innerHTML='';
+    if(!data.data||!data.data.length){
+      // Fallback: search classic cards
+      const r2=await fetch('https://db.ygoprodeck.com/api/v7/cardinfo.php?num=48&offset=0&fname=black luster');
+      const d2=await r2.json();
+      if(d2.data){G.results=d2.data;cl.innerHTML=`<div class="clist">${d2.data.map(c=>crHTML(c)).join('')}</div>`;}
+      return;
+    }
+    G.results=data.data;
+    cl.innerHTML=`<div class="clist">${data.data.map(c=>crHTML(c)).join('')}</div>`;
+  }catch(e){
+    ss.innerHTML='';
+    cl.innerHTML=`<div class="ld" style="color:rgba(196,24,24,.5)">ERROR AL CARGAR OLD SCHOOL</div>`;
+  }
+}
+
+/* ══════════════════════════════════════
+   NAMED DECK SAVE / LOAD
+══════════════════════════════════════ */
+function saveNamedDeck(){
+  const name=(document.getElementById('deck-name-inp')?.value||'').trim();
+  if(!name){toast('INGRESA UN NOMBRE PARA EL MAZO');return;}
+  try{
+    const saved=JSON.parse(localStorage.getItem('ut_named_decks')||'{}');
+    saved[name]={
+      name,
+      date:Date.now(),
+      main:G.deck.main.map(c=>({id:c.id,name:c.name,type:c.type,atk:c.atk,def:c.def,level:c.level,attribute:c.attribute,race:c.race,desc:c.desc,qty:c.qty,card_images:c.card_images})),
+      extra:G.deck.extra.map(c=>({id:c.id,name:c.name,type:c.type,qty:c.qty,card_images:c.card_images})),
+      side:G.deck.side.map(c=>({id:c.id,name:c.name,type:c.type,qty:c.qty,card_images:c.card_images})),
+    };
+    localStorage.setItem('ut_named_decks',JSON.stringify(saved));
+    G.currentDeckName=name;
+    toast(`💾 MAZO "${name.toUpperCase()}" GUARDADO`);
+  }catch(e){toast('ERROR AL GUARDAR');}
+}
+
+function openSavedDecks(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('ut_named_decks')||'{}');
+    const names=Object.keys(saved);
+    const el=document.getElementById('saved-decks-list');
+    if(!names.length){
+      el.innerHTML='<div class="no-hist">No tienes mazos guardados aún</div>';
+    } else {
+      el.innerHTML=names.map(n=>{
+        const d=saved[n];
+        const total=(d.main||[]).reduce((s,c)=>s+(c.qty||1),0);
+        const date=new Date(d.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short'});
+        return`<div style="display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:10px;margin-bottom:5px;transition:all var(--trans)" onmouseenter="this.style.borderColor='rgba(196,24,24,.3)'" onmouseleave="this.style.borderColor='var(--border2)'">
+          <div style="flex:1">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--cream)">${n}</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);margin-top:2px">${total} cartas · ${date}</div>
+          </div>
+          <button onclick="loadNamedDeck('${n.replace(/'/g,"\\'")}');closeSavedDecks()" style="padding:6px 10px;background:rgba(56,200,136,.1);border:1px solid rgba(56,200,136,.3);border-radius:2px;color:var(--gx);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;white-space:nowrap">CARGAR</button>
+          <button onclick="deleteNamedDeck('${n.replace(/'/g,"\\'")}');openSavedDecks()" style="padding:6px 8px;background:rgba(196,24,24,.08);border:1px solid rgba(196,24,24,.2);border-radius:2px;color:rgba(196,24,24,.6);font-family:monospace;font-size:14px;cursor:pointer">×</button>
+        </div>`;
+      }).join('');
+    }
+  }catch(e){document.getElementById('saved-decks-list').innerHTML='<div class="no-hist">Error al cargar mazos</div>';}
+  document.getElementById('saved-decks-modal').classList.remove('hidden');
+}
+
+function loadNamedDeck(name){
+  try{
+    const saved=JSON.parse(localStorage.getItem('ut_named_decks')||'{}');
+    const d=saved[name];if(!d)return;
+    G.deck.main=d.main||[];
+    G.deck.extra=d.extra||[];
+    G.deck.side=d.side||[];
+    G.currentDeckName=name;
+    const inp=document.getElementById('deck-name-inp');
+    if(inp)inp.value=name;
+    renderDG();updateZC();saveDeck();
+    toast(`📂 MAZO "${name.toUpperCase()}" CARGADO`);
+  }catch(e){toast('ERROR AL CARGAR');}
+}
+
+function deleteNamedDeck(name){
+  if(!confirm(`¿Eliminar el mazo "${name}"?`))return;
+  try{
+    const saved=JSON.parse(localStorage.getItem('ut_named_decks')||'{}');
+    delete saved[name];
+    localStorage.setItem('ut_named_decks',JSON.stringify(saved));
+  }catch(e){}
+}
+
+function closeSavedDecks(e){
+  if(!e||e.target===document.getElementById('saved-decks-modal'))
+    document.getElementById('saved-decks-modal').classList.add('hidden');
+}
+
+/* ══════════════════════════════════════
+   CARD SCAN IA — Claude Vision
+══════════════════════════════════════ */
+function openScanModal(){
+  document.getElementById('scan-preview').style.display='none';
+  document.getElementById('scan-status').style.display='none';
+  document.getElementById('scan-results').innerHTML='';
+  document.getElementById('scan-modal').classList.remove('hidden');
+}
+function closeScanModal(e){
+  if(!e||e.target===document.getElementById('scan-modal'))
+    document.getElementById('scan-modal').classList.add('hidden');
+  // Reset mode to search
+  setMode('search');
+  document.getElementById('mb-search').classList.add('on');
+  document.getElementById('mb-scan').classList.remove('on');
+}
+
+async function handleCardScan(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const b64=e.target.result.split(',')[1];
+    const prev=document.getElementById('scan-preview');
+    prev.src=e.target.result;prev.style.display='block';
+    document.getElementById('scan-status').style.display='block';
+    document.getElementById('scan-results').innerHTML='';
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:800,
+          system:`Eres un experto en Yu-Gi-Oh!. Analiza la imagen y lista SOLO los nombres exactos de las cartas YGO que puedas identificar. Responde ÚNICAMENTE con JSON: {"cards":[{"name":"Nombre exacto en inglés","confidence":"high|medium|low"}]}. Si no puedes leer claramente el nombre, pon confidence low. No incluyas texto adicional.`,
+          messages:[{role:'user',content:[
+            {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
+            {type:'text',text:'Identifica todas las cartas Yu-Gi-Oh! en esta imagen.'}
+          ]}]
+        })
+      });
+      const data=await res.json();
+      const text=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'{}';
+      let parsed;
+      try{parsed=JSON.parse(text.replace(/```json?|```/g,'').trim());}
+      catch(e){parsed={cards:[]};}
+      document.getElementById('scan-status').style.display='none';
+      renderScanResults(parsed.cards||[]);
+    }catch(e){
+      document.getElementById('scan-status').style.display='none';
+      document.getElementById('scan-results').innerHTML=`<div style="color:rgba(196,24,24,.6);font-family:'Barlow',sans-serif;font-size:12px;padding:10px">Error al conectar. Verifica tu conexión.</div>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderScanResults(cards){
+  const el=document.getElementById('scan-results');
+  if(!cards.length){
+    el.innerHTML=`<div style="color:var(--cream4);font-family:'Barlow',sans-serif;font-size:12px;padding:10px;text-align:center">No se pudieron identificar cartas en la imagen.</div>`;
+    return;
+  }
+  el.innerHTML=`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">${cards.length} CARTA(S) IDENTIFICADA(S)</div>`+
+  cards.map(c=>{
+    const isLow=c.confidence==='low';
+    const isMed=c.confidence==='medium';
+    return`<div style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid ${isLow?'rgba(212,168,48,.4)':isMed?'rgba(212,168,48,.2)':'var(--border2)'};border-radius:2px;padding:8px 10px;margin-bottom:5px">
+      <span style="font-size:14px">${isLow?'⚠️':isMed?'⚡':'✅'}</span>
+      <div style="flex:1">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--cream)">${c.name}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:${isLow?'#d4a830':isMed?'rgba(212,168,48,.6)':'var(--cream4)'};letter-spacing:1px;text-transform:uppercase;margin-top:1px">${isLow?'⚠ Confianza baja — verificar':isMed?'Confianza media':'Identificada con certeza'}</div>
+      </div>
+      <button onclick="searchAndAddScanned('${c.name.replace(/'/g,"\\'")}','${c.confidence}')" style="padding:5px 9px;background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.25);border-radius:2px;color:var(--red2);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;cursor:pointer;white-space:nowrap;transition:all .15s">+ DECK</button>
+    </div>`;
+  }).join('');
+}
+
+async function searchAndAddScanned(name, confidence){
+  toast(`BUSCANDO ${name.toUpperCase()}…`);
+  try{
+    const res=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?name=${encodeURIComponent(name)}`);
+    const data=await res.json();
+    if(data.data&&data.data[0]){
+      G.results=[...G.results,...data.data];
+      addC(data.data[0].id);
+      if(confidence==='low')toast(`⚠️ ${name} añadida — verifica que sea la correcta`);
+    } else {
+      // Try fuzzy search
+      const r2=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${encodeURIComponent(name)}&num=1`);
+      const d2=await r2.json();
+      if(d2.data&&d2.data[0]){
+        G.results=[...G.results,...d2.data];
+        addC(d2.data[0].id);
+        toast(`⚠️ Añadida aproximación: ${d2.data[0].name}`);
+      } else {
+        toast(`❌ No encontrada: ${name}`);
+      }
+    }
+  }catch(e){toast('ERROR AL BUSCAR');}
+}
+
+/* ══════════════════════════════════════
+   MUSIC PLAYER — YGO Background Music
+══════════════════════════════════════ */
+let _musicOn=false;
+let _ytLoaded=false;
+
+function toggleMusic(){
+  _musicOn=!_musicOn;
+  const btn=document.getElementById('music-btn');
+  if(_musicOn){
+    btn.textContent='🔊';
+    btn.style.opacity='1';
+    btn.style.borderColor='rgba(196,24,24,.4)';
+    if(!_ytLoaded){
+      // Load YouTube IFrame via indirect autoplay
+      const iframe=document.getElementById('yt-player');
+      iframe.src='https://www.youtube.com/embed/o_Z0AhbSQxo?autoplay=1&loop=1&playlist=o_Z0AhbSQxo&controls=0&mute=0&enablejsapi=1';
+      _ytLoaded=true;
+    } else {
+      // Try to resume
+      const iframe=document.getElementById('yt-player');
+      iframe.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}','*');
+    }
+    toast('🎵 MÚSICA ACTIVADA');
+  } else {
+    btn.textContent='🎵';
+    btn.style.opacity='.7';
+    btn.style.borderColor='var(--border)';
+    const iframe=document.getElementById('yt-player');
+    iframe.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}','*');
+    toast('🔇 MÚSICA SILENCIADA');
+  }
+}
+
+/* ══════════════════════════════════════
+   OLD SCHOOL in setChip
 ══════════════════════════════════════ */
 function toast(msg){
   const el=document.createElement('div');el.className='toast';el.textContent=msg;
