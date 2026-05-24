@@ -3095,6 +3095,15 @@ function getWinRate(){
   return total>0?Math.round((G.wins/total)*100):0;
 }
 
+// ── GLOBAL STATE (declared first to avoid use-before-declaration crashes) ──
+let _lightMode=false;
+let _playerCount=1;
+let _handTurn=1;
+let _sfxEnabled=true;
+let _musicOn=false;
+let _ytLoaded=false;
+let _currentResultCode='';
+
 const G={
   initLP:4000,p1:4000,p2:4000,h1:[],h2:[],twoP:true,
   deck:{main:[],extra:[],side:[]},zone:'main',
@@ -3291,8 +3300,6 @@ function decodeResultCode(code){
     return null;
   }catch(e){return null;}
 }
-
-let _currentResultCode='';
 
 function showResultScreen(winner,loser,winnerLP,loserLP,p1n,p2n){
   const code=generateResultCode(winner,loser,winnerLP,loserLP,G.initLP,Date.now());
@@ -4019,7 +4026,6 @@ function deleteHistory(idx){
 /* ══════════════════════════════════════
    THEME TOGGLE — Light / Dark
 ══════════════════════════════════════ */
-let _lightMode=false;
 function toggleTheme(){
   _lightMode=!_lightMode;
   document.body.classList.toggle('light-mode',_lightMode);
@@ -4036,7 +4042,6 @@ function loadTheme(){
 /* ══════════════════════════════════════
    PLAYER MODE (replaces online mode)
 ══════════════════════════════════════ */
-let _playerCount=1;
 function pickPlayers(n,el){
   _playerCount=n;
   document.querySelectorAll('#mode-1p,#mode-2p').forEach(e=>e.classList.remove('on'));
@@ -4942,8 +4947,6 @@ function renderAboutCta(){
 /* ══════════════════════════════════════
    HAND SIMULATION — v11 with turn toggle
 ══════════════════════════════════════ */
-let _handTurn=1; // 1=first(6 cards), 2=second(5 cards)
-
 function setHandTurn(t){
   _handTurn=t;
   const t1=document.getElementById('hand-t1');
@@ -5028,17 +5031,6 @@ function closeHandModal(e){
    OLD SCHOOL FILTER
 ══════════════════════════════════════ */
 // Cards from these classic sets — searched by archetype/set keywords
-const OLD_SCHOOL_SETS=[
-  'Arsenal Secreto','Predadores Metálicos','Amo de la Magia',
-  'Servidor del Faraón','Invasión del Caos','Retro Pack'
-];
-// We search these as archetypes/names in the API
-const OLD_SCHOOL_QUERIES=[
-  'Injection Fairy Lily','Spellbinding Circle','Dark Ruler Ha Des',
-  'Chaos Emperor Dragon','Black Luster Soldier','Yata-Garasu',
-  'Jinzo','Fiber Jar','Breaker the Magical Warrior','Tribe-Infecting Virus'
-];
-
 /* ══════════════════════════════════════
    OLD SCHOOL — Grouped by expansion (local DB)
 ══════════════════════════════════════ */
@@ -5354,9 +5346,6 @@ async function searchAndAddScanned(name, confidence){
 /* ══════════════════════════════════════
    MUSIC PLAYER — YGO Background Music
 ══════════════════════════════════════ */
-let _musicOn=false;
-let _ytLoaded=false;
-
 function toggleMusic(){
   _musicOn=!_musicOn;
   const btn=document.getElementById('music-btn');
@@ -5391,8 +5380,6 @@ function toggleMusic(){
 /* ══════════════════════════════════════
    SETTINGS — Ajustes panel
 ══════════════════════════════════════ */
-let _sfxEnabled=true;
-
 function toggleThemeFromSettings(){
   toggleTheme();
   const el=document.getElementById('st-theme');
