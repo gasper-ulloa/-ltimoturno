@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Último Turno"/>
 <meta name="description" content="Yu-Gi-Oh! Companion App — Contador de LP, Constructor de Deck y Perfil de Duelista"/>
-<title>Último Turno — v8.0</title>
+<title>Último Turno — v10.0</title>
 <script>
 // PWA Manifest — Ícono con logo Último Turno
 (function(){
@@ -451,8 +451,29 @@ body{font-family:'Barlow Condensed',sans-serif}
   100%{transform:scaleX(1) translateY(0)}
 }
 
-.reset-lnk{display:block;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(196,24,24,.3);cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:color var(--trans);margin-bottom:6px;position:relative;z-index:1}
-.reset-lnk:hover{color:var(--red2)}
+.reset-lnk{
+  display:block;text-align:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;
+  color:rgba(196,24,24,.35);cursor:pointer;
+  text-decoration:none;
+  margin-bottom:6px;position:relative;z-index:1;
+  padding:8px 12px;border-radius:2px;
+  border:1px solid transparent;
+  transition:all .2s ease;
+}
+.reset-lnk:hover{
+  color:#ff2020;
+  border-color:rgba(255,32,32,.5);
+  background:rgba(196,24,24,.08);
+  text-shadow:0 0 12px rgba(255,32,32,.9),0 0 24px rgba(255,32,32,.5),0 0 40px rgba(196,24,24,.4);
+  box-shadow:0 0 14px rgba(196,24,24,.25),inset 0 0 14px rgba(196,24,24,.08);
+  letter-spacing:4px;
+}
+.reset-lnk:active{
+  transform:scale(.97);
+  text-shadow:0 0 20px rgba(255,32,32,1),0 0 40px rgba(255,32,32,.7);
+}
 
 /* ════════════════════════════════════════════
    ── DECK VIEW ──
@@ -1396,6 +1417,170 @@ body{font-family:'Barlow Condensed',sans-serif}
 }
 .app-feat-desc{font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.5}
 
+/* ════════════════════════════════════════════
+   RESULTADO EXPORTABLE / IMPORTAR
+════════════════════════════════════════════ */
+
+/* Result screen shown after duel ends */
+.result-screen{
+  position:fixed;inset:0;z-index:700;
+  background:rgba(5,4,2,.97);
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  overflow-y:auto;padding:20px 16px 30px;
+  animation:fi2 .3s ease;
+}
+.result-trophy{
+  font-size:56px;margin-bottom:4px;
+  animation:trophyBounce .9s cubic-bezier(.34,1.5,.64,1) both;
+}
+.result-winner-lbl{
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  color:var(--red2);letter-spacing:4px;text-transform:uppercase;margin-bottom:4px;
+}
+.result-winner-name{
+  font-family:'Black Ops One',sans-serif;font-size:28px;letter-spacing:3px;
+  color:#d4a830;text-shadow:0 0 30px rgba(212,168,48,.35);
+  margin-bottom:16px;text-align:center;
+}
+.result-details{
+  width:100%;background:var(--bg2);border:1px solid var(--border);
+  border-radius:3px;padding:12px;margin-bottom:14px;
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+.rd-cell{text-align:center;padding:6px}
+.rd-val{font-family:'Black Ops One',sans-serif;font-size:18px;color:var(--cream);display:block;letter-spacing:1px}
+.rd-lbl{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;display:block;margin-top:2px}
+.rd-cell.win .rd-val{color:var(--gx)}
+.rd-cell.loss .rd-val{color:var(--red2)}
+
+/* Code block */
+.result-code-block{
+  width:100%;background:var(--bg3);
+  border:1px solid rgba(212,168,48,.3);border-radius:3px;
+  padding:14px;margin-bottom:12px;
+  position:relative;
+}
+.result-code-block::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,#d4a830,transparent);
+}
+.rcb-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  color:#d4a830;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;
+}
+.rcb-desc{
+  font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);
+  line-height:1.6;margin-bottom:10px;
+}
+.rcb-code{
+  font-family:monospace;font-size:11px;
+  background:var(--bg);border:1px solid var(--border2);border-radius:2px;
+  padding:10px;color:#d4a830;word-break:break-all;line-height:1.7;
+  user-select:all;letter-spacing:.5px;
+}
+.rcb-btns{display:flex;gap:8px;margin-top:10px}
+.rcb-copy{
+  flex:1;padding:9px;background:rgba(212,168,48,.12);
+  border:1px solid rgba(212,168,48,.35);border-radius:2px;
+  color:#d4a830;font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all var(--trans);
+}
+.rcb-copy:hover{background:rgba(212,168,48,.22);color:var(--cream)}
+.rcb-share{
+  flex:1;padding:9px;background:rgba(56,200,136,.1);
+  border:1px solid rgba(56,200,136,.3);border-radius:2px;
+  color:var(--gx);font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;transition:all var(--trans);
+}
+.rcb-share:hover{background:rgba(56,200,136,.2)}
+
+/* Instructions for P2 */
+.result-p2-block{
+  width:100%;background:rgba(56,200,136,.05);
+  border:1px solid rgba(56,200,136,.2);border-radius:3px;
+  padding:12px;margin-bottom:12px;
+}
+.rp2-title{
+  font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;
+  color:var(--gx);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;
+}
+.rp2-steps{
+  font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);
+  line-height:1.8;
+}
+.rp2-steps b{color:var(--cream)}
+
+.result-close-btns{width:100%;display:flex;flex-direction:column;gap:8px}
+
+/* Import modal */
+.import-block{
+  background:var(--bg2);border:1px solid var(--border);border-radius:3px;
+  padding:14px;margin-bottom:10px;
+}
+.import-textarea{
+  width:100%;min-height:80px;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:2px;
+  padding:10px;color:#d4a830;
+  font-family:monospace;font-size:12px;line-height:1.6;
+  outline:none;resize:none;transition:border-color var(--trans);
+  margin:8px 0;
+}
+.import-textarea:focus{border-color:#d4a830}
+.import-textarea::placeholder{color:rgba(212,168,48,.2);font-size:11px;font-family:'Barlow',sans-serif}
+.import-result{
+  padding:10px;background:var(--bg3);border-radius:2px;
+  border-left:2px solid var(--gx);margin-top:8px;
+  font-family:'Barlow',sans-serif;font-size:12px;color:var(--cream2);
+  line-height:1.6;display:none;
+}
+.import-result.err{border-left-color:var(--red2);color:rgba(220,80,80,.8)}
+
+/* ════ LIGHT MODE ════ */
+body.light-mode{
+  --bg:#f4f0e8;--bg2:#ece8df;--bg3:#e2ddd3;--bg4:#d8d2c6;--bg5:#ccc5b6;
+  --cream:#1a1510;--cream2:#2e2820;--cream3:#4a4035;--cream4:#7a7060;
+  --border:rgba(26,21,16,.18);--border2:rgba(26,21,16,.09);
+  --rdim:rgba(196,24,24,.25);--dm:#1a1510;--gx:#1a7a50;--fds:#1a4a7a;
+}
+body.light-mode #shell,body.light-mode #content{background:var(--bg)}
+body.light-mode #topbar{background:var(--bg2);border-bottom-color:var(--red)}
+body.light-mode .ph{background:var(--bg2)}
+body.light-mode .iblock,body.light-mode .card-block,body.light-mode .pb,
+body.light-mode .tools-box,body.light-mode .trn-standings,body.light-mode .trn-banner,
+body.light-mode .manual-block,body.light-mode .ai-hero,body.light-mode .ai-quote-block,
+body.light-mode .ai-tip-block,body.light-mode .ai-stats-block,body.light-mode .result-code-block,
+body.light-mode .import-block{background:var(--bg2)}
+body.light-mode .trn-pair-card,body.light-mode .phase-row,body.light-mode .ct-card,
+body.light-mode .chain-visual,body.light-mode .arbitro-input-area{background:var(--bg3)}
+body.light-mode .tbn{color:rgba(26,21,16,.3)}
+body.light-mode .tbn.on{color:var(--red)}
+body.light-mode .fd,.sf,.adv-sel,.adv-inp,body.light-mode .arbitro-textarea,
+body.light-mode .import-textarea{background:var(--bg3);color:var(--cream);border-color:var(--border)}
+body.light-mode .lpn{color:#1a1510!important}
+body.light-mode .sk-dm .lpn{color:#8b1010!important}
+body.light-mode .sk-gx .lpn{color:#1a7a50!important}
+body.light-mode .sk-5ds .lpn{color:#1a4a7a!important}
+body.light-mode .sk-zx .lpn{color:#6020a0!important}
+body.light-mode .result-screen{background:rgba(244,240,232,.98)}
+body.light-mode .rcb-code,body.light-mode .import-textarea{color:#8b1010}
+body.light-mode .ai-tn,body.light-mode .ai-ul{color:#1a1510}
+body.light-mode .ai-bg-glow{background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(196,24,24,.05) 0%,transparent 70%)}
+
+/* Theme toggle — discrete, always visible above nav */
+#theme-toggle{
+  position:fixed;bottom:74px;right:10px;
+  width:30px;height:30px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;z-index:50;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  transition:all var(--trans);opacity:.7;
+}
+#theme-toggle:hover{opacity:1;transform:scale(1.1)}
+
 .hidden{display:none!important}
 @media(max-width:360px){.lpn{font-size:54px}.sk-5ds .lpn{font-size:58px}.sp-tn{font-size:44px}}
 </style>
@@ -1417,11 +1602,13 @@ body{font-family:'Barlow Condensed',sans-serif}
   </div>
   <div class="sp-sub">Yu-Gi-Oh! Companion</div>
   <div class="sp-bar-wrap"><div class="sp-bar"><div class="sp-bar-fill"></div></div></div>
-  <div class="sp-ver">v8.0 · 2025</div>
+  <div class="sp-ver">v10.0 · 2025</div>
 </div>
 
 <!-- ══════════ APP ══════════ -->
 <div class="flash-overlay" id="flash"></div>
+<!-- Theme toggle: discrete, above bottom nav -->
+<div id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</div>
 <div id="shell">
   <div id="topbar">
     <div class="tb-brand">
@@ -1429,7 +1616,7 @@ body{font-family:'Barlow Condensed',sans-serif}
         <span class="tb-ul">ÚLTIMO</span>
         <span class="tb-tn">TURNO</span>
       </div>
-      <span class="tb-beta">v8.0</span>
+      <span class="tb-beta">v10.0</span>
     </div>
     <div class="tb-nav">
       <button class="tbn on" id="tn-lp" onclick="gv('lp')">
@@ -1481,22 +1668,21 @@ body{font-family:'Barlow Condensed',sans-serif}
             <div class="s-row" style="margin-bottom:10px">
               <input class="fd" id="lp-ci" type="number" min="100" placeholder="Otro valor…"/>
             </div>
-            <!-- Modo de juego -->
-            <div class="s-lbl">Modo de juego</div>
-            <div style="display:flex;gap:8px;margin-bottom:4px">
-              <div class="lp-opt on" id="mode-local" onclick="pickMode('local',this)" style="flex:1">
-                <span class="lp-n" style="font-size:18px">👥</span>
-                <span class="lp-t">Local</span>
+            <div class="s-lbl">Jugadores</div>
+            <div style="display:flex;gap:8px;margin-bottom:12px">
+              <div class="lp-opt on" id="mode-1p" onclick="pickPlayers(1,this)" style="flex:1">
+                <span class="lp-n" style="font-size:20px">👤</span>
+                <span class="lp-t">1 Jugador</span>
               </div>
-              <div class="lp-opt" id="mode-online" onclick="pickMode('online',this)" style="flex:1">
-                <span class="lp-n" style="font-size:18px">📱</span>
-                <span class="lp-t">Online / Separado</span>
+              <div class="lp-opt" id="mode-2p" onclick="pickPlayers(2,this)" style="flex:1">
+                <span class="lp-n" style="font-size:20px">👥</span>
+                <span class="lp-t">2 Jugadores</span>
               </div>
             </div>
-            <div id="mode-online-hint" style="display:none;font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.5;margin-bottom:8px;padding:8px;background:rgba(196,24,24,.06);border-radius:2px;border-left:2px solid var(--red)">
-              📱 Cada jugador usa su propio teléfono. Toca "PASAR TURNO" para ceder el control al rival. El historial se registra para ambos.
+            <div id="online-info" style="display:none;font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.6;margin-bottom:10px;padding:8px 10px;background:rgba(212,168,48,.06);border-radius:2px;border-left:2px solid rgba(212,168,48,.4)">
+              💡 Al terminar el duelo se generará un <b style="color:#d4a830">código de resultado</b>. El rival lo importa en su app para registrar el duelo en su perfil automáticamente.
             </div>
-            <button class="btn-red" style="width:100%;padding:10px" onclick="beginDuel()">INICIAR DUELO</button>
+            <button class="btn-red" style="width:100%;padding:11px;font-size:13px;letter-spacing:2px" onclick="beginDuel()">⚔ INICIAR DUELO</button>
           </div>
         </div>
       </div>
@@ -1605,11 +1791,12 @@ body{font-family:'Barlow Condensed',sans-serif}
           </div>
         </div>
 
-        <!-- Online mode: pass phone button -->
-        <div id="pass-phone-btn" style="display:none;margin-bottom:8px;position:relative;z-index:1">
-          <button onclick="passPhone()" style="width:100%;padding:12px;background:rgba(212,168,48,.1);border:1px solid rgba(212,168,48,.35);border-radius:3px;color:#d4a830;font-family:'Black Ops One',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer;transition:all var(--trans)">
-            📱 PASAR TURNO AL RIVAL
+        <!-- Back to setup + reset row -->
+        <div style="display:flex;gap:6px;margin-bottom:10px;position:relative;z-index:1">
+          <button onclick="backToSetup()" style="flex:0 0 auto;padding:7px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:2px;color:var(--cream4);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all var(--trans);display:flex;align-items:center;gap:5px">
+            ← CONFIGURAR
           </button>
+          <div style="flex:1"></div>
         </div>
 
         <a class="reset-lnk" onclick="doReset()">↺ REINICIAR DUELO</a>
@@ -1771,6 +1958,9 @@ body{font-family:'Barlow Condensed',sans-serif}
         </div>
 
         <button class="btn-red" style="width:100%;padding:10px;margin-bottom:6px" onclick="saveProfile()">GUARDAR PERFIL</button>
+        <button class="btn-ghost" style="width:100%;padding:9px;font-size:11px;margin-bottom:6px;border-color:rgba(212,168,48,.3);color:#d4a830" onclick="openImportModal()">
+          📥 Importar Resultado de Duelo
+        </button>
 
         <div class="slbl" style="margin-top:16px">Historial de Duelos</div>
         <div class="dh-list" id="duel-hist"><div class="no-hist">Sin duelos registrados</div></div>
@@ -1805,7 +1995,7 @@ body{font-family:'Barlow Condensed',sans-serif}
           </div>
 
           <div class="ai-tagline">Yu-Gi-Oh! Companion</div>
-          <div class="ai-version">v8.0 · Valdivia, Chile · 2025</div>
+          <div class="ai-version">v10.0 · Valdivia, Chile · 2025</div>
         </div>
 
         <!-- Frase motivacional aleatoria -->
@@ -2072,7 +2262,69 @@ body{font-family:'Barlow Condensed',sans-serif}
   </div>
 </div>
 
-<!-- DICE / COIN POPUP MODAL -->
+<!-- RESULT SCREEN (shown after duel ends) -->
+<div id="result-screen" class="result-screen hidden">
+  <span class="result-trophy">🏆</span>
+  <div class="result-winner-lbl">¡Campeón del Duelo!</div>
+  <div class="result-winner-name" id="rs-winner">—</div>
+
+  <div class="result-details" id="rs-details">
+    <!-- rendered by JS -->
+  </div>
+
+  <!-- Code block -->
+  <div class="result-code-block">
+    <div class="rcb-title">📋 Código de Resultado</div>
+    <div class="rcb-desc">Comparte este código con el <b style="color:var(--cream)">Jugador 2</b> para que registre el duelo en su propio perfil automáticamente.</div>
+    <div class="rcb-code" id="rs-code">—</div>
+    <div class="rcb-btns">
+      <button class="rcb-copy" onclick="copyResultCode()">📋 Copiar código</button>
+      <button class="rcb-share" onclick="shareResultCode()">📤 Compartir</button>
+    </div>
+  </div>
+
+  <!-- Instructions for P2 -->
+  <div class="result-p2-block" id="rs-p2-block">
+    <div class="rp2-title">📱 ¿Cómo registrarlo en tu celular?</div>
+    <div class="rp2-steps">
+      <b>Jugador 2:</b> Abre tu app Último Turno →<br/>
+      Ve a <b>Perfil</b> → toca <b>"Importar Resultado"</b> →<br/>
+      Pega el código → tu historial y stats<br/>
+      se actualizan automáticamente. ✓
+    </div>
+  </div>
+
+  <div class="result-close-btns">
+    <button class="btn-red" style="padding:12px;font-size:13px;letter-spacing:2px" onclick="closeResultScreen()">
+      ✓ LISTO
+    </button>
+    <button class="btn-ghost" style="font-size:11px" onclick="closeResultScreen();gv('profile')">
+      Ver mi perfil →
+    </button>
+  </div>
+</div>
+
+<!-- IMPORT RESULT MODAL -->
+<div id="import-modal" class="mbg hidden" onclick="closeImportModal(event)">
+  <div class="msh" onclick="event.stopPropagation()">
+    <div class="mhandle"></div>
+    <div class="m-name" style="margin-bottom:4px">📥 Importar Resultado</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.6;margin-bottom:12px">
+      Pega el código que te compartió el Jugador 1 para registrar este duelo en tu perfil.
+    </div>
+    <div class="import-block">
+      <div class="adv-lbl">Código de resultado</div>
+      <textarea class="import-textarea" id="import-code" placeholder="Pega aquí el código UT-RESULT:..."></textarea>
+      <button class="btn-red" style="width:100%;padding:10px;font-size:12px;letter-spacing:1.5px" onclick="importResult()">
+        ✓ IMPORTAR Y REGISTRAR
+      </button>
+      <div class="import-result" id="import-feedback"></div>
+    </div>
+    <button class="mclose" onclick="closeImportModal()">Cerrar</button>
+  </div>
+</div>
+
+<!-- OTHER MODALS (existing) -->
 <div id="dice-modal" class="mbg hidden" onclick="closeDiceModal()">
   <div class="msh" style="max-height:60vh;text-align:center" onclick="event.stopPropagation()">
     <div class="mhandle"></div>
@@ -2493,9 +2745,167 @@ const YGO_ICONS = [
     <!-- Belt gem -->
     <ellipse cx="31.5" cy="40" rx="3" ry="2" fill="#a060d0" stroke="#d4a830" stroke-width=".8"/>
   </svg>`},
-];
+  {id:'dark-magician',label:'Mago Oscuro',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#1a0a2a"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#b8922a" stroke-width="1.5"/>
+    <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(160,80,220,.2)" stroke-width="1"/>
+    <rect x="30" y="8" width="3" height="48" rx="1.5" fill="#8040a0" stroke="#a060c0" stroke-width=".8"/>
+    <circle cx="31.5" cy="12" r="7" fill="#6020a0" stroke="#c080e0" stroke-width="1.5"/>
+    <circle cx="31.5" cy="12" r="4.5" fill="#8040c0"/>
+    <circle cx="31.5" cy="12" r="2.5" fill="rgba(220,160,255,.6)"/>
+    <circle cx="29.5" cy="10" r="1.2" fill="rgba(255,255,255,.7)"/>
+    <path d="M31.5 4 L33.5 8 L29.5 8 Z" fill="#d4a830"/>
+    <path d="M31.5 20 L29.5 16 L33.5 16 Z" fill="#d4a830"/>
+    <path d="M22 28 Q24 24 31.5 24 Q39 24 42 28 L44 52 Q38 56 31.5 56 Q25 56 20 52 Z" fill="#2a1050" stroke="#6030a0" stroke-width="1"/>
+    <path d="M24 28 L31.5 8 L39 28 Z" fill="#3a1860" stroke="#6030a0" stroke-width="1"/>
+    <circle cx="28" cy="30" r="2" fill="#d4a830"/><circle cx="35" cy="30" r="2" fill="#d4a830"/>
+    <circle cx="28" cy="30" r="1" fill="#1a0a2a"/><circle cx="35" cy="30" r="1" fill="#1a0a2a"/>
+    <ellipse cx="31.5" cy="40" rx="3" ry="2" fill="#a060d0" stroke="#d4a830" stroke-width=".8"/>
+  </svg>`},
 
-const ICON_IDS = YGO_ICONS.map(i=>i.id);
+  {id:'exodia',label:'Exodia',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#0a1820"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#b8922a" stroke-width="1.5"/>
+    <!-- Glow aura -->
+    <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(212,168,48,.15)" stroke-width="2"/>
+    <circle cx="32" cy="32" r="20" fill="none" stroke="rgba(212,168,48,.1)" stroke-width="1"/>
+    <!-- Body (sealed) -->
+    <rect x="20" y="22" width="24" height="30" rx="3" fill="#1a3050" stroke="#d4a830" stroke-width="1.5"/>
+    <!-- Chains / seals -->
+    <path d="M20 28 L14 28 M20 34 L14 34 M20 40 L14 40" stroke="#c41818" stroke-width="2" stroke-linecap="round"/>
+    <path d="M44 28 L50 28 M44 34 L50 34 M44 40 L50 40" stroke="#c41818" stroke-width="2" stroke-linecap="round"/>
+    <!-- Circle seals on chains -->
+    <circle cx="12" cy="28" r="3" fill="none" stroke="#c41818" stroke-width="1.5"/>
+    <circle cx="12" cy="34" r="3" fill="none" stroke="#c41818" stroke-width="1.5"/>
+    <circle cx="12" cy="40" r="3" fill="none" stroke="#c41818" stroke-width="1.5"/>
+    <circle cx="52" cy="28" r="3" fill="none" stroke="#c41818" stroke-width="1.5"/>
+    <circle cx="52" cy="34" r="3" fill="none" stroke="#c41818" stroke-width="1.5"/>
+    <circle cx="52" cy="40" r="3" fill="none" stroke="#c41818" stroke-width="1.5"/>
+    <!-- Face -->
+    <ellipse cx="32" cy="28" rx="8" ry="9" fill="#c4a050" stroke="#d4a830" stroke-width="1"/>
+    <!-- Eyes glowing -->
+    <ellipse cx="29" cy="26" rx="2.5" ry="2" fill="#d4a830"/>
+    <ellipse cx="35" cy="26" rx="2.5" ry="2" fill="#d4a830"/>
+    <circle cx="29" cy="26" r="1" fill="#0a0010"/>
+    <circle cx="35" cy="26" r="1" fill="#0a0010"/>
+    <!-- Glow dots -->
+    <circle cx="28" cy="25" r=".6" fill="rgba(255,255,255,.8)"/>
+    <circle cx="34" cy="25" r=".6" fill="rgba(255,255,255,.8)"/>
+    <!-- Seal on chest -->
+    <path d="M26 38 L32 34 L38 38 L36 44 L28 44 Z" fill="none" stroke="#d4a830" stroke-width="1.2"/>
+    <circle cx="32" cy="39" r="2" fill="#d4a830" opacity=".6"/>
+    <!-- Head top -->
+    <path d="M26 22 L28 16 L32 14 L36 16 L38 22" fill="#c4a050" stroke="#d4a830" stroke-width="1"/>
+    <path d="M30 14 L32 10 L34 14" fill="#d4a830"/>
+  </svg>`},
+
+  {id:'slifer',label:'Slifer',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#200a0a"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#c41818" stroke-width="1.5"/>
+    <!-- Lightning aura -->
+    <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(196,24,24,.15)" stroke-width="1.5"/>
+    <!-- Dragon body sinuous -->
+    <path d="M10 50 Q20 30 32 20 Q44 10 54 18 Q58 24 54 30 Q48 38 38 32 Q28 26 24 36 Q20 46 26 52" fill="none" stroke="#c41818" stroke-width="5" stroke-linecap="round"/>
+    <path d="M10 50 Q20 30 32 20 Q44 10 54 18 Q58 24 54 30 Q48 38 38 32 Q28 26 24 36 Q20 46 26 52" fill="none" stroke="#e03030" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Wings -->
+    <path d="M32 20 Q24 8 14 12 Q20 18 24 26" fill="rgba(196,24,24,.3)" stroke="#c41818" stroke-width="1"/>
+    <path d="M44 14 Q52 4 58 10 Q52 14 48 22" fill="rgba(196,24,24,.2)" stroke="#c41818" stroke-width=".8"/>
+    <!-- Head -->
+    <ellipse cx="54" cy="22" rx="7" ry="5" fill="#c41818" stroke="#e03030" stroke-width="1.2" transform="rotate(-20 54 22)"/>
+    <!-- Eyes x2 (twin mouths of Slifer) -->
+    <circle cx="56" cy="19" r="2" fill="#ffd020"/>
+    <circle cx="56" cy="19" r="1" fill="#0a0010"/>
+    <circle cx="51" cy="24" r="2" fill="#ffd020"/>
+    <circle cx="51" cy="24" r="1" fill="#0a0010"/>
+    <!-- Lightning bolts -->
+    <path d="M38 32 L34 38 L37 38 L33 46" stroke="#ffd020" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M14 40 L11 44 L14 44 L11 50" stroke="#ffd020" stroke-width="1" stroke-linecap="round" opacity=".6"/>
+  </svg>`},
+
+  {id:'obelisk',label:'Obelisk',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#060a20"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#4060c0" stroke-width="1.5"/>
+    <!-- Energy field -->
+    <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(64,96,192,.2)" stroke-width="2"/>
+    <!-- Giant body -->
+    <path d="M18 56 L22 20 Q22 14 32 12 Q42 14 42 20 L46 56 Z" fill="#1a2860" stroke="#4060c0" stroke-width="1.5"/>
+    <!-- Armor segments -->
+    <path d="M22 30 L42 30" stroke="#4060c0" stroke-width="1"/>
+    <path d="M22 38 L42 38" stroke="#4060c0" stroke-width="1"/>
+    <path d="M22 46 L42 46" stroke="#4060c0" stroke-width="1"/>
+    <!-- Head -->
+    <ellipse cx="32" cy="14" rx="9" ry="8" fill="#2040a0" stroke="#6080d0" stroke-width="1.5"/>
+    <!-- Eyes -->
+    <ellipse cx="29" cy="12" rx="3" ry="2" fill="#80a0e0" stroke="#4060c0" stroke-width=".8"/>
+    <ellipse cx="35" cy="12" rx="3" ry="2" fill="#80a0e0" stroke="#4060c0" stroke-width=".8"/>
+    <circle cx="29" cy="12" r="1.2" fill="#0a0020"/>
+    <circle cx="35" cy="12" r="1.2" fill="#0a0020"/>
+    <!-- Helmet crest -->
+    <path d="M28 8 L32 4 L36 8" fill="#4060c0" stroke="#6080d0" stroke-width="1"/>
+    <!-- Fists -->
+    <circle cx="14" cy="36" r="6" fill="#2040a0" stroke="#4060c0" stroke-width="1.2"/>
+    <circle cx="50" cy="36" r="6" fill="#2040a0" stroke="#4060c0" stroke-width="1.2"/>
+    <!-- Energy glow fists -->
+    <circle cx="14" cy="36" r="3" fill="rgba(128,160,224,.3)"/>
+    <circle cx="50" cy="36" r="3" fill="rgba(128,160,224,.3)"/>
+  </svg>`},
+
+  {id:'winged-ra',label:'Ra',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#0a0800"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#d4a830" stroke-width="1.5"/>
+    <!-- Solar disk glow -->
+    <circle cx="32" cy="28" r="18" fill="rgba(212,168,48,.08)"/>
+    <!-- Wings spread -->
+    <path d="M32 28 Q20 20 8 24 Q14 26 18 30 Q12 30 8 36 Q16 32 22 34 Q26 32 32 28" fill="#d4a830" stroke="#b8922a" stroke-width=".8"/>
+    <path d="M32 28 Q44 20 56 24 Q50 26 46 30 Q52 30 56 36 Q48 32 42 34 Q38 32 32 28" fill="#d4a830" stroke="#b8922a" stroke-width=".8"/>
+    <!-- Wing feathers left -->
+    <path d="M18 30 L10 34 M20 28 L12 28 M22 26 L14 22" stroke="#b8922a" stroke-width=".8"/>
+    <!-- Wing feathers right -->
+    <path d="M46 30 L54 34 M44 28 L52 28 M42 26 L50 22" stroke="#b8922a" stroke-width=".8"/>
+    <!-- Phoenix body -->
+    <path d="M28 28 Q28 44 32 54 Q36 44 36 28 Z" fill="#d4a830" stroke="#b8922a" stroke-width="1"/>
+    <!-- Head -->
+    <circle cx="32" cy="22" r="8" fill="#d4a830" stroke="#b8922a" stroke-width="1.5"/>
+    <!-- Beak -->
+    <path d="M30 25 Q32 28 34 25 L32 24 Z" fill="#b8922a"/>
+    <!-- Eye of Ra -->
+    <ellipse cx="32" cy="21" rx="4" ry="3" fill="#ffd040" stroke="#d4a830" stroke-width="1"/>
+    <circle cx="32" cy="21" r="1.5" fill="#0a0800"/>
+    <circle cx="31" cy="20" r=".6" fill="rgba(255,255,255,.8)"/>
+    <!-- Solar rays -->
+    <line x1="32" y1="8" x2="32" y2="4" stroke="#d4a830" stroke-width="1.5"/>
+    <line x1="24" y1="10" x2="21" y2="7" stroke="#d4a830" stroke-width="1"/>
+    <line x1="40" y1="10" x2="43" y2="7" stroke="#d4a830" stroke-width="1"/>
+    <!-- Tail flame -->
+    <path d="M30 54 Q32 60 34 54 Q32 58 30 54" fill="#c41818" stroke="#e03030" stroke-width=".5"/>
+  </svg>`},
+
+  {id:'millennium-rod',label:'Cetro',svg:`<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="4" fill="#14100a"/>
+    <rect x="2" y="2" width="60" height="60" rx="3" fill="none" stroke="#d4a830" stroke-width="1.5"/>
+    <!-- Rod handle diagonal -->
+    <path d="M14 54 L46 14" stroke="#6b4c2a" stroke-width="5" stroke-linecap="round"/>
+    <path d="M14 54 L46 14" stroke="#8b6c3a" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Gold bands -->
+    <path d="M20 48 L24 44" stroke="#d4a830" stroke-width="3" stroke-linecap="round"/>
+    <path d="M28 40 L32 36" stroke="#d4a830" stroke-width="3" stroke-linecap="round"/>
+    <!-- Millennium Eye topper -->
+    <circle cx="46" cy="14" r="9" fill="#c49020" stroke="#d4a830" stroke-width="2"/>
+    <circle cx="46" cy="14" r="6" fill="#b08010"/>
+    <!-- Triangle with eye -->
+    <path d="M46 8 L52 18 L40 18 Z" fill="rgba(212,168,48,.3)" stroke="#d4a830" stroke-width="1"/>
+    <ellipse cx="46" cy="14" rx="4" ry="3" fill="#d4a830" stroke="#b8922a" stroke-width=".8"/>
+    <circle cx="46" cy="14" r="1.8" fill="#0a0800"/>
+    <circle cx="45" cy="13" r=".7" fill="rgba(255,255,255,.7)"/>
+    <!-- Side blades -->
+    <path d="M46 5 L50 10 L46 8 Z" fill="#d4a830"/>
+    <path d="M46 5 L42 10 L46 8 Z" fill="#d4a830"/>
+    <!-- Bottom spike -->
+    <path d="M12 56 L14 54 L16 56 L14 60 Z" fill="#d4a830"/>
+    <!-- Handle wrapping -->
+    <path d="M22 46 L26 42 M30 38 L34 34 M38 30 L42 26" stroke="#5a3c1a" stroke-width="1.5" opacity=".7"/>
+  </svg>`},
+];
 
 /* ══════════════════════════════════════
    15 RANGOS DE DUELISTA
@@ -2562,7 +2972,7 @@ const G={
    INIT & SPLASH
 ══════════════════════════════════════ */
 window.addEventListener('load',()=>{
-  loadAll();
+  loadAll();loadTheme();
   setTimeout(()=>document.getElementById('splash').classList.add('gone'),2400);
 });
 
@@ -2625,8 +3035,11 @@ function beginDuel(){
     if(iconData){av1.innerHTML='';av1.style.padding='2px';const t=document.createElement('div');t.style.cssText='width:20px;height:20px;display:flex;align-items:center';t.innerHTML=iconData.svg;av1.appendChild(t);}
     else av1.textContent=G.profile.avatar||'⚔️';
   }
+  // Show/hide P2 based on player count
+  const show2=_playerCount===2;
+  document.getElementById('pb2').style.display=show2?'':'none';
+  const vs=document.querySelector('.vs-div');if(vs)vs.style.display=show2?'':'none';
   renderLP(1);renderLP(2);
-  applyOnlineMode();
 }
 
 function dmg(p,v){
@@ -2671,16 +3084,161 @@ function renderLP(p){
 
 function endDuel(){
   const p1n=document.getElementById('pn1').value||'Jugador 1';
-  const p2n=document.getElementById('pn2').value||'Jugador 2';
+  const p2n=_playerCount===2?(document.getElementById('pn2').value||'Jugador 2'):'Rival';
   const winner=G.p1>0?p1n:p2n;
   const loser=G.p1>0?p2n:p1n;
+  const winnerLP=G.p1>0?G.p1:G.p2;
+  const loserLP=G.p1>0?G.p2:G.p1;
   const myName=G.profile.name.toUpperCase();
   const isWin=winner.toUpperCase()===myName;
   if(isWin)G.wins++;else G.losses++;
-  G.history.unshift({date:Date.now(),winner,loser,p1lp:G.p1,p2lp:G.p2,p1n,p2n,initLP:G.initLP});
+  const entry={date:Date.now(),winner,loser,p1lp:G.p1,p2lp:G.p2,p1n,p2n,initLP:G.initLP};
+  G.history.unshift(entry);
   if(G.history.length>50)G.history.pop();
   saveAll();
-  toast('🏆 '+winner.toUpperCase()+' GANA EL DUELO');
+  showResultScreen(winner,loser,winnerLP,loserLP,p1n,p2n);
+}
+
+/* ══════════════════════════════════════
+   RESULT SCREEN + CÓDIGO EXPORTABLE
+══════════════════════════════════════ */
+function generateResultCode(winner,loser,winnerLP,loserLP,initLP,date){
+  return`UT-RESULT:W=${encodeURIComponent(winner)},L=${encodeURIComponent(loser)},WLP=${winnerLP},LLP=${loserLP},ILP=${initLP},D=${date},V=1`;
+}
+function decodeResultCode(code){
+  try{
+    if(!code.includes('UT-RESULT:'))return null;
+    const raw=code.substring(code.indexOf('UT-RESULT:')+10);
+    const data={};
+    raw.split(',').forEach(pair=>{
+      const eq=pair.indexOf('=');
+      if(eq>0){const k=pair.substring(0,eq);const v=pair.substring(eq+1);data[k]=decodeURIComponent(v||'');}
+    });
+    if(!data.W||!data.L)return null;
+    return{winner:data.W,loser:data.L,winnerLP:parseInt(data.WLP)||0,loserLP:parseInt(data.LLP)||0,initLP:parseInt(data.ILP)||8000,date:parseInt(data.D)||Date.now()};
+  }catch(e){return null;}
+}
+
+let _currentResultCode='';
+
+function showResultScreen(winner,loser,winnerLP,loserLP,p1n,p2n){
+  const code=generateResultCode(winner,loser,winnerLP,loserLP,G.initLP,Date.now());
+  _currentResultCode=code;
+  const myName=G.profile.name.toUpperCase();
+  const isWin=winner.toUpperCase()===myName;
+  const is1P=_playerCount===1;
+
+  document.getElementById('rs-winner').textContent=winner.toUpperCase();
+
+  // Details grid — adapts per mode
+  document.getElementById('rs-details').innerHTML=is1P?`
+    <div class="rd-cell ${isWin?'win':'loss'}">
+      <span class="rd-val">${isWin?'VICTORIA':'DERROTA'}</span>
+      <span class="rd-lbl">${G.profile.name||p1n}</span>
+    </div>
+    <div class="rd-cell">
+      <span class="rd-val">${G.initLP}</span>
+      <span class="rd-lbl">LP iniciales</span>
+    </div>
+    <div class="rd-cell">
+      <span class="rd-val" style="color:${isWin?'var(--gx)':'var(--red2)'}">${G.p1.toLocaleString()}</span>
+      <span class="rd-lbl">LP finales</span>
+    </div>
+    <div class="rd-cell">
+      <span class="rd-val">${G.wins}V / ${G.losses}D</span>
+      <span class="rd-lbl">Record total</span>
+    </div>`:`
+    <div class="rd-cell ${isWin?'win':'loss'}">
+      <span class="rd-val">${isWin?'VICTORIA':'DERROTA'}</span>
+      <span class="rd-lbl">${G.profile.name||'Tú'}</span>
+    </div>
+    <div class="rd-cell">
+      <span class="rd-val">${G.initLP}</span>
+      <span class="rd-lbl">LP iniciales</span>
+    </div>
+    <div class="rd-cell">
+      <span class="rd-val" style="color:${winner===p1n?'var(--gx)':'var(--red2)'}">${G.p1.toLocaleString()}</span>
+      <span class="rd-lbl">${p1n}</span>
+    </div>
+    <div class="rd-cell">
+      <span class="rd-val" style="color:${winner===p2n?'var(--gx)':'var(--red2)'}">${G.p2.toLocaleString()}</span>
+      <span class="rd-lbl">${p2n}</span>
+    </div>`;
+
+  // Code — always present
+  document.getElementById('rs-code').textContent=code;
+
+  // P2 instructions block — adapts per mode
+  const p2block=document.getElementById('rs-p2-block');
+  if(p2block){
+    p2block.innerHTML=is1P?`
+      <div class="rp2-title">📋 GUARDAR EN TU PERFIL</div>
+      <div class="rp2-steps">
+        Ve a <b>Perfil</b> → toca <b>"Importar Resultado"</b> →<br/>
+        pega el código para actualizar tus stats. ✓
+      </div>`:`
+      <div class="rp2-title">📱 ¿CÓMO LO REGISTRA EL RIVAL?</div>
+      <div class="rp2-steps">
+        <b>Jugador 2:</b> Abre tu app Último Turno →<br/>
+        Ve a <b>Perfil</b> → toca <b>"Importar Resultado"</b> →<br/>
+        Pega el código → historial y stats actualizados. ✓
+      </div>`;
+  }
+
+  document.getElementById('result-screen').classList.remove('hidden');
+}
+
+function closeResultScreen(){
+  document.getElementById('result-screen').classList.add('hidden');
+}
+function copyResultCode(){
+  const copy=()=>{const ta=document.createElement('textarea');ta.value=_currentResultCode;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);};
+  if(navigator.clipboard)navigator.clipboard.writeText(_currentResultCode).then(()=>toast('CÓDIGO COPIADO — ENVÍALO AL RIVAL')).catch(copy);
+  else{copy();toast('CÓDIGO COPIADO');}
+}
+function shareResultCode(){
+  if(navigator.share){
+    navigator.share({title:'Resultado — Último Turno',text:`Resultado de nuestro duelo:\n\n${_currentResultCode}\n\nPégalo en Último Turno → Perfil → Importar Resultado.`}).catch(()=>copyResultCode());
+  }else copyResultCode();
+}
+
+/* ══════════════════════════════════════
+   IMPORT RESULT — Jugador 2 registra su lado
+══════════════════════════════════════ */
+function openImportModal(){
+  document.getElementById('import-code').value='';
+  document.getElementById('import-feedback').style.display='none';
+  document.getElementById('import-modal').classList.remove('hidden');
+}
+function closeImportModal(e){
+  if(!e||e.target===document.getElementById('import-modal'))
+    document.getElementById('import-modal').classList.add('hidden');
+}
+function importResult(){
+  const raw=document.getElementById('import-code').value.trim();
+  const fb=document.getElementById('import-feedback');
+  if(!raw){showImportFb('Pega el código primero.','err');return;}
+  const data=decodeResultCode(raw);
+  if(!data){showImportFb('❌ Código inválido. Copia el código completo que empieza con UT-RESULT:','err');return;}
+  // Duplicate check
+  const dup=G.history.some(h=>Math.abs((h.date||0)-data.date)<10000&&h.winner===data.winner&&h.loser===data.loser);
+  if(dup){showImportFb('⚠️ Este duelo ya está en tu historial.','err');return;}
+  // Register
+  const myName=G.profile.name.toUpperCase();
+  const isWin=data.winner.toUpperCase()===myName;
+  const isLoss=data.loser.toUpperCase()===myName;
+  if(isWin)G.wins++;
+  else if(isLoss)G.losses++;
+  G.history.unshift({date:data.date,winner:data.winner,loser:data.loser,p1lp:data.winnerLP,p2lp:data.loserLP,p1n:data.winner,p2n:data.loser,initLP:data.initLP,imported:true});
+  if(G.history.length>50)G.history.pop();
+  saveAll();renderHistory();updateStats();
+  const dateStr=new Date(data.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'2-digit'});
+  showImportFb(`${isWin?'✅ Victoria registrada':isLoss?'❌ Derrota registrada':'📋 Duelo registrado'}\n\n${data.winner} vs ${data.loser} · ${dateStr}\nLP iniciales: ${data.initLP}\n\nHistorial y stats actualizados.`,'');
+  toast('RESULTADO IMPORTADO ✓');
+}
+function showImportFb(msg,type){
+  const fb=document.getElementById('import-feedback');
+  fb.textContent=msg;fb.className='import-result'+(type==='err'?' err':'');fb.style.display='block';
 }
 
 function doReset(){
@@ -3156,11 +3714,6 @@ function closeM(e){if(!e||e.target===document.getElementById('mbg'))document.get
 /* ══════════════════════════════════════
    PROFILE
 ══════════════════════════════════════ */
-function getRank(w){
-  if(w>=50)return RANKS[6];if(w>=30)return RANKS[5];if(w>=15)return RANKS[4];
-  if(w>=8)return RANKS[3];if(w>=3)return RANKS[2];if(w>=1)return RANKS[1];
-  return RANKS[0];
-}
 function applyProfile(){
   document.getElementById('prf-name').value=G.profile.name;
   // Avatar — SVG icon or fallback
@@ -3256,26 +3809,6 @@ function closeAV(e){if(!e||e.target===document.getElementById('avbg'))document.g
 function renderHistory(){
   const el=document.getElementById('duel-hist');
   if(!G.history.length){el.innerHTML='<div class="no-hist">Sin duelos registrados aún</div>';return}
-  el.innerHTML=G.history.map(h=>{
-    const myName=G.profile.name.toUpperCase();
-    const isWin=h.winner.toUpperCase()===myName;
-    const opp=isWin?h.loser:h.winner;
-    const myLP=h.p1n&&h.p1n.toUpperCase()===myName?h.p1lp:h.p2lp;
-    const date=new Date(h.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'2-digit'});
-    return`<div class="dh-entry">
-      <div class="dh-res ${isWin?'w':'l'}">${isWin?'WIN':'LOSS'}</div>
-      <div class="dh-info">
-        <div class="dh-vs">vs ${opp}</div>
-        <div class="dh-meta">${date} · ${h.initLP} LP</div>
-      </div>
-      <div class="dh-lp">${myLP.toLocaleString()}</div>
-    </div>`;
-  }).join('');
-}
-
-function renderHistory(){
-  const el=document.getElementById('duel-hist');
-  if(!G.history.length){el.innerHTML='<div class="no-hist">Sin duelos registrados aún</div>';return}
   el.innerHTML=G.history.map((h,idx)=>{
     const myName=G.profile.name.toUpperCase();
     const isWin=h.winner&&h.winner.toUpperCase()===myName;
@@ -3309,42 +3842,51 @@ function deleteHistory(idx){
 }
 
 /* ══════════════════════════════════════
-   ONLINE MODE — pasar teléfono
+   THEME TOGGLE — Light / Dark
 ══════════════════════════════════════ */
-let G_duelMode='local';
-let G_onlineTurn=1;
+let _lightMode=false;
+function toggleTheme(){
+  _lightMode=!_lightMode;
+  document.body.classList.toggle('light-mode',_lightMode);
+  document.getElementById('theme-toggle').textContent=_lightMode?'🌑':'🌙';
+  try{localStorage.setItem('ut_theme',_lightMode?'light':'dark')}catch(e){}
+}
+function loadTheme(){
+  try{
+    const t=localStorage.getItem('ut_theme');
+    if(t==='light'){_lightMode=true;document.body.classList.add('light-mode');document.getElementById('theme-toggle').textContent='🌑';}
+  }catch(e){}
+}
 
-function pickMode(mode,el){
-  G_duelMode=mode;
-  document.querySelectorAll('#mode-local,#mode-online').forEach(e=>e.classList.remove('on'));
+/* ══════════════════════════════════════
+   PLAYER MODE (replaces online mode)
+══════════════════════════════════════ */
+let _playerCount=1;
+function pickPlayers(n,el){
+  _playerCount=n;
+  document.querySelectorAll('#mode-1p,#mode-2p').forEach(e=>e.classList.remove('on'));
   el.classList.add('on');
-  document.getElementById('mode-online-hint').style.display=mode==='online'?'block':'none';
+  document.getElementById('online-info').style.display=n===2?'block':'none';
 }
 
-function passPhone(){
-  G_onlineTurn=G_onlineTurn===1?2:1;
-  const name=G_onlineTurn===1
-    ?(document.getElementById('pn1').value||'Jugador 1')
-    :(document.getElementById('pn2').value||'Jugador 2');
-  document.getElementById('pb1').style.display=G_onlineTurn===1?'':'none';
-  document.getElementById('pb2').style.display=G_onlineTurn===2?'':'none';
-  document.querySelector('.vs-div').style.display='none';
-  toast(`📱 TURNO DE ${name.toUpperCase()}`);
-}
-
-function applyOnlineMode(){
-  const isOnline=G_duelMode==='online';
-  document.getElementById('pass-phone-btn').style.display=isOnline?'block':'none';
-  if(isOnline){
-    G_onlineTurn=1;
-    document.getElementById('pb2').style.display='none';
-    const vs=document.querySelector('.vs-div');
-    if(vs)vs.style.display='none';
-  } else {
-    document.getElementById('pb2').style.display='';
-    const vs=document.querySelector('.vs-div');
-    if(vs)vs.style.display='';
-  }
+/* ══════════════════════════════════════
+   BACK TO SETUP
+══════════════════════════════════════ */
+function backToSetup(){
+  if(!confirm('¿Volver a la configuración? El duelo actual se perderá.'))return;
+  // Hide duel, show setup
+  document.getElementById('duel').style.display='none';
+  const setup=document.getElementById('lp-setup');
+  setup.style.display='';
+  // Reset state
+  G.p1=G.initLP;G.p2=G.initLP;G.h1=[];G.h2=[];
+  // Reset skin selectors
+  document.querySelectorAll('.sk-sel').forEach(s=>s.value='sk-dm');
+  setSkin(1,'sk-dm');setSkin(2,'sk-dm');
+  // Show both boards
+  document.getElementById('pb1').style.display='';
+  document.getElementById('pb2').style.display='';
+  const vs=document.querySelector('.vs-div');if(vs)vs.style.display='';
 }
 
 /* ══════════════════════════════════════
@@ -4000,52 +4542,127 @@ function handleArbPhoto(input){
 async function consultarArbitro(){
   const text=document.getElementById('arb-text').value.trim();
   if(!text){toast('DESCRIBE LA SITUACIÓN DEL DUELO');return;}
-
   const respBox=document.getElementById('arb-response');
   const respText=document.getElementById('arb-response-text');
   respBox.style.display='block';
-  respText.innerHTML=`<div class="arbitro-loading">
-    <div class="arbitro-loading-dots"><span></span><span></span><span></span></div>
-    <span>CONSULTANDO AL ÁRBITRO…</span>
-  </div>`;
+  respText.innerHTML=`<div class="arbitro-loading"><div class="arbitro-loading-dots"><span></span><span></span><span></span></div><span>CONSULTANDO AL ÁRBITRO…</span></div>`;
 
-  const systemPrompt=`Eres un Juez Oficial certificado de Yu-Gi-Oh! con profundo conocimiento del reglamento, el sistema de cadenas (LIFO), las velocidades de cadena, las fases del turno y las interacciones entre cartas específicas.
+  // ── BASE DE DATOS EMBEBIDA DE REGLAS YGO ──
+  const YGO_RULES_DB=`
+=== BASE DE CONOCIMIENTO — REGLAMENTO YU-GI-OH! OFICIAL (Konami) ===
 
-Cuando te presenten una situación de duelo:
-1. Identifica las cartas y efectos involucrados
-2. Explica el orden de resolución paso a paso
-3. Cita la regla oficial aplicable
-4. Da el veredicto final claro y conciso
-5. Si hay imagen del campo, analízala visualmente
+## SISTEMA DE CADENAS (CHAIN)
+- Una cadena (Chain) se forma cuando se activan múltiples efectos en respuesta.
+- Resolución LIFO: el ÚLTIMO efecto añadido a la cadena se resuelve PRIMERO.
+- Velocidades de Cadena (Chain Speed):
+  * CS1: Efectos de monstruo de activación (no se pueden encadenar sobre CS2+)
+  * CS2: Cartas mágicas de activación rápida, efectos de trampa, efectos activados CS2
+  * CS3: Contratrampas (Counter Traps) — solo pueden ser respondidas por otras CS3
+- Solo puedes encadenar un efecto de CS igual o mayor al último de la cadena.
+- No puedes encadenar dos copias del mismo efecto en la misma cadena.
+- Si un efecto es negado, los efectos posteriores que dependan de él fallan (pero siguen resolviéndose en orden).
 
-Usa lenguaje preciso de juez oficial. Sé directo y didáctico. Responde en español.`;
+## TIMING Y ACTIVACIÓN
+- "Timing correcto": Un efecto disparado (Trigger) solo puede activarse si el evento que lo dispara ocurre como la última acción de la cadena.
+- Efectos de "cuando" (When) tienen timing estricto — si no son la última acción, pierden el timing.
+- Efectos de "si" (If) no tienen timing estricto — pueden activarse aunque no sean la última acción.
+- En la fase de daño, los efectos disparados por daño de batalla esperan que la cadena se resuelva.
+
+## INVOCACIONES
+- Invocación Normal: 1 por turno. Colocar boca abajo también cuenta como invocación.
+- Invocación por Sacrificio: Nivel 5-6 = 1 tributo; Nivel 7+ = 2 tributos.
+- Invocación Especial: No cuenta como Invocación Normal. Puede realizarse múltiples veces.
+- Invocación de Fusión: requiere "Polymerization" o efecto específico + materiales en campo/mano.
+- Invocación de Sincro: 1 monstruo Afinador + 1 o más no-Afinador cuya suma de niveles = nivel del Sincro.
+- Invocación XYZ: 2+ monstruos del mismo nivel. Los materiales se superponen bajo el XYZ (no tienen nivel).
+- Invocación de Enlace (Link): coloca monstruos en la zona de Extra Monster si apuntan hacia ella.
+- Un monstruo invocado normalmente ese turno NO puede atacar, salvo efecto especial.
+
+## FASES DEL TURNO
+1. Draw Phase (DP): roba 1 carta. Primer turno del primer jugador: NO roba.
+2. Standby Phase (SP): efectos que se activan "durante la Standby Phase".
+3. Main Phase 1 (MP1): invocar, activar mágicas, colocar trampas boca abajo.
+4. Battle Phase (BP): declarar ataques. Dividida en Start Step, Battle Step, Damage Step, End Step.
+5. Main Phase 2 (MP2): igual que MP1 pero después de la batalla.
+6. End Phase (EP): descartar si hay más de 6 cartas en mano. Efectos "al final del turno".
+
+## POSICIONES DE BATALLA
+- Posición de Ataque (boca arriba vertical): puede atacar. Se compara ATK vs ATK o ATK vs DEF.
+- Posición de Defensa (boca arriba horizontal): no puede atacar. Se compara ATK atacante vs DEF defensor.
+- Boca abajo: no puede atacar. Se voltea cuando es atacado (flip) o por efecto.
+- Un monstruo solo puede cambiar de posición UNA VEZ por turno (no aplica a invocaciones especiales del mismo turno).
+- Un monstruo en posición de defensa que es atacado: si ATK atacante > DEF defensor → destruido sin daño de batalla al dueño. Si ATK atacante < DEF defensor → atacante no sufre daño, defensor no es destruido.
+- "Piercing" (daño penetrante): si el efecto lo indica, el daño de ATK-DEF se aplica al dueño del defensor.
+
+## DAÑO DE BATALLA
+- ATK atacante vs ATK defensor: el de menor ATK es destruido. Si son iguales, ambos son destruidos.
+- Diferencia de ATK = daño de batalla al propietario del monstruo con menor ATK.
+- El daño se calcula en el Damage Step.
+
+## EFECTOS Y ZONAS
+- Zona del Monstruo: máximo 5 monstruos.
+- Zona Extra Monster: 2 zonas especiales para monstruos de Extra Deck invocados por enlace.
+- Zona Magia/Trampa: máximo 5 cartas.
+- Zona Campo: 1 monstruo de campo activo por jugador.
+- Cementerio (GY): zona pública. Los efectos pueden activarse desde aquí con condiciones.
+- Zona de Desterrado (Banished): zona privada por defecto salvo indicación.
+
+## HANDTRAPS COMUNES Y SU FUNCIONAMIENTO
+- Ash Blossom & Joyous Spring: niega efectos que busquen, roben o envíen desde el mazo. Se activa en mano. CS2.
+- Called by the Grave: destierra un monstruo del GY para negar y destruir copias de él en juego. CS2.
+- Effect Veiler: niega efectos de monstruo en mano durante el turno del rival (solo MP1/BP rival). CS1.
+- Infinite Impermanence: niega efectos de monstruo, también niega efectos de las zonas adyacentes. CS2.
+- Nibiru, the Primal Being: si el rival ha invocado especialmente 5+ veces en el turno, tributa todos y especial invoca Nibiru token. CS1.
+- Ghost Ogre & Snow Rabbit: destruye una carta que activó efecto en el campo. CS2.
+
+## REGLAS DE NEGAR/DESTRUIR
+- "Negar" un efecto: el efecto no se aplica pero la carta puede quedar en el campo.
+- "Negar y destruir": el efecto no se aplica Y la carta es destruida.
+- Si un monstruo que estaba siendo Sincronizado/Fusionado es negado antes de la invocación, los materiales vuelven al estado anterior si es posible.
+
+## ERRORES COMUNES
+- Un monstruo boca abajo NO puede atacar (debe estar boca arriba en ataque).
+- Lava Golem y similares: son invocados por tributo del RIVAL, sin invocación especial del controlador. El daño de 1000 LP ocurre en CADA Standby Phase del controlador.
+- Si ambas condiciones se cumplen simultáneamente, el jugador del turno activo declara el orden.
+- "No puede ser objetivo de efectos de cartas del rival" ≠ invulnerabilidad a destrucción por batalla.
+- Un monstruo que ya atacó ese turno no puede cambiar a posición de ataque de nuevo.
+===`;
+
+  const systemPrompt=`Eres un Juez Oficial certificado de Yu-Gi-Oh! (Judge certified by Konami). Tienes acceso a la siguiente base de datos de reglas oficiales:
+
+${YGO_RULES_DB}
+
+Al resolver cualquier situación de duelo:
+1. Identifica las cartas y efectos involucrados citando sus nombres exactos.
+2. Aplica las reglas de la base de datos arriba de forma precisa.
+3. Explica el orden de resolución paso a paso si hay cadena.
+4. Da el veredicto final claro, conciso y definitivo.
+5. Si hay imagen, analízala visualmente para identificar cartas o posiciones.
+6. Si la situación involucra una carta específica que no está en la base de datos, aplica los principios generales del reglamento y acláralo.
+7. Responde siempre en español con lenguaje de juez oficial pero comprensible.
+8. Sé directo. No especules. Si algo no está claro, pide la información faltante.`;
 
   const messages=[];
   if(window._arbImageData){
     messages.push({role:'user',content:[
       {type:'image',source:{type:'base64',media_type:window._arbImageType||'image/jpeg',data:window._arbImageData}},
-      {type:'text',text:`Como juez oficial de Yu-Gi-Oh!, analiza esta situación del campo y resuelve la siguiente consulta:\n\n${text}`}
+      {type:'text',text:`Analiza esta imagen del campo de duelo y resuelve la siguiente situación:\n\n${text}`}
     ]});
-  } else {
-    messages.push({role:'user',content:`Como juez oficial de Yu-Gi-Oh!, resuelve esta situación del duelo:\n\n${text}`});
+  }else{
+    messages.push({role:'user',content:`Resuelve esta situación del duelo:\n\n${text}`});
   }
 
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:systemPrompt,
-        messages
-      })
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:systemPrompt,messages})
     });
     const data=await res.json();
-    const reply=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('\n')||'Sin respuesta del árbitro.';
+    const reply=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('\n')||'Sin respuesta.';
     respText.textContent=reply;
   }catch(e){
-    respText.textContent='Error al conectar con el Árbitro IA. Verifica tu conexión e inténtalo de nuevo.';
+    respText.textContent='Error al conectar. Verifica tu conexión e inténtalo de nuevo.';
   }
 }
 
@@ -4179,7 +4796,16 @@ function toast(msg){
   const el=document.createElement('div');el.className='toast';el.textContent=msg;
   document.body.appendChild(el);setTimeout(()=>el.remove(),2900);
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();closeEM();closeAV()}});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeM();closeEM();closeAV();
+    if(typeof closeDeckCardModal==='function')closeDeckCardModal();
+    if(typeof closeImportModal==='function')closeImportModal();
+    if(typeof closeResultScreen==='function')closeResultScreen();
+    document.getElementById('hand-modal')?.classList.add('hidden');
+    document.getElementById('dice-modal')?.classList.add('hidden');
+  }
+});
 </script>
 </body>
 </html>
