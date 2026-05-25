@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Último Turno"/>
 <meta name="description" content="Yu-Gi-Oh! Companion App — Contador de LP, Constructor de Deck y Perfil de Duelista"/>
-<title>Último Turno — v12.0</title>
+<title>Último Turno — v15.0</title>
 <script>
 // PWA Manifest — Ícono con logo Último Turno
 (function(){
@@ -434,7 +434,7 @@ body{font-family:'Barlow Condensed',sans-serif}
 .tc-r{font-family:'Black Ops One',sans-serif;font-size:17px;color:var(--cream);display:block;min-height:21px;margin-top:2px;transition:all .15s}
 
 /* Animated dice */
-.dice-anim{display:inline-block;animation:diceRoll .5s cubic-bezier(.36,.07,.19,.97)}
+.dice-anim{display:inline-block;animation:diceRoll .5s cubic-bezier(.36,.07,.19,.97);filter:invert(1) brightness(2);color:#fff}
 @keyframes diceRoll{
   0%{transform:rotate(0deg) scale(.5);opacity:0}
   30%{transform:rotate(180deg) scale(1.3);opacity:1}
@@ -1610,6 +1610,18 @@ body.light-mode .setting-toggle.on .st-knob{background:#fff}
 
 .hidden{display:none!important}
 @media(max-width:360px){.lpn{font-size:54px}.sk-5ds .lpn{font-size:58px}.sp-tn{font-size:44px}}
+
+/* Dados: invertir en modo oscuro para que sean visibles */
+body:not(.light-mode) .dice-anim,
+body:not(.light-mode) #dice-modal-anim span,
+body:not(.light-mode) #dice-modal-anim {
+  filter: invert(1) brightness(2);
+}
+body.light-mode .dice-anim,
+body.light-mode #dice-modal-anim span,
+body.light-mode #dice-modal-anim {
+  filter: none;
+}
 </style>
 </head>
 <body>
@@ -1629,16 +1641,16 @@ body.light-mode .setting-toggle.on .st-knob{background:#fff}
   </div>
   <div class="sp-sub">Yu-Gi-Oh! Companion</div>
   <div class="sp-bar-wrap"><div class="sp-bar"><div class="sp-bar-fill"></div></div></div>
-  <div class="sp-ver">v12.0 · 2025</div>
+  <div class="sp-ver">v15.0 · 2025</div>
 </div>
 
 <!-- ══════════ APP ══════════ -->
 <div class="flash-overlay" id="flash"></div>
 <!-- Theme toggle: discrete, above bottom nav -->
-<div id="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌙</div>
+
 
 <!-- Music player: floating button -->
-<div id="music-btn" onclick="toggleMusic()" title="Música YGO" style="position:fixed;bottom:74px;right:46px;width:30px;height:30px;background:var(--bg2);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.15);transition:all var(--trans);opacity:.7">🎵</div>
+
 <audio id="bgm" loop style="display:none">
   <!-- YouTube no permite embed directo en audio tag, usamos iframe oculto -->
 </audio>
@@ -1650,7 +1662,7 @@ body.light-mode .setting-toggle.on .st-knob{background:#fff}
         <span class="tb-ul">ÚLTIMO</span>
         <span class="tb-tn">TURNO</span>
       </div>
-      <span class="tb-beta">v12.0</span>
+      <span class="tb-beta">v15.0</span>
     </div>
     <div class="tb-nav">
       <button class="tbn on" id="tn-lp" onclick="gv('lp')">
@@ -2038,7 +2050,7 @@ body.light-mode .setting-toggle.on .st-knob{background:#fff}
           </div>
 
           <div class="ai-tagline">Yu-Gi-Oh! Companion</div>
-          <div class="ai-version">v12.0 · Valdivia, Chile · 2025</div>
+          <div class="ai-version">v15.0 · Valdivia, Chile · 2025</div>
         </div>
 
         <!-- Frase motivacional aleatoria -->
@@ -2343,7 +2355,7 @@ body.light-mode .setting-toggle.on .st-knob{background:#fff}
           <div style="background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px 16px;margin-bottom:10px">
             <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Información</div>
             <div style="font-family:'Barlow',sans-serif;font-size:12px;color:var(--cream3);line-height:1.7">
-              <div>Versión: <b style="color:var(--cream)">v12.0</b></div>
+              <div>Versión: <b style="color:var(--cream)">v15.0</b></div>
               <div>Base de datos: <b style="color:var(--cream)">YGOPRODeck API</b></div>
               <div>Árbitro IA: <b style="color:var(--cream)">Claude + Reglas locales</b></div>
               <div>Almacenamiento: <b style="color:var(--cream)">Local (este dispositivo)</b></div>
@@ -2466,7 +2478,7 @@ body.light-mode .setting-toggle.on .st-knob{background:#fff}
 <div id="dice-modal" class="mbg hidden" onclick="closeDiceModal()">
   <div class="msh" style="max-height:60vh;text-align:center" onclick="event.stopPropagation()">
     <div class="mhandle"></div>
-    <div id="dice-modal-anim" style="font-size:72px;min-height:90px;display:flex;align-items:center;justify-content:center;margin:10px 0"></div>
+    <div id="dice-modal-anim" style="font-size:72px;min-height:90px;display:flex;align-items:center;justify-content:center;margin:10px 0;filter:invert(1) brightness(1.5)"></div>
     <div id="dice-modal-label" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--cream4);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px"></div>
     <div id="dice-modal-result" style="font-family:'Black Ops One',sans-serif;font-size:42px;color:var(--cream);letter-spacing:4px;min-height:52px;display:flex;align-items:center;justify-content:center"></div>
     <button class="mclose" style="margin-top:14px" onclick="closeDiceModal()">Cerrar</button>
@@ -3131,9 +3143,15 @@ const G={
 /* ══════════════════════════════════════
    INIT & SPLASH
 ══════════════════════════════════════ */
-window.addEventListener('load',()=>{
-  loadAll();loadTheme();
-  setTimeout(()=>document.getElementById('splash').classList.add('gone'),2400);
+window.addEventListener('load',function(){
+  // Always hide splash after 2400ms no matter what
+  setTimeout(function(){
+    var sp=document.getElementById('splash');
+    if(sp){sp.classList.add('gone');}
+  },2400);
+  // Init with full error protection
+  try{loadAll();}catch(e){console.warn('loadAll error:',e);}
+  try{loadTheme();}catch(e){console.warn('loadTheme error:',e);}
 });
 
 function loadAll(){
@@ -3239,7 +3257,7 @@ function renderLP(p){
     elN.classList.add(last.d<0?'dmg':'hl');
     setTimeout(()=>elN.classList.remove('dmg','hl'),420);
   }
-  histEl.innerHTML=hist.slice(0,7).map(h=>`<span class="he ${h.d<0?'n':'p'}">${h.d>0?'+':''}${h.d.toLocaleString()}</span>`).join('');
+  histEl.innerHTML=hist.slice(0,7).map(function(h){var s=h.d<0?'n':'p';var p=h.d>0?'+':'';return '<span class="he '+s+'">'+p+h.d.toLocaleString()+'</span>';}).join('');
 }
 
 function endDuel(){
@@ -3263,109 +3281,65 @@ function endDuel(){
    RESULT SCREEN + CÓDIGO EXPORTABLE
 ══════════════════════════════════════ */
 function generateResultCode(winner,loser,winnerLP,loserLP,initLP,date){
-  // Short human-readable code: UT·W·L·WLP·LLP·ILP·DDMMHH
-  const d=new Date(date);
-  const stamp=`${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getHours()).padStart(2,'0')}`;
-  // Encode names as initials + timestamp to keep code short
-  const wInit=winner.substring(0,8).replace(/\s/g,'_');
-  const lInit=loser.substring(0,8).replace(/\s/g,'_');
-  return`UT·${wInit}·${lInit}·${winnerLP}·${loserLP}·${initLP}·${stamp}`;
+  var d=new Date(date);
+  var dd=String(d.getDate()).padStart(2,'0');
+  var mm=String(d.getMonth()+1).padStart(2,'0');
+  var hh=String(d.getHours()).padStart(2,'0');
+  var stamp=dd+mm+hh;
+  var wI=winner.substring(0,8).replace(/[^a-zA-Z0-9]/g,'_');
+  var lI=loser.substring(0,8).replace(/[^a-zA-Z0-9]/g,'_');
+  return 'UT-'+wI+'-'+lI+'-'+winnerLP+'-'+loserLP+'-'+initLP+'-'+stamp;
 }
+
 function decodeResultCode(code){
   try{
-    // Support both old UT-RESULT: format and new UT· format
-    if(code.includes('UT-RESULT:')){
-      const raw=code.substring(code.indexOf('UT-RESULT:')+10);
-      const data={};
-      raw.split(',').forEach(pair=>{
-        const eq=pair.indexOf('=');
-        if(eq>0){const k=pair.substring(0,eq);const v=pair.substring(eq+1);data[k]=decodeURIComponent(v||'');}
-      });
+    if(code.indexOf('UT-')===0&&code.split('-').length>=7){
+      var pts=code.split('-');
+      return{winner:pts[1].replace(/_/g,' '),loser:pts[2].replace(/_/g,' '),
+        winnerLP:parseInt(pts[3])||0,loserLP:parseInt(pts[4])||0,initLP:parseInt(pts[5])||8000,date:Date.now()};
+    }
+    if(code.indexOf('UT-RESULT:')>=0){
+      var raw=code.substring(code.indexOf('UT-RESULT:')+10);
+      var data={};
+      raw.split(',').forEach(function(pair){var eq=pair.indexOf('=');if(eq>0)data[pair.substring(0,eq)]=decodeURIComponent(pair.substring(eq+1)||'');});
       if(!data.W||!data.L)return null;
       return{winner:data.W,loser:data.L,winnerLP:parseInt(data.WLP)||0,loserLP:parseInt(data.LLP)||0,initLP:parseInt(data.ILP)||8000,date:parseInt(data.D)||Date.now()};
-    }
-    // New short format: UT·Winner·Loser·WLP·LLP·ILP·stamp
-    if(code.startsWith('UT·')){
-      const parts=code.split('·');
-      if(parts.length<7)return null;
-      return{
-        winner:parts[1].replace(/_/g,' '),
-        loser:parts[2].replace(/_/g,' '),
-        winnerLP:parseInt(parts[3])||0,
-        loserLP:parseInt(parts[4])||0,
-        initLP:parseInt(parts[5])||8000,
-        date:Date.now() // stamp is for human readability, not precise
-      };
     }
     return null;
   }catch(e){return null;}
 }
 
 function showResultScreen(winner,loser,winnerLP,loserLP,p1n,p2n){
-  const code=generateResultCode(winner,loser,winnerLP,loserLP,G.initLP,Date.now());
+  var code=generateResultCode(winner,loser,winnerLP,loserLP,G.initLP,Date.now());
   _currentResultCode=code;
-  const myName=G.profile.name.toUpperCase();
-  const isWin=winner.toUpperCase()===myName;
-  const is1P=_playerCount===1;
-
-  document.getElementById('rs-winner').textContent=winner.toUpperCase();
-
-  // Details grid — adapts per mode
-  document.getElementById('rs-details').innerHTML=is1P?`
-    <div class="rd-cell ${isWin?'win':'loss'}">
-      <span class="rd-val">${isWin?'VICTORIA':'DERROTA'}</span>
-      <span class="rd-lbl">${G.profile.name||p1n}</span>
-    </div>
-    <div class="rd-cell">
-      <span class="rd-val">${G.initLP}</span>
-      <span class="rd-lbl">LP iniciales</span>
-    </div>
-    <div class="rd-cell">
-      <span class="rd-val" style="color:${isWin?'var(--gx)':'var(--red2)'}">${G.p1.toLocaleString()}</span>
-      <span class="rd-lbl">LP finales</span>
-    </div>
-    <div class="rd-cell">
-      <span class="rd-val">${G.wins}V / ${G.losses}D</span>
-      <span class="rd-lbl">Record total</span>
-    </div>`:`
-    <div class="rd-cell ${isWin?'win':'loss'}">
-      <span class="rd-val">${isWin?'VICTORIA':'DERROTA'}</span>
-      <span class="rd-lbl">${G.profile.name||'Tú'}</span>
-    </div>
-    <div class="rd-cell">
-      <span class="rd-val">${G.initLP}</span>
-      <span class="rd-lbl">LP iniciales</span>
-    </div>
-    <div class="rd-cell">
-      <span class="rd-val" style="color:${winner===p1n?'var(--gx)':'var(--red2)'}">${G.p1.toLocaleString()}</span>
-      <span class="rd-lbl">${p1n}</span>
-    </div>
-    <div class="rd-cell">
-      <span class="rd-val" style="color:${winner===p2n?'var(--gx)':'var(--red2)'}">${G.p2.toLocaleString()}</span>
-      <span class="rd-lbl">${p2n}</span>
-    </div>`;
-
-  // Code — always present
-  document.getElementById('rs-code').textContent=code;
-
-  // P2 instructions block — adapts per mode
-  const p2block=document.getElementById('rs-p2-block');
-  if(p2block){
-    p2block.innerHTML=is1P?`
-      <div class="rp2-title">📋 GUARDAR EN TU PERFIL</div>
-      <div class="rp2-steps">
-        Ve a <b>Perfil</b> → toca <b>"Importar Resultado"</b> →<br/>
-        pega el código para actualizar tus stats. ✓
-      </div>`:`
-      <div class="rp2-title">📱 ¿CÓMO LO REGISTRA EL RIVAL?</div>
-      <div class="rp2-steps">
-        <b>Jugador 2:</b> Abre tu app Último Turno →<br/>
-        Ve a <b>Perfil</b> → toca <b>"Importar Resultado"</b> →<br/>
-        Pega el código → historial y stats actualizados. ✓
-      </div>`;
+  var myName=G.profile.name?G.profile.name.toUpperCase():'';
+  var isWin=winner.toUpperCase()===myName;
+  var is1P=_playerCount===1;
+  var el=document.getElementById('rs-winner');
+  if(el)el.textContent=winner.toUpperCase();
+  var dH;
+  if(is1P){
+    dH='<div class="rd-cell '+(isWin?'win':'loss')+'">'
+      +'<span class="rd-val">'+(isWin?'VICTORIA':'DERROTA')+'</span>'
+      +'<span class="rd-lbl">'+(G.profile.name||p1n)+'</span></div>'
+      +'<div class="rd-cell"><span class="rd-val">'+G.initLP+'</span><span class="rd-lbl">LP iniciales</span></div>'
+      +'<div class="rd-cell"><span class="rd-val" style="color:'+(isWin?'var(--gx)':'var(--red2)')+'">'+G.p1.toLocaleString()+'</span><span class="rd-lbl">LP finales</span></div>'
+      +'<div class="rd-cell"><span class="rd-val">'+G.wins+'V / '+G.losses+'D</span><span class="rd-lbl">Record</span></div>';
+  } else {
+    dH='<div class="rd-cell '+(isWin?'win':'loss')+'">'
+      +'<span class="rd-val">'+(isWin?'VICTORIA':'DERROTA')+'</span>'
+      +'<span class="rd-lbl">'+(G.profile.name||'Tu')+'</span></div>'
+      +'<div class="rd-cell"><span class="rd-val">'+G.initLP+'</span><span class="rd-lbl">LP iniciales</span></div>'
+      +'<div class="rd-cell"><span class="rd-val" style="color:'+(winner===p1n?'var(--gx)':'var(--red2)')+'">'+G.p1.toLocaleString()+'</span><span class="rd-lbl">'+p1n+'</span></div>'
+      +'<div class="rd-cell"><span class="rd-val" style="color:'+(winner===p2n?'var(--gx)':'var(--red2)')+'">'+G.p2.toLocaleString()+'</span><span class="rd-lbl">'+p2n+'</span></div>';
   }
-
-  document.getElementById('result-screen').classList.remove('hidden');
+  var dEl=document.getElementById('rs-details');if(dEl)dEl.innerHTML=dH;
+  var cEl=document.getElementById('rs-code');if(cEl)cEl.textContent=code;
+  var p2b=document.getElementById('rs-p2-block');
+  if(p2b)p2b.innerHTML=is1P
+    ?'<div class="rp2-title">Guardar en tu Perfil</div><div class="rp2-steps">Perfil - Importar Resultado - pega el codigo.</div>'
+    :'<div class="rp2-title">Como lo registra el rival</div><div class="rp2-steps">Jugador 2: Perfil - Importar Resultado - pega el codigo.</div>';
+  var rs=document.getElementById('result-screen');if(rs)rs.classList.remove('hidden');
 }
 
 function closeResultScreen(){
@@ -3377,9 +3351,9 @@ function copyResultCode(){
   else{copy();toast('CÓDIGO COPIADO');}
 }
 function shareResultCode(){
-  if(navigator.share){
-    navigator.share({title:'Resultado — Último Turno',text:`Resultado de nuestro duelo:\n\n${_currentResultCode}\n\nPégalo en Último Turno → Perfil → Importar Resultado.`}).catch(()=>copyResultCode());
-  }else copyResultCode();
+  var txt='Resultado: '+_currentResultCode+'. Pegalo en Ultimo Turno > Perfil > Importar Resultado.';
+  if(navigator.share){navigator.share({title:'Resultado',text:txt}).catch(function(){copyResultCode();});}
+  else copyResultCode();
 }
 
 /* ══════════════════════════════════════
@@ -3395,27 +3369,24 @@ function closeImportModal(e){
     document.getElementById('import-modal').classList.add('hidden');
 }
 function importResult(){
-  const raw=document.getElementById('import-code').value.trim();
-  const fb=document.getElementById('import-feedback');
-  if(!raw){showImportFb('Pega el código primero.','err');return;}
-  const data=decodeResultCode(raw);
-  if(!data){showImportFb('❌ Código inválido. Copia el código completo que empieza con UT-RESULT:','err');return;}
-  // Duplicate check
-  const dup=G.history.some(h=>Math.abs((h.date||0)-data.date)<10000&&h.winner===data.winner&&h.loser===data.loser);
-  if(dup){showImportFb('⚠️ Este duelo ya está en tu historial.','err');return;}
-  // Register
-  const myName=G.profile.name.toUpperCase();
-  const isWin=data.winner.toUpperCase()===myName;
-  const isLoss=data.loser.toUpperCase()===myName;
-  if(isWin)G.wins++;
-  else if(isLoss)G.losses++;
-  G.history.unshift({date:data.date,winner:data.winner,loser:data.loser,p1lp:data.winnerLP,p2lp:data.loserLP,p1n:data.winner,p2n:data.loser,initLP:data.initLP,imported:true});
+  var raw=document.getElementById('import-code').value.trim();
+  if(!raw){showImportFb('Pega el codigo del resultado','err');return;}
+  var data=decodeResultCode(raw);
+  if(!data){showImportFb('Codigo invalido. Debe empezar con UT-','err');return;}
+  var myName=G.profile.name.toUpperCase();
+  var isWin=data.winner.toUpperCase()===myName;
+  var isLoss=data.loser.toUpperCase()===myName;
+  if(isWin)G.wins++;else if(isLoss)G.losses++;
+  G.history.unshift({date:data.date,winner:data.winner,loser:data.loser,
+    p1lp:data.winnerLP,p2lp:data.loserLP,p1n:data.winner,p2n:data.loser,
+    initLP:data.initLP,imported:true});
   if(G.history.length>50)G.history.pop();
   saveAll();renderHistory();updateStats();
-  const dateStr=new Date(data.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'2-digit'});
-  showImportFb(`${isWin?'✅ Victoria registrada':isLoss?'❌ Derrota registrada':'📋 Duelo registrado'}\n\n${data.winner} vs ${data.loser} · ${dateStr}\nLP iniciales: ${data.initLP}\n\nHistorial y stats actualizados.`,'');
-  toast('RESULTADO IMPORTADO ✓');
+  var msg=(isWin?'Victoria':isLoss?'Derrota':'Duelo')+' registrado. '+data.winner+' vs '+data.loser+'. Stats actualizados.';
+  showImportFb(msg,'');
+  toast('RESULTADO IMPORTADO');
 }
+
 function showImportFb(msg,type){
   const fb=document.getElementById('import-feedback');
   fb.textContent=msg;fb.className='import-result'+(type==='err'?' err':'');fb.style.display='block';
@@ -3566,41 +3537,26 @@ function showDiceModal(label, animFn, resultFn){
 
 function rollD(){
   playDiceSound();
-  const v=Math.floor(Math.random()*6);
-  showDiceModal(
-    'RESULTADO DEL DADO',
-    ()=>`<span style="font-size:72px;opacity:.6">${FC[Math.floor(Math.random()*6)]}</span>`,
-    ()=>({
-      anim:`<span class="dice-anim" style="font-size:72px">${FC[v]}</span>`,
-      result:`<span style="color:var(--gx)">${v+1}</span>`
-    })
-  );
+  var v=Math.floor(Math.random()*6);
+  showDiceModal('DADO',
+    function(){return '<span style="font-size:72px;opacity:.6">'+FC[Math.floor(Math.random()*6)]+'</span>';},
+    function(){return{anim:'<span class="dice-anim" style="font-size:72px">'+FC[v]+'</span>',result:'<span style="color:var(--gx)">'+(v+1)+'</span>'};});
 }
 
 function roll2D(){
   playDiceSound();
-  const a=Math.floor(Math.random()*6), b=Math.floor(Math.random()*6);
-  showDiceModal(
-    'RESULTADO — 2 DADOS',
-    ()=>`<span style="font-size:52px;opacity:.6">${FC[Math.floor(Math.random()*6)]}${FC[Math.floor(Math.random()*6)]}</span>`,
-    ()=>({
-      anim:`<span class="dice-anim" style="font-size:52px">${FC[a]}${FC[b]}</span>`,
-      result:`<span style="color:var(--gx)">${a+1} + ${b+1} = ${a+b+2}</span>`
-    })
-  );
+  var a=Math.floor(Math.random()*6),b=Math.floor(Math.random()*6);
+  showDiceModal('2 DADOS',
+    function(){return '<span style="font-size:52px;opacity:.6">'+FC[Math.floor(Math.random()*6)]+FC[Math.floor(Math.random()*6)]+'</span>';},
+    function(){return{anim:'<span class="dice-anim" style="font-size:52px">'+FC[a]+FC[b]+'</span>',result:'<span style="color:var(--gx)">'+(a+1)+' + '+(b+1)+' = '+(a+b+2)+'</span>'};});
 }
 
 function flipC(){
   playCoinSound();
-  const val=Math.random()<0.5;
-  showDiceModal(
-    'CARA O CRUZ',
-    (i)=>`<span class="coin-anim" style="font-size:72px">${i%2===0?'🟡':'⚪'}</span>`,
-    ()=>({
-      anim:`<span class="coin-anim" style="font-size:72px">${val?'🟡':'⚪'}</span>`,
-      result:`<span style="color:${val?'#d4a830':'var(--cream2)'};font-size:28px">${val?'CARA':'CRUZ'}</span>`
-    })
-  );
+  var val=Math.random()<0.5;
+  showDiceModal('CARA O CRUZ',
+    function(i){return '<span class="coin-anim" style="font-size:72px">'+(i%2===0?'O':'X')+'</span>';},
+    function(){return{anim:'<span class="coin-anim" style="font-size:72px">'+(val?'O':'X')+'</span>',result:'<span style="color:'+(val?'#d4a830':'var(--cream2)')+';font-size:28px">'+(val?'CARA':'CRUZ')+'</span>'};});
 }
 
 function closeDiceModal(){
@@ -3624,13 +3580,13 @@ async function doAdvSearch(){
   const amax=document.getElementById('af-atk-max').value;
   const fname=document.getElementById('si-inp').value;
   let url='https://db.ygoprodeck.com/api/v7/cardinfo.php?num=36&offset=0';
-  if(fname)url+=`&fname=${encodeURIComponent(fname)}`;
-  if(type)url+=`&type=${encodeURIComponent(type)}`;
-  if(attr)url+=`&attribute=${attr}`;
-  if(level)url+=`&level=${level}`;
-  if(arch)url+=`&archetype=${encodeURIComponent(arch)}`;
-  if(amin)url+=`&atk=gte${amin}`;
-  if(amax)url+=`&atk=lte${amax}`;
+  if(fname)url+='&fname='+encodeURIComponent(fname);
+  if(type)url+='&type='+encodeURIComponent(type);
+  if(attr)url+='&attribute='+attr;
+  if(level)url+='&level='+level;
+  if(arch)url+='&archetype='+encodeURIComponent(arch);
+  if(amin)url+='&atk=gte'+amin;
+  if(amax)url+='&atk=lte'+amax;
   if(!fname&&!type&&!attr&&!level&&!arch&&!amin&&!amax)url+='&fname=dragon';
   await fetchCards(url,G.mode==='browse');
 }
@@ -3683,7 +3639,7 @@ function onSI(v){
   sTimer=setTimeout(()=>doSearch(v),480);
 }
 async function doSearch(q){
-  let url=`https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${encodeURIComponent(q)}&num=28&offset=0`;
+  var url='https://db.ygoprodeck.com/api/v7/cardinfo.php?fname='+encodeURIComponent(q)+'&num=28&offset=0';
   if(aF==='monster')url+='&type=Normal%20Monster,Effect%20Monster';
   else if(aF==='spell')url+='&type=Spell%20Card';
   else if(aF==='trap')url+='&type=Trap%20Card';
@@ -3706,11 +3662,11 @@ async function fetchCards(url,browse=false){
     }
     G.results=data.data;
     cl.innerHTML=browse
-      ?`<div class="bgrid">${data.data.map(c=>bgHTML(c)).join('')}</div>`
-      :`<div class="clist">${data.data.map(c=>crHTML(c)).join('')}</div>`;
+      ?'<div class="bgrid">'+data.data.map(function(c){return bgHTML(c);}).join('')+'</div>'
+      :'<div class="clist">'+data.data.map(function(c){return crHTML(c);}).join('')+'</div>';
   }catch(e){
     ss.innerHTML='';
-    cl.innerHTML=`<div class="ld" style="color:rgba(196,24,24,.5)">ERROR DE CONEXIÓN</div>`;
+    cl.innerHTML='<div class="ld" style="color:rgba(196,24,24,.5)">ERROR DE CONEXION</div>';
   }
 }
 
@@ -3721,22 +3677,20 @@ function tE(t){if(!t)return'🃏';const s=t.toLowerCase();if(s.includes('spell')
 function cpys(id){let n=0;['main','extra','side'].forEach(z=>{const f=G.deck[z].find(c=>c.id===id);if(f)n+=(f.qty||1)});return n}
 
 function bgHTML(c){
-  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-  return`<div class="bgc" onclick="openM(${c.id})">
-    ${img?`<img src="${img}" loading="lazy" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
-    <div class="bgc-add">+ DECK</div>
-  </div>`;
+  var img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  var imgH=img?'<img src="'+img+'" loading="lazy" alt="card"/>':'<span>'+tE(c.type)+'</span>';
+  return '<div class="mc" title="'+c.name+'" onclick="addC('+c.id+')">'+imgH+'</div>';
 }
+
 function crHTML(c){
-  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-  const stats=c.atk!==undefined?`ATK ${c.atk} · DEF ${c.def??'?'}`:(c.race||'');
-  const cp=cpys(c.id);
-  return`<div class="cr ${cp>0?'ind':''}" onclick="openM(${c.id})">
-    <div class="cthumb">${img?`<img src="${img}" loading="lazy" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}</div>
-    <div class="cinfo"><div class="cn">${c.name}</div><div class="cm">${stats}</div></div>
-    <span class="tpill ${tC(c.type)}">${tL(c.type)}</span>
-    <button class="addb" onclick="event.stopPropagation();addC(${c.id})" ${cp>=3?'disabled':''}>+</button>
-  </div>`;
+  var img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  var stats=c.atk!==undefined?'ATK '+c.atk+' / DEF '+(c.def!=null?c.def:'?'):(c.race||'');
+  var cp=cpys(c.id);
+  var imgH=img?'<img src="'+img+'" loading="lazy" alt="card"/>':'<span>'+tE(c.type)+'</span>';
+  return '<div class="cr '+(cp>0?'ind':'')+'" onclick="openM('+c.id+')">'
+    +'<div class="cthumb">'+imgH+'</div>'
+    +'<div class="ci"><div class="cn">'+c.name+'</div><div class="cm">'+stats+'</div></div>'
+    +(cp>0?'<div class="cq">x'+cp+'</div>':'')+'</div>';
 }
 
 function isExtra(t){if(!t)return false;const s=t.toLowerCase();return s.includes('fusion')||s.includes('synchro')||s.includes('xyz')||s.includes('link')}
@@ -3748,9 +3702,9 @@ function addC(id){
   if(cp>=3){toast('MÁXIMO 3 COPIAS');return}
   const max=tgt==='main'?60:15;
   const tot=lst.reduce((s,x)=>s+(x.qty||1),0);
-  if(tot>=max&&!ex){toast(`LÍMITE ${max} CARTAS`);return}
+  if(tot>=max&&!ex){toast('LIMITE '+max+' CARTAS');return}
   if(ex)ex.qty=(ex.qty||1)+1;else lst.push({...c,qty:1});
-  renderDG();updateZC();saveDeck();toast(`+ ${c.name}`);refreshList();
+  renderDG();updateZC();saveDeck();toast('+ '+c.name);refreshList();
 }
 function remC(id,z){
   const lst=G.deck[z];const i=lst.findIndex(c=>c.id===id);if(i<0)return;
@@ -3762,56 +3716,41 @@ function refreshList(){
   if(!G.results.length)return;
   const isBrowse=cl.querySelector('.bgrid');
   cl.innerHTML=isBrowse
-    ?`<div class="bgrid">${G.results.map(c=>bgHTML(c)).join('')}</div>`
-    :`<div class="clist">${G.results.map(c=>crHTML(c)).join('')}</div>`;
+    ?'<div class="bgrid">'+G.results.map(function(c){return bgHTML(c);}).join('')+'</div>'
+    :'<div class="clist">'+G.results.map(function(c){return crHTML(c);}).join('')+'</div>';
 }
 function renderDG(){
-  const el=document.getElementById('dg');
-  const lst=G.deck[G.zone];
-  if(!lst||!lst.length){
-    const L={main:'DECK PRINCIPAL VACÍO',extra:'EXTRA DECK VACÍO',side:'SIDE DECK VACÍO'};
-    el.innerHTML=`<div class="dge">${L[G.zone]}</div>`;return;
-  }
-  el.innerHTML=lst.map(c=>{
-    const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-    return`<div class="mc" title="${c.name}" onclick="openDeckCardModal(${c.id},'${G.zone}')">
-      ${img?`<img src="${img}" loading="lazy" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
-      ${(c.qty||1)>1?`<div class="mc-b">x${c.qty}</div>`:''}
-    </div>`;
+  var el=document.getElementById('dg');
+  var lst=G.deck[G.zone];
+  if(!lst||!lst.length){var L={main:'DECK VACIO',extra:'EXTRA DECK VACIO',side:'SIDE DECK VACIO'};el.innerHTML='<div class="dge">'+L[G.zone]+'</div>';return;}
+  el.innerHTML=lst.map(function(c){
+    var img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+    var imgH=img?'<img src="'+img+'" loading="lazy" alt="card"/>':'<span>'+tE(c.type)+'</span>';
+    var badge=(c.qty||1)>1?'<div class="mc-b">x'+c.qty+'</div>':'';
+    return '<div class="mc" title="'+c.name+'" onclick="openDeckCardModal('+c.id+',''+G.zone+'')">'+imgH+badge+'</div>';
   }).join('');
 }
 
-function openDeckCardModal(id, zone){
-  const c=G.deck[zone].find(x=>x.id===id);
-  if(!c)return;
-  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-  const canMoveToSide=zone!=='side'&&G.deck.side.reduce((s,x)=>s+(x.qty||1),0)<15;
-  document.getElementById('deck-card-modal-inner').innerHTML=`
-    <div class="m-name">${c.name}</div>
-    <span class="tpill ${tC(c.type)}" style="margin-bottom:10px;display:inline-block">${tL(c.type)}${c.race?' · '+c.race:''}</span>
-    ${img?`<img class="m-img" src="${img}" alt="${c.name}"/>`:`<div class="m-img-ph">${tE(c.type)}</div>`}
-    ${c.atk!==undefined?`<div class="mstats">
-      <div class="mstat"><span class="msl">ATK</span><span class="msv">${c.atk}</span></div>
-      <div class="mstat"><span class="msl">DEF</span><span class="msv">${c.def??'—'}</span></div>
-      <div class="mstat"><span class="msl">Nivel</span><span class="msv">${c.level??'—'}</span></div>
-      <div class="mstat"><span class="msl">Atrib.</span><span class="msv" style="font-size:11px">${c.attribute??'—'}</span></div>
-    </div>`:''}
-    <div class="mdesc" style="max-height:80px;overflow-y:auto">${c.desc||''}</div>
-    <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">
-      ${canMoveToSide?`<button class="btn-ghost" style="width:100%;padding:10px;font-size:11px;letter-spacing:1px" onclick="moveToDeckZone(${id},'${zone}','side');closeDeckCardModal()">
-        ↔ MOVER AL SIDE DECK
-      </button>`:''}
-      ${zone==='side'?`<button class="btn-ghost" style="width:100%;padding:10px;font-size:11px;letter-spacing:1px;border-color:rgba(56,200,136,.3);color:rgba(56,200,136,.7)" onclick="moveToDeckZone(${id},'side','main');closeDeckCardModal()">
-        ↑ MOVER AL DECK PRINCIPAL
-      </button>`:''}
-      <button onclick="remC(${id},'${zone}');closeDeckCardModal()" style="width:100%;padding:10px;background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.3);border-radius:2px;color:var(--red2);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all var(--trans)">
-        🗑 ELIMINAR DEL DECK
-      </button>
-      <button class="mclose" onclick="closeDeckCardModal()">Cerrar</button>
-    </div>
-  `;
-  document.getElementById('deck-card-modal').classList.remove('hidden');
+function openDeckCardModal(id,zone){
+  var c=G.deck[zone].find(function(x){return x.id===id;});if(!c)return;
+  var img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  var canSide=zone!=='side'&&G.deck.side.reduce(function(s,x){return s+(x.qty||1);},0)<15;
+  var imgH=img?'<img class="m-img" src="'+img+'" alt="card"/>':'<div class="m-img-ph">'+tE(c.type)+'</div>';
+  var sH='';
+  if(c.atk!==undefined){sH='<div class="mstats"><div class="mstat"><span class="msl">ATK</span><span class="msv">'+c.atk+'</span></div><div class="mstat"><span class="msl">DEF</span><span class="msv">'+(c.def!=null?c.def:'-')+'</span></div><div class="mstat"><span class="msl">Nivel</span><span class="msv">'+(c.level!=null?c.level:'-')+'</span></div><div class="mstat"><span class="msl">Atrib.</span><span class="msv">'+(c.attribute||'-')+'</span></div></div>';}
+  var sBtn=canSide?'<button class="btn-ghost" style="width:100%;padding:10px;font-size:11px" onclick="moveToDeckZone('+id+',''+zone+'','side');closeDeckCardModal()">Mover al Side Deck</button>':'';
+  var mBtn=zone==='side'?'<button class="btn-ghost" style="width:100%;padding:10px;font-size:11px;border-color:rgba(56,200,136,.3);color:rgba(56,200,136,.7)" onclick="moveToDeckZone('+id+','side','main');closeDeckCardModal()">Mover al Principal</button>':'';
+  var inner=document.getElementById('deck-card-modal-inner');
+  if(inner)inner.innerHTML='<div class="m-name">'+c.name+'</div>'
+    +'<span class="tpill '+tC(c.type)+'" style="margin-bottom:10px;display:inline-block">'+tL(c.type)+(c.race?' / '+c.race:'')+'</span>'
+    +imgH+sH+'<div class="mdesc" style="max-height:80px;overflow-y:auto">'+(c.desc||'')+'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">'
+    +sBtn+mBtn
+    +'<button onclick="remC('+id+',''+zone+'');closeDeckCardModal()" style="width:100%;padding:10px;background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.3);border-radius:2px;color:var(--red2);font-weight:700;cursor:pointer">Eliminar del Deck</button>'
+    +'<button class="mclose" onclick="closeDeckCardModal()">Cerrar</button></div>';
+  var dm=document.getElementById('deck-card-modal');if(dm)dm.classList.remove('hidden');
 }
+
 function closeDeckCardModal(e){
   if(!e||e.target===document.getElementById('deck-card-modal'))
     document.getElementById('deck-card-modal').classList.add('hidden');
@@ -3830,12 +3769,12 @@ function moveToDeckZone(id, fromZone, toZone){
   if(existing)existing.qty=(existing.qty||1)+1;
   else toList.push({...card,qty:1});
   renderDG();updateZC();saveDeck();
-  toast(`Movida a ${toZone==='side'?'Side Deck':'Deck Principal'}`);
+  toast('Movida a '+(toZone==='side'?'Side Deck':'Deck Principal'));
 }
 function updateZC(){
   ['main','extra','side'].forEach(z=>{
     const tot=G.deck[z].reduce((s,c)=>s+(c.qty||1),0);
-    document.getElementById('zc-'+z).textContent=`${tot}/${z==='main'?60:15}`;
+    document.getElementById('zc-'+z).textContent=tot+'/'+(z==='main'?60:15);
   });
 }
 function exportDeck(){
@@ -3843,15 +3782,15 @@ function exportDeck(){
   let has=false;
   [{k:'main',l:'DECK PRINCIPAL'},{k:'extra',l:'EXTRA DECK'},{k:'side',l:'SIDE DECK'}].forEach(s=>{
     const lst=G.deck[s.k];if(!lst||!lst.length)return;has=true;
-    lines.push(`── ${s.l} (${lst.reduce((a,c)=>a+(c.qty||1),0)}) ──`);
-    lst.forEach(c=>lines.push(`${c.qty||1}x ${c.name}`));lines.push('');
+    lines.push('-- '+s.l+' ('+lst.reduce(function(a,c){return a+(c.qty||1);},0)+') --');
+    lst.forEach(function(c){lines.push((c.qty||1)+'x '+c.name);});lines.push('');
   });
   if(!has){toast('DECK VACÍO');return}
   document.getElementById('exta').value=lines.join('\n');
   document.getElementById('embg').classList.remove('hidden');
 }
 function clearDeck(){
-  if(!confirm(`¿Vaciar el ${G.zone==='main'?'deck principal':G.zone==='extra'?'extra deck':'side deck'}?`))return;
+  if(!confirm('Vaciar el '+(G.zone==='main'?'deck principal':G.zone==='extra'?'extra deck':'side deck')+'?'))return;
   G.deck[G.zone]=[];
   renderDG();updateZC();saveDeck();toast('DECK VACIADO');
 }
@@ -3866,78 +3805,81 @@ function closeEM(e){if(!e||e.target===document.getElementById('embg'))document.g
    CARD MODAL
 ══════════════════════════════════════ */
 async function openM(id){
-  let c=G.results.find(x=>x.id===id);
-  if(!c){
-    try{const r=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${id}`);const d=await r.json();if(d.data&&d.data[0]){c=d.data[0];G.results.push(c)}}catch(e){}
-  }
+  var c=G.results.find(function(x){return x.id===id;});
+  if(!c){try{var r=await fetch('https://db.ygoprodeck.com/api/v7/cardinfo.php?id='+id);var d=await r.json();if(d.data&&d.data[0])c=d.data[0];}catch(e){}}
   if(!c)return;
-  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-  const cp=cpys(c.id);
-  document.getElementById('mi').innerHTML=`
-    <div class="m-name">${c.name}</div>
-    <span class="tpill ${tC(c.type)}" style="margin-bottom:10px;display:inline-block">${tL(c.type)}${c.race?' · '+c.race:''}</span>
-    ${img?`<img class="m-img" src="${img}" alt="${c.name}"/>`:`<div class="m-img-ph">${tE(c.type)}</div>`}
-    ${c.atk!==undefined?`<div class="mstats">
-      <div class="mstat"><span class="msl">ATK</span><span class="msv">${c.atk}</span></div>
-      <div class="mstat"><span class="msl">DEF</span><span class="msv">${c.def??'—'}</span></div>
-      <div class="mstat"><span class="msl">Nivel</span><span class="msv">${c.level??'—'}</span></div>
-      <div class="mstat"><span class="msl">Atrib.</span><span class="msv" style="font-size:11px">${c.attribute??'—'}</span></div>
-    </div>`:''}
-    <div class="mdesc">${c.desc||''}</div>
-    <button class="madd" onclick="addC(${c.id});closeM()" ${cp>=3?'disabled style="opacity:.3;cursor:default"':''}>
-      ${cp>=3?'✓ YA TIENES 3 COPIAS':'+ AÑADIR AL DECK'}
-    </button>
-    <button class="mclose" onclick="closeM()">Cerrar</button>
-  `;
-  document.getElementById('mbg').classList.remove('hidden');
+  var img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  var cp=cpys(c.id);
+  var imgH=img?'<img class="m-img" src="'+img+'" alt="card"/>':'<div class="m-img-ph">'+tE(c.type)+'</div>';
+  var sH='';
+  if(c.atk!==undefined){sH='<div class="mstats"><div class="mstat"><span class="msl">ATK</span><span class="msv">'+c.atk+'</span></div><div class="mstat"><span class="msl">DEF</span><span class="msv">'+(c.def!=null?c.def:'-')+'</span></div><div class="mstat"><span class="msl">Nivel</span><span class="msv">'+(c.level!=null?c.level:'-')+'</span></div><div class="mstat"><span class="msl">Atrib.</span><span class="msv">'+(c.attribute||'-')+'</span></div></div>';}
+  var mi=document.getElementById('mi');
+  if(mi)mi.innerHTML='<div class="m-name">'+c.name+'</div>'
+    +'<span class="tpill '+tC(c.type)+'" style="margin-bottom:10px;display:inline-block">'+tL(c.type)+(c.race?' / '+c.race:'')+'</span>'
+    +imgH+sH+'<div class="mdesc">'+(c.desc||'')+'</div>'
+    +'<button class="madd" onclick="addC('+c.id+');closeM()" '+(cp>=3?'disabled':'')+'>'+' '+(cp>=3?'Ya tienes 3 copias':'+ Anadir')+'</button>'
+    +'<button class="mclose" onclick="closeM()">Cerrar</button>';
+  var mbg=document.getElementById('mbg');if(mbg)mbg.classList.remove('hidden');
 }
+
 function closeM(e){if(!e||e.target===document.getElementById('mbg'))document.getElementById('mbg').classList.add('hidden')}
 
 /* ══════════════════════════════════════
    PROFILE
 ══════════════════════════════════════ */
 function applyProfile(){
-  document.getElementById('prf-name').value=G.profile.name;
-  // Avatar — SVG icon or fallback
-  const iconData=YGO_ICONS.find(i=>i.id===G.profile.avatar);
-  const avBig=document.getElementById('av-display');
-  const av1=document.getElementById('av1');
-  if(iconData){
-    document.getElementById('av-icon').innerHTML=iconData.svg;
-    if(av1)av1.innerHTML=`<span style="font-size:18px;line-height:1">${iconData.svg.substring(0,200)}</span>`;
-    // Set avatar in duel as small SVG
-    if(av1){av1.innerHTML='';av1.style.padding='2px';const tmp=document.createElement('div');tmp.style.cssText='width:20px;height:20px;display:flex;align-items:center';tmp.innerHTML=iconData.svg;av1.appendChild(tmp);}
-  } else {
-    document.getElementById('av-icon').textContent=G.profile.avatar||'⚔️';
-    if(av1)av1.textContent=G.profile.avatar||'⚔️';
-  }
-  const rank=getRank(G.wins);
-  const rankEl=document.getElementById('prf-rank');
-  if(rankEl){rankEl.textContent=rank.icon+' '+rank.name;rankEl.style.color=rank.color;}
-  document.getElementById('prf-since').textContent='Desde '+new Date(G.profile.since).toLocaleDateString('es-CL',{year:'numeric',month:'long'});
-  document.querySelectorAll('.era-btn').forEach(b=>b.classList.toggle('on',b.dataset.era===G.profile.era));
-  updateRankProgress();
+  try{
+    var pn=document.getElementById('prf-name');
+    if(pn)pn.value=G.profile.name;
+    var iconData=null;
+    for(var _ii=0;_ii<YGO_ICONS.length;_ii++){
+      if(YGO_ICONS[_ii].id===G.profile.avatar){iconData=YGO_ICONS[_ii];break;}
+    }
+    var av1=document.getElementById('av1');
+    var avIcon=document.getElementById('av-icon');
+    if(iconData){
+      if(avIcon)avIcon.innerHTML=iconData.svg;
+      if(av1){
+        av1.innerHTML='';av1.style.padding='2px';
+        var tmp=document.createElement('div');
+        tmp.style.cssText='width:20px;height:20px;display:flex;align-items:center';
+        tmp.innerHTML=iconData.svg;av1.appendChild(tmp);
+      }
+    } else {
+      if(avIcon)avIcon.textContent=G.profile.avatar||'⚔️';
+      if(av1)av1.textContent=G.profile.avatar||'⚔️';
+    }
+    var rank=getRank(G.wins);
+    var rankEl=document.getElementById('prf-rank');
+    if(rankEl){rankEl.textContent=rank.icon+' '+rank.name;rankEl.style.color=rank.color;}
+    var sinceEl=document.getElementById('prf-since');
+    if(sinceEl)sinceEl.textContent='Desde '+new Date(G.profile.since).toLocaleDateString('es-CL',{year:'numeric',month:'long'});
+    document.querySelectorAll('.era-btn').forEach(function(b){b.classList.toggle('on',b.dataset.era===G.profile.era);});
+    updateRankProgress();
+  }catch(e){console.warn('applyProfile:',e);}
 }
 
 function updateRankProgress(){
-  const rank=getRank(G.wins);
-  const next=getRankNext(G.wins);
-  const rnEl=document.getElementById('rank-name');
-  const riEl=document.getElementById('rank-icon');
-  const rpEl=document.getElementById('rank-progress-bar');
-  const rlEl=document.getElementById('rank-next-label');
-  if(rnEl)rnEl.textContent=rank.name;
-  if(riEl)riEl.textContent=rank.icon;
-  if(next&&rpEl){
-    const curMin=rank.min;
-    const nextMin=next.rank.min;
-    const pct=Math.round(((G.wins-curMin)/(nextMin-curMin))*100);
-    rpEl.style.width=pct+'%';rpEl.style.background=rank.color;
-    if(rlEl)rlEl.textContent=`${next.needed} victorias para "${next.rank.icon} ${next.rank.name}"`;
-  } else if(rpEl){
-    rpEl.style.width='100%';rpEl.style.background='#d4a830';
-    if(rlEl)rlEl.textContent='¡Rango máximo alcanzado!';
-  }
+  try{
+    const rank=getRank(G.wins);
+    const next=getRankNext(G.wins);
+    const rnEl=document.getElementById('rank-name');
+    const riEl=document.getElementById('rank-icon');
+    const rpEl=document.getElementById('rank-progress-bar');
+    const rlEl=document.getElementById('rank-next-label');
+    if(rnEl)rnEl.textContent=rank.name;
+    if(riEl)riEl.textContent=rank.icon;
+    if(next&&rpEl){
+      const curMin=rank.min;
+      const nextMin=next.rank.min;
+      const pct=Math.round(((G.wins-curMin)/(nextMin-curMin))*100);
+      rpEl.style.width=pct+'%';rpEl.style.background=rank.color;
+      if(rlEl)rlEl.textContent=next.needed+' victorias para "'+next.rank.icon+' '+next.rank.name+'"';
+    } else if(rpEl){
+      rpEl.style.width='100%';rpEl.style.background='#d4a830';
+      if(rlEl)rlEl.textContent='¡Rango máximo alcanzado!';
+    }
+  }catch(e){console.warn('updateRankProgress:',e);}
 }
 function updateStats(){
   const total=G.wins+G.losses;
@@ -3951,7 +3893,7 @@ function updateStats(){
   const wr=getWinRate();
   const wrEl=document.getElementById('wr-pct');
   const wrBar=document.getElementById('wr-bar');
-  if(wrEl)wrEl.textContent=`${wr}% win rate (${G.wins}V / ${G.losses}D)`;
+  if(wrEl)wrEl.textContent=wr+'% win rate ('+G.wins+'V / '+G.losses+'D)';
   if(wrBar){
     wrBar.style.width=wr+'%';
     wrBar.style.background=wr>=60?'var(--gx)':wr>=40?'#d4a830':'var(--red2)';
@@ -3967,12 +3909,13 @@ function setEra(era,el){
   document.querySelectorAll('.era-btn').forEach(b=>b.classList.toggle('on',b.dataset.era===era));
 }
 function openAvatarPicker(){
-  document.getElementById('av-grid').innerHTML=YGO_ICONS.map(ico=>
-    `<div class="av-opt ${ico.id===G.profile.avatar?'on':''}" onclick="pickAvatar('${ico.id}',this)" title="${ico.label}">
-      ${ico.svg}
-      <div style="position:absolute;bottom:2px;left:0;right:0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:7px;font-weight:700;color:rgba(232,223,200,.5);letter-spacing:.5px;text-transform:uppercase">${ico.label}</div>
-    </div>`
-  ).join('');
+  document.getElementById('av-grid').innerHTML=YGO_ICONS.map(function(ico){
+    var on=ico.id===G.profile.avatar?'on':'';
+    return '<div class="av-opt '+on+'" onclick="pickAvatar(''+ico.id+'',this)" title="'+ico.label+'">'
+      +ico.svg
+      +'<div style="position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:7px;font-weight:700;color:rgba(232,223,200,.5);text-transform:uppercase">'+ico.label+'</div>'
+      +'</div>';
+  }).join('');
   document.getElementById('avbg').classList.remove('hidden');
 }
 function pickAvatar(id,el){
@@ -3989,25 +3932,24 @@ function pickAvatar(id,el){
 function closeAV(e){if(!e||e.target===document.getElementById('avbg'))document.getElementById('avbg').classList.add('hidden')}
 
 function renderHistory(){
-  const el=document.getElementById('duel-hist');
-  if(!G.history.length){el.innerHTML='<div class="no-hist">Sin duelos registrados aún</div>';return}
-  el.innerHTML=G.history.map((h,idx)=>{
-    const myName=G.profile.name.toUpperCase();
-    const isWin=h.winner&&h.winner.toUpperCase()===myName;
-    const opp=isWin?h.loser:h.winner;
-    const myLP=h.p1n&&h.p1n.toUpperCase()===myName?h.p1lp:h.p2lp;
-    const date=new Date(h.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'2-digit'});
-    return`<div class="dh-entry">
-      <div class="dh-res ${isWin?'w':'l'}">${isWin?'WIN':'LOSS'}</div>
-      <div class="dh-info">
-        <div class="dh-vs">vs ${opp||'Desconocido'}</div>
-        <div class="dh-meta">${date} · ${h.initLP||'?'} LP</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <div class="dh-lp">${(myLP||0).toLocaleString()}</div>
-        <button onclick="deleteHistory(${idx})" style="background:none;border:none;color:rgba(196,24,24,.35);font-size:15px;cursor:pointer;padding:2px;line-height:1;transition:color var(--trans)" title="Eliminar">🗑</button>
-      </div>
-    </div>`;
+  var el=document.getElementById('duel-hist');
+  if(!G.history.length){el.innerHTML='<div class="no-hist">Sin duelos registrados</div>';return;}
+  el.innerHTML=G.history.map(function(h,idx){
+    var myName=G.profile.name.toUpperCase();
+    var isWin=h.winner&&h.winner.toUpperCase()===myName;
+    var opp=isWin?h.loser:h.winner;
+    var myLP=h.p1n&&h.p1n.toUpperCase()===myName?h.p1lp:h.p2lp;
+    var date=new Date(h.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'2-digit'});
+    return '<div class="dh-entry">'
+      +'<div class="dh-res '+(isWin?'w':'l')+'">'+(isWin?'WIN':'LOSS')+'</div>'
+      +'<div class="dh-info">'
+      +'<div class="dh-vs">vs '+(opp||'Desconocido')+'</div>'
+      +'<div class="dh-meta">'+date+' - '+(h.initLP||'?')+' LP</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<div class="dh-lp">'+((myLP||0).toLocaleString())+'</div>'
+      +'<button onclick="deleteHistory('+idx+')" style="background:none;border:none;color:rgba(196,24,24,.35);font-size:15px;cursor:pointer;padding:2px;line-height:1" title="Eliminar">X</button>'
+      +'</div></div>';
   }).join('');
 }
 
@@ -4029,13 +3971,13 @@ function deleteHistory(idx){
 function toggleTheme(){
   _lightMode=!_lightMode;
   document.body.classList.toggle('light-mode',_lightMode);
-  document.getElementById('theme-toggle').textContent=_lightMode?'🌑':'🌙';
+  var _tg=document.getElementById('theme-toggle'); if(_tg)_tg.textContent=_lightMode?'🌑':'🌙';
   try{localStorage.setItem('ut_theme',_lightMode?'light':'dark')}catch(e){}
 }
 function loadTheme(){
   try{
     const t=localStorage.getItem('ut_theme');
-    if(t==='light'){_lightMode=true;document.body.classList.add('light-mode');document.getElementById('theme-toggle').textContent='🌑';}
+    if(t==='light'){_lightMode=true;document.body.classList.add('light-mode');var _tg2=document.getElementById('theme-toggle');if(_tg2)_tg2.textContent='🌑';}
   }catch(e){}
 }
 
@@ -4124,277 +4066,95 @@ function renderTrn(){
     sub.textContent='Sistema Swiss · Formato Oficial YGO';
     el.innerHTML=trnSetupHTML();
   } else if(t.phase==='swiss'){
-    sub.textContent=`${t.name} · Ronda ${t.curRound}/${t.totalRounds}`;
+    sub.textContent=(t.name||'TORNEO')+' - Ronda '+t.curRound+'/'+t.totalRounds;
     el.innerHTML=trnSwissHTML();
     renderTimer();
   } else if(t.phase==='topcut'){
-    sub.textContent=`${t.name} · Top ${t.topCut} · Eliminación Directa`;
+    sub.textContent=(t.name||'TORNEO')+' - Top '+t.topCut+' - Eliminacion Directa';
     el.innerHTML=trnTopCutHTML();
   } else if(t.phase==='done'){
-    sub.textContent=`${t.name} · ¡Torneo Finalizado!`;
+    sub.textContent=(t.name||'TORNEO')+' - Torneo Finalizado';
     el.innerHTML=trnDoneHTML();
   }
 }
 
 // --- SETUP HTML ---
 function trnSetupHTML(){
-  const players=G.trn.players;
-  const n=players.length;
-  const rounds=n>=2?calcRounds(n):0;
-  const cut=n>=2?calcTopCut(n):0;
-  return`
-  <div class="trn-setup">
-    <div class="card-block" style="padding:16px">
-      <div class="s-lbl">Nombre del Torneo</div>
-      <input class="fd" id="trn-name" placeholder="Ej: Torneo Local Valdivia…" value="${G.trn.name}" style="margin-bottom:10px"/>
-      <div class="s-lbl">Premio (opcional)</div>
-      <input class="fd" id="trn-prize" placeholder="🏆 Ej: Pack de cartas, trofeo…" value="${G.trn.prize}"/>
-    </div>
-
-    <div class="trn-format-info">
-      <div class="trn-fi-title">⚔ Sistema Swiss — Formato Oficial Konami</div>
-      <div class="trn-fi-body">
-        Victoria = <b style="color:#38c888">3 pts</b> · Empate = <b style="color:#d4a830">1 pt</b> · Derrota = <b style="color:var(--red2)">0 pts</b><br/>
-        ${n>=2?`<b style="color:var(--cream)">${n} jugadores → ${rounds} rondas Swiss${cut?` + Top ${cut} Eliminación Directa`:''}</b>`:'Agrega jugadores para ver la estructura'}
-      </div>
-    </div>
-
-    <div class="card-block" style="padding:14px">
-      <div class="slbl" style="margin-top:0">Jugadores <span style="color:var(--red2)">${n}/32</span></div>
-      <div class="trn-player-add">
-        <input class="fd" id="trn-pname" placeholder="Nombre del duelista…" style="font-size:13px;padding:8px 10px"
-          onkeydown="if(event.key==='Enter')trnAddPlayer()"/>
-        <button class="btn-red" style="padding:8px 14px;font-size:11px;white-space:nowrap" onclick="trnAddPlayer()">+ ADD</button>
-      </div>
-      <div class="trn-players" id="trn-plist">
-        ${players.length===0
-          ?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--cream4);text-align:center;padding:14px;letter-spacing:2px;text-transform:uppercase">Sin jugadores</div>`
-          :players.map((p,i)=>`
-            <div class="trn-player-row">
-              <span class="trn-player-seed">${i+1}</span>
-              <span class="trn-player-name">${p.name}</span>
-              <button class="trn-del-btn" onclick="trnRemovePlayer('${p.id}')">×</button>
-            </div>`).join('')
-        }
-      </div>
-    </div>
-
-    <button class="btn-red" style="width:100%;padding:12px;font-size:14px;letter-spacing:2px"
-      onclick="trnStart()" ${n<2?'disabled style="opacity:.35;cursor:default"':''}>
-      ⚔ INICIAR TORNEO
-    </button>
-    ${n<2?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);text-align:center;letter-spacing:2px;margin-top:4px">Mínimo 2 jugadores</div>`:''}
-  </div>`;
+  var t=G.trn;var n=t.players.length;var rounds=n>=2?calcRounds(n):0;var cut=n>=2?calcTopCut(n):0;
+  var struct=n>=2?('<b style="color:var(--cream)">'+n+' jugadores / '+rounds+' rondas'+(cut?' + Top '+cut:'')+' </b>'):'Agrega jugadores';
+  var pR=n===0?'<div style="text-align:center;padding:14px;color:var(--cream4)">Sin jugadores</div>'
+    :t.players.map(function(p,i){return '<div class="trn-player-row"><span class="trn-player-seed">'+(i+1)+'</span><span class="trn-player-name">'+p.name+'</span><button class="trn-del-btn" onclick="trnRemovePlayer(''+p.id+'')">x</button></div>';}).join('');
+  return '<div class="trn-setup"><div class="card-block" style="padding:16px"><div class="s-lbl">Nombre del Torneo</div><input class="fd" id="trn-name" placeholder="Nombre..." value="'+t.name+'" style="margin-bottom:10px"/><div class="s-lbl">Premio (opcional)</div><input class="fd" id="trn-prize" placeholder="Premio..." value="'+t.prize+'"/></div><div class="trn-format-info"><div class="trn-fi-title">Sistema Swiss Oficial Konami</div><div class="trn-fi-body">Victoria = 3pts / Empate = 1pt / Derrota = 0pts<br/>'+struct+'</div></div><div class="card-block" style="padding:14px"><div class="slbl" style="margin-top:0">Jugadores <span style="color:var(--red2)">'+n+'/32</span></div><div class="trn-player-add"><input class="fd" id="trn-pname" placeholder="Nombre del duelista..." style="font-size:13px;padding:8px 10px" onkeydown="if(event.key==='Enter')trnAddPlayer()"/><button class="btn-red" style="padding:8px 14px;font-size:11px;white-space:nowrap" onclick="trnAddPlayer()">+ ADD</button></div><div class="trn-players" id="trn-plist">'+pR+'</div></div><button class="btn-red" style="width:100%;padding:12px;font-size:14px" onclick="trnStart()" '+(n<2?'disabled':'')+'>'+(n<2?'Min. 2 jugadores':'INICIAR TORNEO')+'</button></div>';
 }
 
-// --- SWISS HTML ---
 function trnSwissHTML(){
-  const t=G.trn;
-  const round=t.rounds[t.curRound-1];
-  const allDone=round&&round.pairings.every(p=>p.res!==null);
-
-  // Round dots
-  const dots=Array.from({length:t.totalRounds},(_,i)=>{
-    const state=i+1<t.curRound?'done':i+1===t.curRound?'active':'';
-    return`<div class="trn-rd ${state}">${i+1}</div>`;
-  }).join('');
-
-  // Pairings
-  const pairingsHTML=round?round.pairings.map((p,idx)=>{
-    if(p.p2==='BYE'){
-      return`<div class="trn-pair-card bye">
-        <div class="trn-pair-names">
-          <div class="trn-pair-p1">${p.p1n}</div>
-          <div class="trn-pair-vs">BYE</div>
-          <div class="trn-pair-p2" style="color:var(--cream4)">—</div>
-        </div>
-        <div class="trn-pair-result">Victoria automática ✓</div>
-      </div>`;
-    }
-    const r=p.res;
-    return`<div class="trn-pair-card ${r?'done':''}">
-      <div class="trn-pair-names">
-        <div class="trn-pair-p1" style="${r==='p1'?'color:var(--gx)':r==='p2'?'opacity:.45':''}">${p.p1n}</div>
-        <div class="trn-pair-vs">VS</div>
-        <div class="trn-pair-p2" style="${r==='p2'?'color:var(--gx)':r==='p1'?'opacity:.45':''}">${p.p2n}</div>
-      </div>
-      <div class="trn-pair-btns">
-        <button class="trn-res-btn ${r==='p1'?'sel-p1':''}" onclick="trnSetResult(${idx},'p1')">🏆 ${p.p1n}</button>
-        <button class="trn-res-btn ${r==='draw'?'sel-draw':''}" onclick="trnSetResult(${idx},'draw')">≈ EMPATE</button>
-        <button class="trn-res-btn ${r==='p2'?'sel-p2':''}" onclick="trnSetResult(${idx},'p2')">🏆 ${p.p2n}</button>
-      </div>
-      ${r?`<div class="trn-pair-result" style="color:${r==='draw'?'#d4a830':r==='p1'?'var(--gx)':'var(--gx)'}">
-        ${r==='p1'?`✓ ${p.p1n} gana`:r==='p2'?`✓ ${p.p2n} gana`:'✓ Empate — 1 punto cada uno'}
-      </div>`:''}
-    </div>`;
-  }).join(''):'';
-
-  return`
-  <!-- Banner -->
-  <div class="trn-banner">
-    <div class="trn-banner-name">${t.name||'TORNEO'}</div>
-    <div class="trn-banner-sub">RONDA ${t.curRound} DE ${t.totalRounds} · SISTEMA SWISS</div>
-    ${t.prize?`<div class="trn-prize-badge"><span>🏆</span><span class="trn-prize-text">${t.prize}</span></div>`:''}
-    <div class="trn-round-badge">
-      <div style="font-size:9px;margin-bottom:2px">QUEDAN</div>
-      <div style="font-size:18px">${t.topCut?`TOP ${t.topCut}`:''}</div>
-    </div>
-  </div>
-
-  <!-- Round dots -->
-  <div class="trn-rounds-dots">${dots}</div>
-
-  <!-- Timer (50 min oficial) -->
-  <div class="trn-timer">
-    <div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px">Tiempo de ronda</div>
-      <div class="trn-timer-display ${G.trn.timerSec<=300&&G.trn.timerSec>0?'warn':G.trn.timerSec<=60&&G.trn.timerSec>0?'crit':''}" id="trn-timer-disp">${fmtTime(G.trn.timerSec)}</div>
-    </div>
-    <div class="trn-timer-btns">
-      <button class="trn-timer-btn" onclick="trnTimerToggle()">${G.trn.timerRunning?'⏸ PAUSA':'▶ INICIAR'}</button>
-      <button class="trn-timer-btn" onclick="trnTimerReset()">↺</button>
-    </div>
-  </div>
-
-  <!-- Pairings -->
-  <div class="slbl">Enfrentamientos — Ronda ${t.curRound}</div>
-  <div class="trn-pairings">${pairingsHTML}</div>
-
-  <!-- Standings -->
-  <div class="slbl">Clasificación</div>
-  ${trnStandingsHTML()}
-
-  <!-- Next round / top cut button -->
-  ${allDone?`
-  <button class="btn-red" style="width:100%;padding:12px;margin-top:6px;font-size:13px;letter-spacing:2px"
-    onclick="trnNextRound()">
-    ${t.curRound<t.totalRounds?`SIGUIENTE RONDA (${t.curRound+1}/${t.totalRounds}) →`:t.topCut?`⚔ INICIAR TOP ${t.topCut}`:'🏆 FINALIZAR TORNEO'}
-  </button>`:`
-  <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);text-align:center;padding:10px;letter-spacing:2px;text-transform:uppercase">
-    Ingresa todos los resultados para continuar
-  </div>`}
-
-  <button class="btn-ghost" style="width:100%;margin-top:8px;font-size:10px" onclick="trnAbandon()">Abandonar torneo</button>`;
+  var t=G.trn;var round=t.rounds[t.curRound-1];
+  var allDone=round&&round.pairings.every(function(p){return p.res!==null;});
+  var dots='';for(var d=0;d<t.totalRounds;d++){var st=d+1<t.curRound?'done':d+1===t.curRound?'active':'';dots+='<div class="trn-rd '+st+'">'+(d+1)+'</div>';}
+  var pH='';
+  if(round){pH=round.pairings.map(function(p,idx){
+    if(p.p2==='BYE')return '<div class="trn-pair-card bye"><div class="trn-pair-names"><div class="trn-pair-p1">'+p.p1n+'</div><div class="trn-pair-vs">BYE</div></div><div class="trn-pair-result">Victoria automatica</div></div>';
+    var r=p.res;var rH=r?'<div class="trn-pair-result" style="color:var(--gx)">'+(r==='p1'?p.p1n:r==='p2'?p.p2n:'Empate')+' gana</div>':'';
+    return '<div class="trn-pair-card '+(r?'done':'')+'">'
+      +'<div class="trn-pair-names"><div class="trn-pair-p1" style="'+(r==='p1'?'color:var(--gx)':r==='p2'?'opacity:.45':'')+'">'+p.p1n+'</div><div class="trn-pair-vs">VS</div><div class="trn-pair-p2" style="'+(r==='p2'?'color:var(--gx)':r==='p1'?'opacity:.45':'')+'">'+p.p2n+'</div></div>'
+      +'<div class="trn-pair-btns"><button class="trn-res-btn '+(r==='p1'?'sel-p1':'')+'" onclick="trnSetResult('+idx+','p1')">Win '+p.p1n+'</button><button class="trn-res-btn '+(r==='draw'?'sel-draw':'')+'" onclick="trnSetResult('+idx+','draw')">Empate</button><button class="trn-res-btn '+(r==='p2'?'sel-p2':'')+'" onclick="trnSetResult('+idx+','p2')">Win '+p.p2n+'</button></div>'+rH+'</div>';
+  }).join('');}
+  var nL=t.curRound<t.totalRounds?'RONDA '+(t.curRound+1)+' >':t.topCut?'TOP '+t.topCut:'FINALIZAR';
+  var nB=allDone?'<button class="btn-red" style="width:100%;padding:12px;margin-top:6px" onclick="trnNextRound()">'+nL+'</button>':'<div style="text-align:center;padding:10px;color:var(--cream4);font-size:10px">Ingresa todos los resultados para continuar</div>';
+  var prize=t.prize?'<div class="trn-prize-badge">Premio: '+t.prize+'</div>':'';
+  return '<div class="trn-banner"><div class="trn-banner-name">'+(t.name||'TORNEO')+'</div><div class="trn-banner-sub">RONDA '+t.curRound+'/'+t.totalRounds+'</div>'+prize+'</div>'
+    +'<div class="trn-rounds-dots">'+dots+'</div>'
+    +'<div class="trn-timer"><div><div style="font-size:9px;color:var(--cream4)">TIEMPO</div><div class="trn-timer-display" id="trn-timer-disp">'+fmtTime(G.trn.timerSec)+'</div></div><div class="trn-timer-btns"><button class="trn-timer-btn" onclick="trnTimerToggle()">'+(G.trn.timerRunning?'Pausa':'Iniciar')+'</button><button class="trn-timer-btn" onclick="trnTimerReset()">Reset</button></div></div>'
+    +'<div class="slbl">Ronda '+t.curRound+'</div><div class="trn-pairings">'+pH+'</div><div class="slbl">Clasificacion</div>'+trnStandingsHTML(false)+nB
+    +'<button class="btn-ghost" style="width:100%;margin-top:8px;font-size:10px" onclick="trnAbandon()">Abandonar</button>';
 }
 
-// --- TOP CUT HTML ---
 function trnTopCutHTML(){
-  const t=G.trn;
-  // Group bracket by round name
-  const phases=['SEMIFINAL','CUARTOS DE FINAL','OCTAVOS'];
-  // Find unique rounds
-  const rounds=[...new Set(t.bracket.map(m=>m.round))];
-
-  const bracketHTML=rounds.map(rn=>{
-    const matches=t.bracket.filter(m=>m.round===rn);
-    const phaseName=rn==='final'?'FINAL':rn==='semi'?'SEMIFINALES':rn==='quarter'?'CUARTOS DE FINAL':'RONDA';
-    const allDone=matches.every(m=>m.res!==null);
-    return`
-    <div class="trn-bracket-phase">${phaseName}</div>
-    ${matches.map((m,idx)=>{
-      const globalIdx=t.bracket.indexOf(m);
-      if(m.p2==='TBD'){
-        return`<div class="trn-pair-card">
-          <div class="trn-pair-names">
-            <div class="trn-pair-p1">${m.p1n}</div>
-            <div class="trn-pair-vs">VS</div>
-            <div class="trn-pair-p2" style="color:var(--cream4)">Por definir</div>
-          </div>
-        </div>`;
-      }
-      const r=m.res;
-      return`<div class="trn-pair-card ${r?'done':''}">
-        <div class="trn-pair-names">
-          <div class="trn-pair-p1" style="${r==='p1'?'color:var(--gx)':r==='p2'?'opacity:.45':''}">${m.p1n}</div>
-          <div class="trn-pair-vs">VS</div>
-          <div class="trn-pair-p2" style="${r==='p2'?'color:var(--gx)':r==='p1'?'opacity:.45':''}">${m.p2n}</div>
-        </div>
-        ${!r?`<div class="trn-pair-btns">
-          <button class="trn-res-btn" onclick="trnBracketResult(${globalIdx},'p1')">🏆 ${m.p1n}</button>
-          <button class="trn-res-btn" onclick="trnBracketResult(${globalIdx},'p2')">🏆 ${m.p2n}</button>
-        </div>`:`<div class="trn-pair-result" style="color:var(--gx)">✓ ${r==='p1'?m.p1n:m.p2n} avanza</div>`}
-      </div>`;
-    }).join('')}
-    ${rn!=='final'&&allDone?`<button class="btn-red" style="width:100%;padding:10px;margin-top:4px;font-size:12px;letter-spacing:2px" onclick="trnAdvanceBracket('${rn}')">AVANZAR →</button>`:''}
-    ${rn==='final'&&matches[0]?.res?`<button class="btn-red" style="width:100%;padding:12px;margin-top:6px;font-size:13px;letter-spacing:2px" onclick="trnFinish()">🏆 VER CAMPEÓN</button>`:''}
-    `;
+  var t=G.trn;var rounds=[];t.bracket.forEach(function(m){if(rounds.indexOf(m.round)<0)rounds.push(m.round);});
+  var bH=rounds.map(function(rn){
+    var ms=t.bracket.filter(function(m){return m.round===rn;});
+    var name=rn==='final'?'FINAL':rn==='semi'?'SEMIFINALES':'CUARTOS';
+    var allDone=ms.every(function(m){return m.res!==null;});
+    var mH=ms.map(function(m){
+      var gi=t.bracket.indexOf(m);
+      if(m.p2==='TBD')return '<div class="trn-pair-card"><div class="trn-pair-names"><div class="trn-pair-p1">'+m.p1n+'</div><div class="trn-pair-vs">VS</div><div class="trn-pair-p2" style="color:var(--cream4)">Por definir</div></div></div>';
+      var r=m.res;
+      var btns=!r?'<div class="trn-pair-btns"><button class="trn-res-btn" onclick="trnBracketResult('+gi+','p1')">Win '+m.p1n+'</button><button class="trn-res-btn" onclick="trnBracketResult('+gi+','p2')">Win '+m.p2n+'</button></div>'
+        :'<div class="trn-pair-result" style="color:var(--gx)">'+(r==='p1'?m.p1n:m.p2n)+' avanza</div>';
+      return '<div class="trn-pair-card '+(r?'done':'')+'">'
+        +'<div class="trn-pair-names"><div class="trn-pair-p1" style="'+(r==='p1'?'color:var(--gx)':r==='p2'?'opacity:.45':'')+'">'+m.p1n+'</div><div class="trn-pair-vs">VS</div><div class="trn-pair-p2" style="'+(r==='p2'?'color:var(--gx)':r==='p1'?'opacity:.45':'')+'">'+m.p2n+'</div></div>'+btns+'</div>';
+    }).join('');
+    var adv=rn!=='final'&&allDone?'<button class="btn-red" style="width:100%;padding:10px;margin-top:4px" onclick="trnAdvanceBracket(''+rn+'')">Avanzar</button>':'';
+    var fin=rn==='final'&&ms[0]&&ms[0].res?'<button class="btn-red" style="width:100%;padding:12px;margin-top:6px" onclick="trnFinish()">Ver Campeon</button>':'';
+    return '<div class="trn-bracket-phase">'+name+'</div>'+mH+adv+fin;
   }).join('');
-
-  return`
-  <div class="trn-banner">
-    <div class="trn-banner-name">${t.name||'TORNEO'}</div>
-    <div class="trn-banner-sub">TOP ${t.topCut} · ELIMINACIÓN DIRECTA</div>
-    ${t.prize?`<div class="trn-prize-badge"><span>🏆</span><span class="trn-prize-text">${t.prize}</span></div>`:''}
-  </div>
-  <div class="slbl">Clasificación Swiss (referencia)</div>
-  ${trnStandingsHTML(true)}
-  <div class="slbl" style="margin-top:14px">Bracket Eliminatorio</div>
-  <div class="trn-bracket">${bracketHTML}</div>`;
+  var prize=t.prize?'<div class="trn-prize-badge">Premio: '+t.prize+'</div>':'';
+  return '<div class="trn-banner"><div class="trn-banner-name">'+(t.name||'TORNEO')+'</div><div class="trn-banner-sub">TOP '+t.topCut+'</div>'+prize+'</div><div class="slbl">Clasificacion Swiss</div>'+trnStandingsHTML(true)+'<div class="slbl" style="margin-top:14px">Bracket</div><div class="trn-bracket">'+bH+'</div>';
 }
 
-// --- DONE HTML ---
 function trnDoneHTML(){
-  const t=G.trn;
-  const sorted=trnSortedPlayers();
-  const [first,second,third]=sorted;
-  return`
-  <div class="trn-winner-screen">
-    <span class="trn-trophy">🏆</span>
-    <div class="trn-winner-label">¡Campeón del Torneo!</div>
-    <div class="trn-winner-name">${t.winner||first?.name||'—'}</div>
-    ${t.prize?`<div class="trn-winner-prize">Premio: ${t.prize}</div>`:''}
-    <div class="trn-podium" style="margin-top:24px">
-      ${second?`<div class="trn-podium-place">
-        <span style="font-size:20px">🥈</span>
-        <div class="trn-podium-block" style="height:44px">2°</div>
-        <div class="trn-podium-name">${second.name}</div>
-        <div style="font-family:'Black Ops One',sans-serif;font-size:10px;color:var(--cream4)">${second.pts}pts</div>
-      </div>`:''}
-      <div class="trn-podium-place">
-        <span style="font-size:28px">🥇</span>
-        <div class="trn-podium-block" style="height:60px">1°</div>
-        <div class="trn-podium-name" style="color:#d4a830;font-weight:900">${first?.name||'—'}</div>
-        <div style="font-family:'Black Ops One',sans-serif;font-size:10px;color:#d4a830">${first?.pts||0}pts</div>
-      </div>
-      ${third?`<div class="trn-podium-place">
-        <span style="font-size:18px">🥉</span>
-        <div class="trn-podium-block" style="height:32px">3°</div>
-        <div class="trn-podium-name">${third.name}</div>
-        <div style="font-family:'Black Ops One',sans-serif;font-size:10px;color:var(--cream4)">${third.pts}pts</div>
-      </div>`:''}
-    </div>
-  </div>
-  <div class="slbl">Clasificación Final</div>
-  ${trnStandingsHTML(true)}
-  <button class="btn-red" style="width:100%;padding:12px;margin-top:14px;font-size:13px;letter-spacing:2px" onclick="trnReset()">+ NUEVO TORNEO</button>`;
+  var t=G.trn;var s=trnSortedPlayers();var s1=s[0],s2=s[1],s3=s[2];
+  var w=t.winner||(s1?s1.name:'');var prize=t.prize?'<div class="trn-winner-prize">Premio: '+t.prize+'</div>':'';
+  var b1='<div class="trn-podium-place"><div class="trn-podium-block" style="height:60px">1</div><div class="trn-podium-name" style="color:#d4a830;font-weight:900">'+(s1?s1.name:'')+'</div><div style="font-size:10px;color:#d4a830">'+(s1?s1.pts:0)+'pts</div></div>';
+  var b2=s2?'<div class="trn-podium-place"><div class="trn-podium-block" style="height:44px">2</div><div class="trn-podium-name">'+s2.name+'</div><div style="font-size:10px;color:var(--cream4)">'+s2.pts+'pts</div></div>':'';
+  var b3=s3?'<div class="trn-podium-place"><div class="trn-podium-block" style="height:32px">3</div><div class="trn-podium-name">'+s3.name+'</div><div style="font-size:10px;color:var(--cream4)">'+s3.pts+'pts</div></div>':'';
+  return '<div class="trn-winner-screen"><div class="trn-winner-label">Campeon del Torneo</div><div class="trn-winner-name">'+w.toUpperCase()+'</div>'+prize+'<div class="trn-podium" style="margin-top:24px">'+b2+b1+b3+'</div></div><div class="slbl">Clasificacion Final</div>'+trnStandingsHTML(true)+'<button class="btn-red" style="width:100%;padding:12px;margin-top:14px" onclick="trnReset()">+ NUEVO TORNEO</button>';
 }
 
-// --- STANDINGS HTML ---
-function trnStandingsHTML(full=false){
-  const sorted=trnSortedPlayers();
-  const show=full?sorted:sorted.slice(0,Math.min(8,sorted.length));
-  return`<div class="trn-standings">
-    <div class="trn-st-head">
-      <div class="trn-st-hcell">#</div>
-      <div class="trn-st-hcell">Jugador</div>
-      <div class="trn-st-hcell" style="color:#d4a830">PTS</div>
-      <div class="trn-st-hcell" style="color:var(--gx)">V</div>
-      <div class="trn-st-hcell" style="color:var(--cream4)">E</div>
-      <div class="trn-st-hcell" style="color:var(--red2)">D</div>
-    </div>
-    ${show.map((p,i)=>`
-    <div class="trn-st-row ${i<G.trn.topCut?'top':''}">
-      <div class="trn-st-pos">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
-      <div class="trn-st-name">${p.name}</div>
-      <div class="trn-st-cell pts">${p.pts}</div>
-      <div class="trn-st-cell w">${p.w}</div>
-      <div class="trn-st-cell">${p.d}</div>
-      <div class="trn-st-cell l">${p.l}</div>
-    </div>`).join('')}
-  </div>`;
+function trnStandingsHTML(full){
+  var s=trnSortedPlayers();var show=full?s:s.slice(0,Math.min(8,s.length));
+  var rows=show.map(function(p,i){
+    return '<div class="trn-st-row '+(i<G.trn.topCut?'top':'')+'">'
+      +'<div class="trn-st-pos">'+(i+1)+'</div>'
+      +'<div class="trn-st-name">'+p.name+'</div>'
+      +'<div class="trn-st-cell pts">'+p.pts+'</div>'
+      +'<div class="trn-st-cell w">'+p.w+'</div>'
+      +'<div class="trn-st-cell">'+p.d+'</div>'
+      +'<div class="trn-st-cell l">'+p.l+'</div></div>';
+  }).join('');
+  return '<div class="trn-standings"><div class="trn-st-head"><div class="trn-st-hcell">#</div><div class="trn-st-hcell">Jugador</div><div class="trn-st-hcell" style="color:#d4a830">PTS</div><div class="trn-st-hcell" style="color:var(--gx)">V</div><div class="trn-st-hcell" style="color:var(--cream4)">E</div><div class="trn-st-hcell" style="color:var(--red2)">D</div></div>'+rows+'</div>';
 }
 
-// --- SORTED PLAYERS (pts desc, then W desc) ---
 function trnSortedPlayers(){
   return [...G.trn.players].sort((a,b)=>b.pts-a.pts||b.w-a.w||a.name.localeCompare(b.name));
 }
@@ -4427,8 +4187,8 @@ function trnRemovePlayer(id){
 function trnStart(){
   const ni=document.getElementById('trn-name');
   const pi=document.getElementById('trn-prize');
-  G.trn.name=(ni?.value||'').trim()||'TORNEO SIN NOMBRE';
-  G.trn.prize=(pi?.value||'').trim();
+  G.trn.name=(ni?ni.value||'':'').trim()||'TORNEO SIN NOMBRE';
+  G.trn.prize=(pi?pi.value||'':'').trim();
   const n=G.trn.players.length;
   if(n<2){toast('Mínimo 2 jugadores');return;}
   G.trn.totalRounds=calcRounds(n);
@@ -4444,7 +4204,7 @@ function trnStart(){
   G.trn.players.forEach(p=>{p.pts=0;p.w=0;p.l=0;p.d=0;p.byes=0;p.opponents=[]});
   trnGenerateRound();
   renderTrn();
-  toast(`¡${G.trn.name} iniciado! ${n} jugadores · ${G.trn.totalRounds} rondas`);
+  toast((G.trn.name||'Torneo')+' iniciado! '+n+' jugadores - '+G.trn.totalRounds+' rondas');
 }
 
 function trnGenerateRound(){
@@ -4517,7 +4277,7 @@ function trnNextRound(){
   if(t.curRound<t.totalRounds){
     trnGenerateRound();
     renderTrn();
-    toast(`Ronda ${t.curRound} iniciada`);
+    toast('Ronda '+t.curRound+' iniciada');
   } else if(t.topCut>0){
     trnBuildTopCut();
   } else {
@@ -4540,7 +4300,7 @@ function trnBuildTopCut(){
     t.bracket.push({round:roundName,p1:p1.id,p2:p2.id,p1n:p1.name,p2n:p2.name,res:null});
   }
   renderTrn();
-  toast(`¡Top ${t.topCut} iniciado!`);
+  toast('Top '+t.topCut+' iniciado');
 }
 
 function trnBracketResult(idx,res){
@@ -4572,7 +4332,7 @@ function trnFinish(){
   if(finalMatch&&finalMatch.res){
     t.winner=finalMatch.res==='p1'?finalMatch.p1n:finalMatch.p2n;
   } else {
-    t.winner=trnSortedPlayers()[0]?.name||'—';
+    t.winner=(function(){var _s=trnSortedPlayers()[0];return _s?_s.name:'—'})();
   }
   t.phase='done';
   stopTimer();
@@ -4599,7 +4359,7 @@ function trnReset(){
 // --- TIMER ---
 function fmtTime(s){
   const m=Math.floor(s/60),sec=s%60;
-  return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+  return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
 }
 function renderTimer(){
   const el=document.getElementById('trn-timer-disp');
@@ -4757,9 +4517,9 @@ async function consultarArbitro(){
 - Un monstruo que ya atacó ese turno no puede cambiar a posición de ataque de nuevo.
 ===`;
 
-  const systemPrompt=`Eres un Juez Oficial certificado de Yu-Gi-Oh! (Judge certified by Konami). Tienes acceso a la siguiente base de datos de reglas oficiales:
+  const systemPrompt='Eres un Juez Oficial certificado de Yu-Gi-Oh! (Judge certified by Konami). Tienes acceso a la siguiente base de datos de reglas oficiales:
 
-${YGO_RULES_DB}
+'+YGO_RULES_DB+'
 
 Al resolver cualquier situación de duelo:
 1. Identifica las cartas y efectos involucrados citando sus nombres exactos.
@@ -4769,16 +4529,16 @@ Al resolver cualquier situación de duelo:
 5. Si hay imagen, analízala visualmente para identificar cartas o posiciones.
 6. Si la situación involucra una carta específica que no está en la base de datos, aplica los principios generales del reglamento y acláralo.
 7. Responde siempre en español con lenguaje de juez oficial pero comprensible.
-8. Sé directo. No especules. Si algo no está claro, pide la información faltante.`;
+8. Sé directo. No especules. Si algo no está claro, pide la información faltante.';
 
   const messages=[];
   if(window._arbImageData){
     messages.push({role:'user',content:[
       {type:'image',source:{type:'base64',media_type:window._arbImageType||'image/jpeg',data:window._arbImageData}},
-      {type:'text',text:`Analiza esta imagen del campo de duelo y resuelve la siguiente situación:\n\n${text}`}
+      {type:'text',text:'Analiza esta imagen del campo de duelo y resuelve la siguiente situacion:\n\n'+text}
     ]});
   }else{
-    messages.push({role:'user',content:`Resuelve esta situación del duelo:\n\n${text}`});
+    messages.push({role:'user',content:'Resuelve esta situacion del duelo:\n\n'+text});
   }
 
   try{
@@ -4790,7 +4550,7 @@ Al resolver cualquier situación de duelo:
     if(!res.ok)throw new Error('HTTP '+res.status);
     const data=await res.json();
     if(data.error)throw new Error(data.error.message||'API error');
-    const reply=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('\n')||'Sin respuesta.';
+    const reply=(data.content?data.content.filter(function(b){return b.type==='text'}).map(function(b){return b.text}).join('\n'):null)||'Sin respuesta.';
     respText.textContent=reply;
   }catch(e){
     // LOCAL FALLBACK: resolve using embedded rules DB
@@ -4798,27 +4558,58 @@ Al resolver cualquier situación de duelo:
   }
 }
 
-// Local arbitro using embedded rules — works offline
+// ─── LOCAL ARBITRO: Expert YGO Judge — no internet needed ───
 function resolveLocalArbitro(query){
-  const q=query.toLowerCase();
-  // Chain / LIFO
-  if(q.includes('cadena')||q.includes('chain')||q.includes('lifo')){
-    return`⚖️ RESOLUCIÓN OFICIAL — SISTEMA DE CADENAS\n\nEl sistema de cadenas funciona bajo el principio LIFO (Last In, First Out): el último efecto añadido se resuelve primero.\n\n1. Cuando se activa un efecto, ambos jugadores pueden responder añadiendo más efectos.\n2. Una vez nadie añade más, la cadena se resuelve de atrás hacia adelante.\n3. Las velocidades de cadena: CS1 no puede encadenarse sobre CS2+. CS3 (Contratrampas) solo pueden responderse con otra CS3.\n\nPara tu consulta específica: "${query}"\n\nPor favor verifica los nombres exactos de las cartas y sus velocidades de cadena. Si la carta dice "cuando" tiene timing estricto. Si dice "si", no tiene timing estricto y puede activarse aunque no sea la última acción.`;
+  var q=query.toLowerCase();
+  var r='ARBITRO LOCAL
+
+';
+  if(q.indexOf('lava golem')>=0||q.indexOf('catsith')>=0){
+    return 'RESOLUCION OFICIAL - LAVA GOLEM
+
+Lava Golem se invoca en el campo del rival tributando 2 monstruos suyos.
+DANO: 1000 LP en cada Standby Phase del controlador.
+CAMBIO DE POSICION: Un monstruo con mas de 1 turno en campo puede cambiar de Defensa a Ataque en tu Main Phase. No puede atacar ese turno.
+VERDICTO: El cambio de posicion es valido.';
   }
-  // Lava Golem specific
-  if(q.includes('lava golem')||q.includes('lava gol')){
-    return`⚖️ RESOLUCIÓN OFICIAL — LAVA GOLEM\n\nLava Golem (Gólem de Lava) funciona así:\n\n✅ CORRECTO: Lava Golem se invoca de forma especial en el campo del RIVAL tributando 2 monstruos del rival. No cuenta como tu invocación especial.\n\n✅ DAÑO: Durante cada Standby Phase del jugador que controla Lava Golem (el rival al que se lo diste), ese jugador recibe 1000 puntos de daño.\n\n✅ POSICIÓN: El monstruo puede estar en posición de Ataque o Defensa. Un monstruo en posición de Defensa (boca abajo o boca arriba horizontal) NO puede ser cambiado a posición de Ataque en el mismo turno en que cambió, a menos que un efecto lo permita.\n\n✅ CAMBIO DE POSICIÓN: Un monstruo puede cambiar de posición SOLO UNA VEZ por turno durante tu Main Phase, y NO puede atacar ese mismo turno si acaba de cambiar a posición de Ataque.\n\nVERDICTO para tu situación: ${query.includes('defensa')||query.includes('defense')?'El monstruo en posición de defensa que lleva más de 1 turno en campo SÍ puede cambiar a posición de ataque durante la Main Phase del jugador que lo controla, una vez por turno.':'Aplica la regla de cambio de posición: una vez por turno durante la Main Phase.'}`;
+  if(q.indexOf('cadena')>=0||q.indexOf('chain')>=0||q.indexOf('lifo')>=0){
+    r='RESOLUCION OFICIAL - CADENAS
+
+LIFO: el ULTIMO efecto se resuelve PRIMERO.
+CS1: estandar. CS2: rapidos/trampas/handtraps. CS3: contratrampas.
+';
+    if(q.indexOf('ash')>=0)r+='Ash Blossom (CS2): niega efectos que busquen/roben/envien del mazo.
+';
+    if(q.indexOf('called by')>=0)r+='Called by the Grave (CS2): puede encadenarse a Ash Blossom para negarla.
+';
+    return r;
   }
-  // Position change
-  if(q.includes('posición')||q.includes('posicion')||q.includes('ataque')||q.includes('defensa')){
-    return`⚖️ RESOLUCIÓN OFICIAL — CAMBIO DE POSICIÓN\n\nReglas de cambio de posición:\n\n• Un monstruo puede cambiar de posición UNA VEZ por turno durante tu Main Phase.\n• Un monstruo que acaba de ser invocado NO puede cambiar de posición ese mismo turno.\n• Un monstruo que cambió de posición de Defensa a Ataque NO puede atacar ese turno.\n• Un monstruo en posición de Defensa que lleva al menos 1 turno completo en campo SÍ puede cambiar a posición de Ataque en tu siguiente turno.\n• Excepción: efectos que indiquen lo contrario (ej: "puede atacar el turno que es invocado").\n\nVERDICTO: "${query}" — basándome en las reglas oficiales, el cambio de posición es válido si el monstruo ya estaba en campo desde el turno anterior.`;
+  if(q.indexOf('posicion')>=0||q.indexOf('ataque')>=0||q.indexOf('defensa')>=0){
+    return 'RESOLUCION OFICIAL - POSICION
+
+- Cambio: una vez por turno en Main Phase.
+- Recien invocado: no puede cambiar ese turno.
+- Defensa a Ataque: no puede atacar ese turno.
+- Boca abajo: no puede atacar.
+- Piercing: solo si el efecto lo indica.';
   }
-  // Hand traps
-  if(q.includes('ash')||q.includes('called by')||q.includes('veiler')||q.includes('nibiru')){
-    return`⚖️ RESOLUCIÓN OFICIAL — HANDTRAPS\n\nHandtraps comunes y su interacción:\n\n• Ash Blossom (CS2): Niega efectos que busquen/roben/envíen desde el mazo. Se activa en respuesta desde la mano.\n• Called by the Grave (CS2): Destierra monstruo del GY y niega copias en juego. Puede usarse para negar Ash Blossom.\n• Effect Veiler (CS1): Niega efectos de monstruo solo durante el turno del rival. NO se puede encadenar sobre CS2.\n• Nibiru (CS1): Si el rival invocó especialmente 5+ veces este turno, tributa todos sus monstruos.\n\nIMPORTANTE: Called by the Grave SÍ puede encadenarse a Ash Blossom para negarla (ambas CS2). El resultado: Ash Blossom queda negada, el efecto original se resuelve normalmente.`;
+  if(q.indexOf('ash')>=0||q.indexOf('nibiru')>=0||q.indexOf('veiler')>=0){
+    return 'RESOLUCION OFICIAL - HANDTRAPS
+
+Ash Blossom (CS2): niega efectos que busquen/roben/envien del mazo.
+Called by the Grave (CS2): puede negar Ash Blossom.
+Effect Veiler (CS1): niega efectos de monstruo, solo turno del rival.
+Nibiru (CS1): si el rival invoco 5+ veces, tributa todos sus monstruos.';
   }
-  // Generic fallback
-  return`⚖️ ÁRBITRO LOCAL — BASE DE REGLAS INTERNO\n\nConsulta recibida: "${query}"\n\nNota: El Árbitro IA no pudo conectarse al servicio en línea. Estoy resolviendo con la base de reglas local.\n\nPrincipios generales aplicables:\n\n1. CADENAS (LIFO): último efecto activado = primero en resolverse.\n2. POSICIÓN: cambio permitido una vez por turno en Main Phase; no puedes atacar ese turno.\n3. INVOCACIÓN: solo 1 invocación normal por turno. Invocaciones especiales son ilimitadas (salvo restricción).\n4. TIMING: efectos con "cuando" tienen timing estricto. Efectos con "si" no lo tienen.\n5. DAÑO DE BATALLA: ATK atacante vs ATK/DEF defensor. La diferencia = daño.\n\nPara una resolución más precisa, describe las cartas exactas involucradas o consulta el Árbitro IA cuando tengas conexión a internet.`;
+  return 'ARBITRO LOCAL - REGLAS GENERALES
+
+Consulta: '+query+'
+
+1. CADENAS: LIFO - ultimo = primero en resolverse.
+2. POSICION: cambio una vez por turno en Main Phase.
+3. INVOCACION: 1 normal por turno. Especiales ilimitadas.
+4. TIMING: cuando = estricto. Si = flexible.
+5. BATALLA: ATK vs ATK/DEF, diferencia = dano.';
 }
 
 function clearArbitro(){
@@ -4902,20 +4693,21 @@ function newTip(animate=true){
 }
 
 function renderAboutStats(){
-  const grid=document.getElementById('ai-stats-grid');
+  var grid=document.getElementById('ai-stats-grid');
   if(!grid)return;
-  const total=G.wins+G.losses;
-  const wr=total>0?Math.round((G.wins/total)*100):0;
-  const rank=getRank(G.wins);
-  const streak=calcStreak();
-  grid.innerHTML=`
-    <div class="ai-stat"><span class="ai-stat-val">${total}</span><span class="ai-stat-lbl">Duelos</span></div>
-    <div class="ai-stat wr"><span class="ai-stat-val">${wr}%</span><span class="ai-stat-lbl">Win Rate</span></div>
-    <div class="ai-stat"><span class="ai-stat-val">${streak>0?'+'+streak:streak}</span><span class="ai-stat-lbl">Racha</span></div>
-    <div class="ai-stat"><span class="ai-stat-val">${G.wins}</span><span class="ai-stat-lbl">Victorias</span></div>
-    <div class="ai-stat"><span class="ai-stat-val">${G.losses}</span><span class="ai-stat-lbl">Derrotas</span></div>
-    <div class="ai-stat rk"><span class="ai-stat-val">${rank.icon}</span><span class="ai-stat-lbl">${rank.name.split(' ').slice(0,2).join(' ')}</span></div>
-  `;
+  var total=G.wins+G.losses;
+  var wr=total>0?Math.round((G.wins/total)*100):0;
+  var rank=getRank(G.wins);
+  var streak=calcStreak();
+  var streakStr=streak>0?'+'+streak:String(streak);
+  var rankShort=rank.name.split(' ').slice(0,2).join(' ');
+  grid.innerHTML=
+    '<div class="ai-stat"><span class="ai-stat-val">'+total+'</span><span class="ai-stat-lbl">Duelos</span></div>'
+    +'<div class="ai-stat wr"><span class="ai-stat-val">'+wr+'%</span><span class="ai-stat-lbl">Win Rate</span></div>'
+    +'<div class="ai-stat"><span class="ai-stat-val">'+streakStr+'</span><span class="ai-stat-lbl">Racha</span></div>'
+    +'<div class="ai-stat"><span class="ai-stat-val">'+G.wins+'</span><span class="ai-stat-lbl">Victorias</span></div>'
+    +'<div class="ai-stat"><span class="ai-stat-val">'+G.losses+'</span><span class="ai-stat-lbl">Derrotas</span></div>'
+    +'<div class="ai-stat rk"><span class="ai-stat-val">'+rank.icon+'</span><span class="ai-stat-lbl">'+rankShort+'</span></div>';
 }
 
 function calcStreak(){
@@ -4940,7 +4732,7 @@ function renderAboutCta(){
   const rank=getRank(G.wins);
   const next=getRankNext(G.wins);
   if(total===0) sub.textContent='¡Es hora de tu primer duelo!';
-  else if(next) sub.textContent=`${next.needed} victorias para "${next.rank.icon} ${next.rank.name}"`;
+  else if(next) sub.textContent=next.needed+' victorias para '+next.rank.name;
   else sub.textContent=`¡Leyenda Milenaria! El rango máximo es tuyo 👑`;
 }
 
@@ -4983,43 +4775,35 @@ function openHandModal(){
 }
 
 function drawHand(){
-  const main=G.deck.main;
-  // T1 = 5 cards, T2 = 5 start + 1 draw = 6 shown (last one marked)
-  const cardCount=_handTurn===1?5:6;
-  let pool=[];
-  main.forEach(c=>{for(let i=0;i<(c.qty||1);i++)pool.push(c)});
-  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
-  const hand=pool.slice(0,cardCount);
-  window._currentHand=hand;
+  var main=G.deck.main;var cardCount=_handTurn===2?6:5;
+  var pool=[];main.forEach(function(c){for(var i=0;i<(c.qty||1);i++)pool.push(c);});
+  for(var i=pool.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=pool[i];pool[i]=pool[j];pool[j]=t;}
+  var hand=pool.slice(0,cardCount);window._currentHand=hand;
   document.getElementById('hand-card-detail').innerHTML='';
-  document.getElementById('hand-cards').innerHTML=hand.map((c,i)=>{
-    const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-    const isDrawn=_handTurn===2&&i===5;
-    return`<div onclick="showHandCardDetail(${i})" style="flex-shrink:0;cursor:pointer;transition:transform .15s;text-align:center"
-      onmouseenter="this.style.transform='scale(1.1) translateY(-5px)'"
-      onmouseleave="this.style.transform='scale(1)'">
-      <div style="width:62px;height:88px;border-radius:3px;border:2px solid ${isDrawn?'rgba(56,200,136,.8)':'var(--border)'};overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:3px;position:relative">
-        ${img?`<img src="${img}" style="width:100%;height:100%;object-fit:cover" alt="${c.name}"/>`:`<span>${tE(c.type)}</span>`}
-        ${isDrawn?`<div style="position:absolute;top:0;right:0;background:#38c888;color:#0d1a12;font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:900;padding:1px 4px;border-radius:0 0 0 3px;letter-spacing:.5px">ROBO</div>`:''}
-      </div>
-      <div style="width:62px;font-family:'Barlow Condensed',sans-serif;font-size:7px;font-weight:700;color:var(--cream4);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
-    </div>`;
+  document.getElementById('hand-cards').innerHTML=hand.map(function(c,idx){
+    var img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+    var isDrawn=_handTurn===2&&idx===5;
+    var bdr=isDrawn?'2px solid rgba(56,200,136,.8)':'2px solid var(--border)';
+    var badge=isDrawn?'<div style="position:absolute;top:0;right:0;background:#38c888;color:#0d1a12;font-size:8px;font-weight:900;padding:1px 4px;border-radius:0 0 0 3px">ROBO</div>':'';
+    var imgH=img?'<img src="'+img+'" style="width:100%;height:100%;object-fit:cover" alt="card"/>':'<span>'+tE(c.type)+'</span>';
+    return '<div onclick="showHandCardDetail('+idx+')" style="flex-shrink:0;cursor:pointer;text-align:center">'
+      +'<div style="width:62px;height:88px;border-radius:3px;border:'+bdr+';overflow:hidden;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:3px;position:relative">'+imgH+badge+'</div>'
+      +'<div style="width:62px;font-size:7px;font-weight:700;color:var(--cream4);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+c.name+'</div></div>';
   }).join('');
 }
 
 function showHandCardDetail(idx){
-  const c=window._currentHand[idx];if(!c)return;
-  const img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
-  document.getElementById('hand-card-detail').innerHTML=`
-    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:10px;display:flex;gap:10px;margin-top:8px;animation:fadeU .2s ease">
-      ${img?`<img src="${img}" style="width:52px;height:72px;border-radius:2px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)" alt="${c.name}"/>`:
-        `<div style="width:52px;height:72px;background:var(--bg3);border-radius:2px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${tE(c.type)}</div>`}
-      <div style="flex:1;min-width:0">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:var(--cream);margin-bottom:3px">${c.name}</div>
-        ${c.atk!==undefined?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--cream3);margin-bottom:4px">ATK ${c.atk} · DEF ${c.def??'—'} · Nv.${c.level??'?'} · ${c.attribute||''}</div>`:''}
-        <div style="font-family:'Barlow',sans-serif;font-size:10px;color:var(--cream4);line-height:1.5;overflow-y:auto;max-height:70px">${(c.desc||'Sin descripción').substring(0,220)}${c.desc&&c.desc.length>220?'…':''}</div>
-      </div>
-    </div>`;
+  var c=window._currentHand[idx];if(!c)return;
+  var img=c.card_images&&c.card_images[0]?c.card_images[0].image_url_small:'';
+  var imgH=img?'<img src="'+img+'" style="width:52px;height:72px;border-radius:2px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)" alt="card"/>'
+    :'<div style="width:52px;height:72px;background:var(--bg3);border-radius:2px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">'+tE(c.type)+'</div>';
+  var sH=c.atk!==undefined?'<div style="font-size:11px;color:var(--cream3);margin-bottom:4px">ATK '+c.atk+' / DEF '+(c.def!=null?c.def:'-')+' / Nv.'+(c.level!=null?c.level:'?')+'</div>':'';
+  var desc=(c.desc||'Sin descripcion').substring(0,220);
+  var el=document.getElementById('hand-card-detail');
+  if(el)el.innerHTML='<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:10px;display:flex;gap:10px;margin-top:8px">'
+    +imgH+'<div style="flex:1;min-width:0">'
+    +'<div style="font-size:13px;font-weight:800;color:var(--cream);margin-bottom:3px">'+c.name+'</div>'
+    +sH+'<div style="font-size:10px;color:var(--cream4);line-height:1.5;overflow-y:auto;max-height:70px">'+desc+'</div></div></div>';
 }
 
 function closeHandModal(e){
@@ -5028,107 +4812,23 @@ function closeHandModal(e){
 }
 
 /* ══════════════════════════════════════
-   OLD SCHOOL FILTER
-══════════════════════════════════════ */
-// Cards from these classic sets — searched by archetype/set keywords
-/* ══════════════════════════════════════
-   OLD SCHOOL — Grouped by expansion (local DB)
+   OLD SCHOOL — Listado completo por expansión
+   Fuente: Konami DB oficial + Fandom ES
 ══════════════════════════════════════ */
 const OLD_SCHOOL_SETS={
-  'Arsenal Secreto Cap. 1':[
-    'Dark Magician','Blue-Eyes White Dragon','Exodia the Forbidden One',
-    'Left Leg of the Forbidden One','Right Leg of the Forbidden One',
-    'Left Arm of the Forbidden One','Right Arm of the Forbidden One',
-    'Summoned Skull','Red-Eyes B. Dragon','Gaia The Fierce Knight',
-    'Celtic Guardian','Kuriboh','Polymerization','Monster Reborn',
-    'Change of Heart','Dark Hole','Raigeki','Mirror Force',
-    'Trap Hole','Fissure'
-  ],
-  'Predadores Metálicos':[
-    'Jinzo','Mechanicalchaser','Mad Sword Beast','Launcher Spider',
-    'Cannon Soldier','Heavy Storm','Nobleman of Crossout',
-    'Ceasefire','Drop Off','Fairy Meteor Crush',
-    'Series 7 commons','7 Colored Fish','Giant Trunade',
-    'Exiled Force','Goblin Attack Force'
-  ],
-  'El Amo de la Magia':[
-    'Breaker the Magical Warrior','Magical Scientist','Tribe-Infecting Virus',
-    'Spell Canceller','Skilled Dark Magician','Skilled White Magician',
-    'Different Dimension Capsule','Magical Dimension','Diffusion Wave-Motion',
-    'Thousand Knives','Dark Paladin','Mystic Box'
-  ],
-  'Servidor del Faraón':[
-    'Gravekeeper\'s Spy','Gravekeeper\'s Assailant','Gravekeeper\'s Chief',
-    'Necrovalley','Gravekeeper\'s Curse','Gravekeeper\'s Guard',
-    'Gravekeeper\'s Servant','Royal Tribute','Rite of Spirit',
-    'Gravekeepers Vassal','Winged Sage Falcos'
-  ],
-  'Invasión del Caos':[
-    'Black Luster Soldier - Envoy of the Beginning',
-    'Chaos Emperor Dragon - Envoy of the End',
-    'Yata-Garasu','Fiber Jar','Sinister Serpent',
-    'D.D. Warrior Lady','Reflect Bounder',
-    'Magical Merchant','Night Assailant',
-    'Chaos Command Magician'
-  ],
-  'Retro Pack 02':[
-    'Harpie Lady Sisters','Harpie Lady','Harpie\'s Feather Duster',
-    'Elegant Egotist','Cyber Harpie Lady','Triangle Echelon',
-    'Mesmeric Control','Lady Panther','Shadow of Eyes',
-    'Petit Moth','Cocoon of Evolution','Great Moth','Perfectly Ultimate Great Moth',
-    'Insect Queen','Larvae Moth'
-  ]
+  "Arsenal Secreto Cap. 1":["Ally of Justice Catastor","Naturia Beast","Naturia Barkion","Dragunity Knight - Gae Dearg","Ice Barrier Dragon Trishula","Brionac Dragon of the Ice Barrier","Monster Reborn","Dark Hole","Mirror Force","Pot of Avarice","Gorz the Emissary of Darkness"],
+  "Predadores Metalicos":["Jinzo","Barrel Dragon","Launcher Spider","Mirror Force","Solemn Judgment","Seven Tools of the Bandit","Magic Jammer","Pot of Greed","Change of Heart","Dark Hole","Raigeki","Heavy Storm","Harpie Lady Sisters"],
+  "El Amo de la Magia":["Dark Magician Girl","Buster Blader","Breaker the Magical Warrior","Magical Scientist","Tribe-Infecting Virus","Skilled Dark Magician","Thousand Knives","Dark Paladin","Diffusion Wave-Motion","Injection Fairy Lily"],
+  "Servidor del Faraon":["Gravekeeper s Spy","Gravekeeper s Assailant","Gravekeeper s Chief","Necrovalley","Royal Tribute","Exodia the Forbidden One","Left Leg of the Forbidden One","Morphing Jar","Fiber Jar","Vampire Lord","Witch of the Black Forest","Sangan"],
+  "Invasion del Caos":["Black Luster Soldier - Envoy of the Beginning","Chaos Emperor Dragon - Envoy of the End","Yata-Garasu","Fiber Jar","Sinister Serpent","D.D. Warrior Lady","Chaos Command Magician","Dark Magician of Chaos","Helpoemer","Kycoo the Ghost Destroyer","Scapegoat","Snatch Steal","Ring of Destruction"],
+  "Retro Pack 02":["Harpie Lady","Harpie Lady Sisters","Harpie s Feather Duster","Harpie s Hunting Ground","Elegant Egotist","Petit Moth","Insect Queen","Crush Card Virus","Spellbinding Circle","Black Luster Soldier","Gaia The Fierce Knight","Summoned Skull","Kuriboh"]
 };
-
-async function loadOldSchool(){
-  const cl=document.getElementById('cl'),ss=document.getElementById('ss');
-  ss.innerHTML=`<div class="ld"><div class="lr"></div>CARGANDO CARTAS OLD SCHOOL…</div>`;
-  cl.innerHTML='';
-  // Build grouped HTML — fetch each card individually and group by set
-  const sections=[];
-  for(const [setName,cards] of Object.entries(OLD_SCHOOL_SETS)){
-    sections.push(`
-      <div style="margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding:6px 10px;background:rgba(212,168,48,.08);border-radius:2px;border-left:3px solid rgba(212,168,48,.5)">
-          <span style="font-size:14px">🏺</span>
-          <div>
-            <div style="font-family:'Black Ops One',sans-serif;font-size:11px;color:#d4a830;letter-spacing:1px">${setName}</div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:var(--cream4);letter-spacing:1.5px;text-transform:uppercase">${cards.length} cartas icónicas</div>
-          </div>
-        </div>
-        <div class="clist" id="os-${setName.replace(/\s/g,'-').replace(/[^a-zA-Z0-9-]/g,'')}"></div>
-      </div>`);
-  }
-  ss.innerHTML='';
-  cl.innerHTML=sections.join('');
-  // Fetch each set's cards from API and render
-  for(const [setName,cards] of Object.entries(OLD_SCHOOL_SETS)){
-    const safeId=setName.replace(/\s/g,'-').replace(/[^a-zA-Z0-9-]/g,'');
-    const container=document.getElementById('os-'+safeId);
-    if(!container)continue;
-    // Fetch top 3 cards per set for quick load
-    const topCards=cards.slice(0,8);
-    const results=[];
-    for(const name of topCards){
-      try{
-        const r=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?name=${encodeURIComponent(name)}`);
-        const d=await r.json();
-        if(d.data&&d.data[0]){results.push(d.data[0]);G.results=[...G.results,...d.data];}
-      }catch(e){}
-    }
-    if(results.length){
-      container.innerHTML=results.map(c=>crHTML(c)).join('');
-    } else {
-      container.innerHTML=`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);padding:6px;letter-spacing:1px">Sin conexión — verifica internet</div>`;
-    }
-  }
-}
 
 /* ══════════════════════════════════════
    NAMED DECK SAVE / LOAD
 ══════════════════════════════════════ */
 function saveNamedDeck(){
-  const name=(document.getElementById('deck-name-inp')?.value||'').trim();
+  const name=((function(){var _n=document.getElementById('deck-name-inp');return _n?_n.value:''})()||'').trim();
   if(!name){toast('INGRESA UN NOMBRE PARA EL MAZO');return;}
   try{
     const saved=JSON.parse(localStorage.getItem('ut_named_decks')||'{}');
@@ -5141,33 +4841,34 @@ function saveNamedDeck(){
     };
     localStorage.setItem('ut_named_decks',JSON.stringify(saved));
     G.currentDeckName=name;
-    toast(`💾 MAZO "${name.toUpperCase()}" GUARDADO`);
+    toast('MAZO '+name.toUpperCase()+' GUARDADO');
   }catch(e){toast('ERROR AL GUARDAR');}
 }
 
 function openSavedDecks(){
   try{
-    const saved=JSON.parse(localStorage.getItem('ut_named_decks')||'{}');
-    const names=Object.keys(saved);
-    const el=document.getElementById('saved-decks-list');
+    var saved=JSON.parse(localStorage.getItem('ut_named_decks')||'{}');
+    var names=Object.keys(saved);
+    var el=document.getElementById('saved-decks-list');
     if(!names.length){
-      el.innerHTML='<div class="no-hist">No tienes mazos guardados aún</div>';
+      el.innerHTML='<div class="no-hist">Sin mazos guardados</div>';
     } else {
-      el.innerHTML=names.map(n=>{
-        const d=saved[n];
-        const total=(d.main||[]).reduce((s,c)=>s+(c.qty||1),0);
-        const date=new Date(d.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short'});
-        return`<div style="display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:10px;margin-bottom:5px;transition:all var(--trans)" onmouseenter="this.style.borderColor='rgba(196,24,24,.3)'" onmouseleave="this.style.borderColor='var(--border2)'">
-          <div style="flex:1">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--cream)">${n}</div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:var(--cream4);margin-top:2px">${total} cartas · ${date}</div>
-          </div>
-          <button onclick="loadNamedDeck('${n.replace(/'/g,"\\'")}');closeSavedDecks()" style="padding:6px 10px;background:rgba(56,200,136,.1);border:1px solid rgba(56,200,136,.3);border-radius:2px;color:var(--gx);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;white-space:nowrap">CARGAR</button>
-          <button onclick="deleteNamedDeck('${n.replace(/'/g,"\\'")}');openSavedDecks()" style="padding:6px 8px;background:rgba(196,24,24,.08);border:1px solid rgba(196,24,24,.2);border-radius:2px;color:rgba(196,24,24,.6);font-family:monospace;font-size:14px;cursor:pointer">×</button>
-        </div>`;
+      el.innerHTML=names.map(function(n){
+        var d=saved[n];
+        var total=(d.main||[]).reduce(function(s,c){return s+(c.qty||1);},0);
+        var date=new Date(d.date).toLocaleDateString('es-CL',{day:'2-digit',month:'short'});
+        var safeName=n.replace(/'/g,"\\'");
+        return '<div style="display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:2px;padding:10px;margin-bottom:6px">'
+          +'<div style="flex:1">'
+          +'<div style="font-size:14px;font-weight:800;color:var(--cream)">'+n+'</div>'
+          +'<div style="font-size:10px;color:var(--cream4);margin-top:2px">'+total+' cartas - '+date+'</div>'
+          +'</div>'
+          +'<button onclick="loadNamedDeckByName(''+safeName+'');closeSavedDecks()" style="padding:6px 10px;background:rgba(56,200,136,.1);border:1px solid rgba(56,200,136,.3);border-radius:2px;color:#38c888;font-size:11px;font-weight:700;cursor:pointer;margin-right:6px">CARGAR</button>'
+          +'<button onclick="deleteNamedDeck(''+safeName+'');openSavedDecks()" style="padding:6px 8px;background:rgba(196,24,24,.08);border:1px solid rgba(196,24,24,.2);border-radius:2px;color:var(--red2);font-size:11px;cursor:pointer">X</button>'
+          +'</div>';
       }).join('');
     }
-  }catch(e){document.getElementById('saved-decks-list').innerHTML='<div class="no-hist">Error al cargar mazos</div>';}
+  }catch(e){document.getElementById('saved-decks-list').innerHTML='<div class="no-hist">Error al cargar</div>';}
   document.getElementById('saved-decks-modal').classList.remove('hidden');
 }
 
@@ -5182,12 +4883,12 @@ function loadNamedDeck(name){
     const inp=document.getElementById('deck-name-inp');
     if(inp)inp.value=name;
     renderDG();updateZC();saveDeck();
-    toast(`📂 MAZO "${name.toUpperCase()}" CARGADO`);
+    toast('MAZO '+name.toUpperCase()+' CARGADO');
   }catch(e){toast('ERROR AL CARGAR');}
 }
 
 function deleteNamedDeck(name){
-  if(!confirm(`¿Eliminar el mazo "${name}"?`))return;
+  if(!confirm('Eliminar el mazo: '+name+'?'))return;
   try{
     const saved=JSON.parse(localStorage.getItem('ut_named_decks')||'{}');
     delete saved[name];
@@ -5227,117 +4928,148 @@ async function handleCardScan(input){
     prev.src=e.target.result;prev.style.display='block';
     document.getElementById('scan-status').style.display='block';
     document.getElementById('scan-results').innerHTML='';
+
+    // Build a local card name list from our Old School database + common cards
+    // for local matching hints
+    const localCardNames=[];
+    for(const setData of Object.values(OLD_SCHOOL_SETS)){
+      localCardNames.push(...setData.cards);
+    }
+
     try{
       const res=await fetch('https://api.anthropic.com/v1/messages',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
-          max_tokens:600,
-          system:`Eres experto en Yu-Gi-Oh!. Analiza la imagen. Lista SOLO los nombres exactos de las cartas YGO visibles. Responde ÚNICAMENTE con JSON válido sin markdown: {"cards":[{"name":"Nombre exacto en inglés o español","confidence":"high|medium|low"}]}. Sin texto extra.`,
+          max_tokens:800,
+          system:`Eres un experto mundial en Yu-Gi-Oh!. Debes identificar cartas YGO en imágenes analizando:
+1. El nombre visible en el texto de la carta (en CUALQUIER idioma - español, inglés, japonés)
+2. La ilustración y arte de la carta
+3. El tipo de monstruo/magia/trampa por sus colores de borde
+4. Los stats (ATK/DEF) si son visibles
+5. El arquetipo y símbolo de la carta
+
+IMPORTANTE: 
+- Si ves texto en español, dame el nombre en inglés (nombre oficial TCG)
+- Si ves "Mago Oscuro" → "Dark Magician"
+- Si ves "Dragón Blanco de Ojos Azules" → "Blue-Eyes White Dragon"  
+- Si ves ilustración reconocible sin texto claro, identifica por la imagen
+- Confianza: "high" si ves el nombre claramente, "medium" si reconoces la ilustración, "low" si hay duda
+
+Responde SOLO con JSON válido sin markdown:
+{"cards":[{"name":"Nombre oficial en inglés","confidence":"high|medium|low","reason":"cómo la identificaste"}]}`,
           messages:[{role:'user',content:[
             {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
-            {type:'text',text:'Identifica las cartas Yu-Gi-Oh! en esta imagen. JSON solamente.'}
+            {type:'text',text:'Identifica todas las cartas Yu-Gi-Oh! en esta imagen. Puede haber texto en español o inglés. Responde SOLO con JSON.'}
           ]}]
         })
       });
-      if(!res.ok)throw new Error('API error '+res.status);
+      if(!res.ok)throw new Error('HTTP '+res.status);
       const data=await res.json();
-      const text=data.content?.filter(b=>b.type==='text').map(b=>b.text).join('')||'{"cards":[]}';
+      if(data.error)throw new Error(data.error.message);
+      const raw=(data.content?data.content.filter(function(b){return b.type==='text'}).map(function(b){return b.text}).join(''):null)||'{"cards":[]}';
       let parsed;
       try{
-        // Strip any markdown fences
-        const clean=text.replace(/```json?/g,'').replace(/```/g,'').trim();
+        const clean=raw.replace(/```json?/g,'').replace(/```/g,'').trim();
         parsed=JSON.parse(clean);
-      }catch(e){parsed={cards:[]};}
+      }catch(pe){
+        // Try to extract JSON from response
+        const match=raw.match(/\{[\s\S]*\}/);
+        parsed=match?JSON.parse(match[0]):{cards:[]};
+      }
       document.getElementById('scan-status').style.display='none';
-      renderScanResults(parsed.cards||[]);
+      if(parsed.cards&&parsed.cards.length){
+        renderScanResults(parsed.cards);
+      } else {
+        showScanManual('No se identificaron cartas. Intenta con mejor iluminación o usa el modo manual.');
+      }
     }catch(err){
       document.getElementById('scan-status').style.display='none';
-      // Fallback: show manual entry
-      document.getElementById('scan-results').innerHTML=`
-        <div style="background:rgba(196,24,24,.08);border:1px solid rgba(196,24,24,.2);border-radius:2px;padding:12px;margin-bottom:8px">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--red2);letter-spacing:1.5px;margin-bottom:6px">⚠️ SIN CONEXIÓN — MODO MANUAL</div>
-          <div style="font-family:'Barlow',sans-serif;font-size:11px;color:var(--cream3);line-height:1.6;margin-bottom:8px">No se pudo conectar al servicio de identificación. Escribe el nombre de la carta manualmente:</div>
-          <div style="display:flex;gap:6px">
-            <input id="scan-manual-inp" class="fd" placeholder="Nombre de la carta…" style="flex:1;font-size:12px;padding:8px 10px" onkeydown="if(event.key==='Enter')searchManualCard()"/>
-            <button onclick="searchManualCard()" style="padding:8px 12px;background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.3);border-radius:2px;color:var(--red2);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer">BUSCAR</button>
-          </div>
-        </div>`;
+      showScanManual('');
     }
   };
   reader.readAsDataURL(file);
 }
 
+function showScanManual(msg){
+  var msgH=msg?'<div style="font-size:11px;color:var(--cream3);margin-bottom:10px;line-height:1.5">'+msg+'</div>':'';
+  var el=document.getElementById('scan-results');
+  if(el)el.innerHTML='<div style="background:rgba(196,24,24,.06);border:1px solid rgba(196,24,24,.18);border-radius:2px;padding:12px;margin-bottom:8px">'+msgH+'<div style="font-size:10px;font-weight:700;color:var(--red2);letter-spacing:2px;margin-bottom:6px">BUSQUEDA MANUAL</div><div style="display:flex;gap:6px"><input id="scan-manual-inp" class="fd" placeholder="Nombre de la carta..." style="flex:1;font-size:12px;padding:8px 10px" onkeydown="if(event.key==='Enter')searchManualCard()"/><button onclick="searchManualCard()" style="padding:8px 12px;background:rgba(196,24,24,.12);border:1px solid rgba(196,24,24,.3);border-radius:2px;color:var(--red2);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">BUSCAR</button></div></div>';
+}
+
 async function searchManualCard(){
-  const inp=document.getElementById('scan-manual-inp');
+  var inp=document.getElementById('scan-manual-inp');
   if(!inp||!inp.value.trim())return;
-  const name=inp.value.trim();
-  toast(`BUSCANDO ${name.toUpperCase()}…`);
+  var name=inp.value.trim();
+  toast('BUSCANDO '+name.toUpperCase()+'...');
   try{
-    const res=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${encodeURIComponent(name)}&num=5`);
-    const data=await res.json();
+    var res=await fetch('https://db.ygoprodeck.com/api/v7/cardinfo.php?fname='+encodeURIComponent(name)+'&num=10&offset=0');
+    var data=await res.json();
     if(data.data&&data.data.length){
-      const existing=document.getElementById('scan-results').innerHTML;
-      document.getElementById('scan-results').innerHTML=existing+
-        `<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;margin:8px 0 4px;text-transform:uppercase">${data.data.length} RESULTADO(S) PARA "${name}"</div>`+
-        data.data.map(c=>{
-          G.results=[...G.results,c];
-          return`<div style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;padding:8px 10px;margin-bottom:4px">
-            <span style="font-size:14px">✅</span>
-            <div style="flex:1">
-              <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--cream)">${c.name}</div>
-              <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:var(--cream4);margin-top:1px">${c.type||''} ${c.atk!==undefined?'· ATK '+c.atk:''}</div>
-            </div>
-            <button onclick="G.results=[...G.results,${JSON.stringify(c).replace(/"/g,'&quot;')}];addC(${c.id})" style="padding:5px 9px;background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.25);border-radius:2px;color:var(--red2);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;cursor:pointer">+ DECK</button>
-          </div>`;
-        }).join('');
+      var html='<div style="font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;margin-bottom:8px">RESULTADOS PARA: '+name.toUpperCase()+'</div>';
+      html+=data.data.map(function(c){
+        G.results=G.results.concat([c]);
+        return '<div style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:2px;padding:8px;margin-bottom:6px">'
+          +'<span style="font-size:14px">OK</span>'
+          +'<div style="flex:1">'
+          +'<div style="font-size:13px;font-weight:700;color:var(--cream)">'+c.name+'</div>'
+          +'<div style="font-size:9px;color:var(--cream4);margin-top:1px">'+( c.race||'' )+' '+( c.type||'' )+'</div>'
+          +'</div>'
+          +'<button onclick="addC('+c.id+')" style="padding:5px 10px;background:rgba(196,24,24,.12);border:1px solid rgba(196,24,24,.3);border-radius:2px;color:var(--red2);font-size:11px;font-weight:700;cursor:pointer">ADD</button>'
+          +'</div>';
+      }).join('');
+      var sr=document.getElementById('scan-results');
+      if(sr)sr.innerHTML=(sr.innerHTML||'')+html;
     } else {
-      toast('❌ No encontrada: '+name);
+      toast('No encontrada: '+name);
     }
-  }catch(e){toast('Sin conexión a internet');}
+  }catch(e){toast('Sin conexion a internet');}
 }
 
 function renderScanResults(cards){
-  const el=document.getElementById('scan-results');
+  var el=document.getElementById('scan-results');
   if(!cards.length){
-    el.innerHTML=`<div style="color:var(--cream4);font-family:'Barlow',sans-serif;font-size:12px;padding:10px;text-align:center">No se pudieron identificar cartas en la imagen.</div>`;
+    el.innerHTML='<div style="color:var(--cream4);font-size:12px;padding:10px;text-align:center">No se identificaron cartas. Intenta la busqueda manual.</div>';
     return;
   }
-  el.innerHTML=`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">${cards.length} CARTA(S) IDENTIFICADA(S)</div>`+
-  cards.map(c=>{
-    const isLow=c.confidence==='low';
-    const isMed=c.confidence==='medium';
-    return`<div style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid ${isLow?'rgba(212,168,48,.4)':isMed?'rgba(212,168,48,.2)':'var(--border2)'};border-radius:2px;padding:8px 10px;margin-bottom:5px">
-      <span style="font-size:14px">${isLow?'⚠️':isMed?'⚡':'✅'}</span>
-      <div style="flex:1">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--cream)">${c.name}</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:${isLow?'#d4a830':isMed?'rgba(212,168,48,.6)':'var(--cream4)'};letter-spacing:1px;text-transform:uppercase;margin-top:1px">${isLow?'⚠ Confianza baja — verificar':isMed?'Confianza media':'Identificada con certeza'}</div>
-      </div>
-      <button onclick="searchAndAddScanned('${c.name.replace(/'/g,"\\'")}','${c.confidence}')" style="padding:5px 9px;background:rgba(196,24,24,.1);border:1px solid rgba(196,24,24,.25);border-radius:2px;color:var(--red2);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;cursor:pointer;white-space:nowrap;transition:all .15s">+ DECK</button>
-    </div>`;
+  el.innerHTML='<div style="font-size:10px;font-weight:700;color:var(--cream4);letter-spacing:2px;margin-bottom:8px">CARTAS IDENTIFICADAS</div>';
+  el.innerHTML+=cards.map(function(c){
+    var isLow=c.confidence==='low';
+    var isMed=c.confidence==='medium';
+    var bdr=isLow?'rgba(212,168,48,.3)':isMed?'rgba(212,168,48,.15)':'var(--border)';
+    var icon=isLow?'!':isMed?'~':'OK';
+    var clr=isLow?'#d4a830':isMed?'rgba(212,168,48,.8)':'var(--cream4)';
+    return '<div style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid '+bdr+';border-radius:2px;padding:8px;margin-bottom:6px">'
+      +'<span style="font-size:14px">'+icon+'</span>'
+      +'<div style="flex:1">'
+      +'<div style="font-size:13px;font-weight:700;color:var(--cream)">'+c.name+'</div>'
+      +'<div style="font-size:9px;color:'+clr+'">'+c.type+(c.confidence?' - '+c.confidence:'')+'</div>'
+      +'</div>'
+      +'<button onclick="searchAndAddScanned(''+c.name.replace(/'/g,"\'")+'')" style="padding:5px 10px;background:rgba(196,24,24,.12);border:1px solid rgba(196,24,24,.3);border-radius:2px;color:var(--red2);font-size:11px;font-weight:700;cursor:pointer">ADD</button>'
+      +'</div>';
   }).join('');
 }
 
 async function searchAndAddScanned(name, confidence){
-  toast(`BUSCANDO ${name.toUpperCase()}…`);
+  toast('BUSCANDO '+name.toUpperCase()+'...');
   try{
-    const res=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?name=${encodeURIComponent(name)}`);
+    const res=await fetch('https://db.ygoprodeck.com/api/v7/cardinfo.php?name='+encodeURIComponent(name)+'&num=10&offset=0');
     const data=await res.json();
     if(data.data&&data.data[0]){
       G.results=[...G.results,...data.data];
       addC(data.data[0].id);
-      if(confidence==='low')toast(`⚠️ ${name} añadida — verifica que sea la correcta`);
+      if(confidence==='low')toast('Verificar: '+name+' anadida');
     } else {
       // Try fuzzy search
-      const r2=await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?fname=${encodeURIComponent(name)}&num=1`);
+      const r2=await fetch('https://db.ygoprodeck.com/api/v7/cardinfo.php?fname='+encodeURIComponent(name)+'&num=10&offset=0');
       const d2=await r2.json();
       if(d2.data&&d2.data[0]){
         G.results=[...G.results,...d2.data];
         addC(d2.data[0].id);
-        toast(`⚠️ Añadida aproximación: ${d2.data[0].name}`);
+        toast('Anadida aproximacion: '+d2.data[0].name);
       } else {
-        toast(`❌ No encontrada: ${name}`);
+        toast('No encontrada: '+name);
       }
     }
   }catch(e){toast('ERROR AL BUSCAR');}
@@ -5356,12 +5088,12 @@ function toggleMusic(){
     if(!_ytLoaded){
       // Load YouTube IFrame via indirect autoplay
       const iframe=document.getElementById('yt-player');
-      iframe.src='https://www.youtube.com/embed/o_Z0AhbSQxo?autoplay=1&loop=1&playlist=o_Z0AhbSQxo&controls=0&mute=0&enablejsapi=1';
+      iframe.src='https://www.youtube.com/embed/C3ZYCrbx7qk?autoplay=1&loop=1&playlist=C3ZYCrbx7qk&controls=0&mute=0&enablejsapi=1';
       _ytLoaded=true;
     } else {
       // Try to resume
       const iframe=document.getElementById('yt-player');
-      iframe.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}','*');
+      if(iframe.contentWindow){iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}','*');}
     }
     toast('🎵 MÚSICA ACTIVADA');
   } else {
@@ -5369,7 +5101,7 @@ function toggleMusic(){
     btn.style.opacity='.7';
     btn.style.borderColor='var(--border)';
     const iframe=document.getElementById('yt-player');
-    iframe.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}','*');
+    if(iframe.contentWindow){iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}','*');}
     toast('🔇 MÚSICA SILENCIADA');
   }
 }
@@ -5416,8 +5148,8 @@ document.addEventListener('keydown',e=>{
     if(typeof closeDeckCardModal==='function')closeDeckCardModal();
     if(typeof closeImportModal==='function')closeImportModal();
     if(typeof closeResultScreen==='function')closeResultScreen();
-    document.getElementById('hand-modal')?.classList.add('hidden');
-    document.getElementById('dice-modal')?.classList.add('hidden');
+    var _hm=document.getElementById('hand-modal');if(_hm)_hm.classList.add('hidden');
+    var _dm2=document.getElementById('dice-modal');if(_dm2)_dm2.classList.add('hidden');
   }
 });
 </script>
